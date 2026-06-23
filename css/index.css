@@ -1,0 +1,163 @@
+/* HERO */
+
+.hero {
+  background: url("../img/CENFOTEC-HERO.jpg") no-repeat center center/cover;
+  padding: 4rem 2rem;
+  text-align: center;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero h1 {
+  font-size: clamp(1.75rem, 5vw, 2rem);
+  color: var(--blue-800);
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.hero p {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-weight: 200;
+  color: var(--blue-600);
+  width: 85%;
+  margin: 0 auto;
+}
+
+.heroInnerContainer {
+  background-color: rgba(255, 255, 255, 0.671);
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.heroCTA {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.heroSearch {
+  display: flex;
+  align-items: center;
+  background-color: var(--white);
+  border: 2px solid var(--blue-200);
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  width: 100%;
+  max-width: 650px;
+  transition: all 0.3s ease;
+}
+
+.heroSearch:focus-within {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 4px rgba(0, 106, 234, 0.15);
+}
+
+.heroSearch button {
+  background: transparent;
+  border: none;
+  color: var(--blue-800);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.heroSearch input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 1.1rem;
+  color: var(--blue-800);
+}
+
+.heroFilters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.heroFilters select,
+.heroFilters input[type="date"] {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  border: 1px solid var(--blue-200);
+  background-color: var(--white);
+  color: var(--blue-800);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.heroFilters select:focus,
+.heroFilters input[type="date"]:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(0, 106, 234, 0.15);
+}
+
+#filterButton {
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  background-color: var(--blue-800);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#filterButton:hover {
+  background-color: var(--blue-500);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* EVENTS SECTION */
+.eventsSection {
+  padding: 3rem;
+  background-color: var(--blue-100);
+}
+
+.eventsSection h2 {
+  text-align: left;
+  font-weight: bold;
+  font-size: 2rem;
+  color: var(--blue-800);
+  margin-bottom: 2rem;
+}
+
+.loadMoreButton {
+  display: block;
+  margin: 2rem auto 0;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  background-color: transparent;
+  color: var(--blue-800);
+  border: 2px solid var(--blue-800);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.loadMoreButton:hover {
+  background-color: var(--blue-800);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,232 @@
+/* ADMIN LAYOUT */
+
+body {
+  background-color: var(--white);
+}
+
+.admin-main-content {
+  background-color: #f0f0f0;
+  margin-left: 290px; /* mismo que navSideMenu */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navSideMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 290px;
+  height: 100vh;
+  background-color: #f2f8ff;
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.sideMenuHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 5px;
+  gap: 1rem;
+}
+
+.sideMenuHeader h2 {
+  color: var(--blue-800);
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.sideMenuHeader p {
+  color: var(--gray-600);
+  margin: 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sideMenuHeader img {
+  width: 45px;
+  height: auto;
+}
+
+.sideMenuLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sideMenuLinks:last-child {
+  margin-top: auto;
+}
+
+/* Estilos de los enlaces del menú */
+.sideMenuLinks a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--blue-800);
+  text-decoration: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-left: 0;
+}
+
+.sideMenuLinks a i {
+  font-size: 1.2rem;
+}
+
+.sideMenuLinks a:hover {
+  background-color: var(--blue-500);
+  color: var(--white);
+}
+
+.sideMenuLinks a.sideMenuActive {
+  background-color: var(--blue-500);
+  color: var(--white);
+}
+
+#btnLogOut {
+  color: var(--danger);
+}
+
+#btnLogOut:hover {
+  background-color: var(--danger);
+  color: var(--white);
+}
+
+.menuSeparator {
+  border: none;
+  border-top: 1px solid var(--blue-800);
+  width: 100%;
+  margin: 0 0 2rem 0;
+}
+
+header {
+  background-color: var(--white);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.headerTitle h1 {
+  color: var(--blue-800);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.headerSearchBar {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid var(--blue-200);
+  border-radius: 50px;
+  padding: 0.4rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.headerSearchBar:focus-within {
+  border-color: var(--blue-500);
+  background-color: var(--white);
+  box-shadow: 0 0 0 3px rgba(0, 106, 234, 0.15);
+}
+
+.headerSearchBar button {
+  background: transparent;
+  border: none;
+  color: var(--blue-800);
+  font-size: 1.1rem;
+  padding: 0;
+  margin-right: 0.5rem;
+}
+
+.headerSearchBar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--blue-800);
+  width: 200px;
+}
+
+.headerAdminInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border-left: 2px solid var(--gray-300);
+  padding-left: 1.5rem;
+}
+
+.userName {
+  margin: 0;
+  color: var(--blue-800);
+  font-size: 0.95rem;
+}
+
+.userRol {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 0.8rem;
+}
+
+/* ACCTION BUTTONS */
+.eventsAdminBtnPrimary,
+.eventsAdminBtnSecondary {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 200;
+}
+
+.eventsAdminBtnPrimary {
+  background-color: var(--blue-800);
+  color: var(--white);
+  border: none;
+}
+
+.eventsAdminBtnPrimary:hover {
+  background-color: var(--blue-500);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.eventsAdminBtnSecondary {
+  background-color: transparent;
+  color: var(--blue-800);
+  border: 1px solid var(--blue-500);
+}
+
+.eventsAdminBtnSecondary:hover {
+  background-color: var(--blue-800);
+  color: var(--white, #ffffff);
+}
+
+.btnDelete {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btnDelete:hover {
+  background-color: var(--danger);
+  color: var(--white);
+  border-color: #dc3545;
+}

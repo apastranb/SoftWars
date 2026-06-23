@@ -1,0 +1,198 @@
+/* ICONS - USAR <i></i> DESDE https://icons.getbootstrap.com/*/
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+
+/* FONTS */
+@font-face {
+  font-family: "Din-Alternate-Bold";
+  src: url("../fonts/Din-Alternate-Bold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Circular-Std-Book";
+  src: url("../fonts/Circular-Std-Book.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* COLOR TOKENS */
+
+:root {
+  /* Azules */
+  --blue-200: #9cc8ff; /* Celeste */
+  --blue-500: #006aea; /* Azul medio */
+  --blue-800: #164a98; /* Azul oscuro */
+
+  /* Grises */
+  --gray-300: #d2d2d2; /* Gris claro */
+  --gray-600: #7c7b75; /* Gris oscuro */
+  --white: #ffffff; /* Blanco */
+  --black: #000; /* Negro */
+
+  /* Amarillos */
+  --yellow-400: #fff200; /* Amarillo */
+  --yellow-600: #ffc63e; /* Mostaza */
+
+  /* Acciones */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #0ea5e9;
+}
+
+/* RESET Y BASE */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Circular-Std-Book", sans-serif;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+input,
+select,
+textarea,
+button,
+optgroup {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Din-Alternate-Bold", sans-serif;
+  color: var(--blue-800);
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid var(--gray-300);
+  padding: 8px;
+  text-align: left;
+}
+
+/* NAVBAR */
+nav {
+  background-color: var(--white);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(0.5rem, 2vw, 1rem);
+}
+
+.navLogo {
+    display: flex;
+    align-items: center;
+}
+
+.navLogo img {
+  height: clamp(40px, 5vw, 60px);
+  width: auto;
+}
+
+nav a {
+  color: var(--blue-800);
+  font-weight: bold;
+  font-size: 1rem;
+  margin-left: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--blue-500);
+  transform: scale(1.05);
+}
+
+.active {
+  border-bottom: 2px solid var(--blue-800);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+}
+
+.navbarSearch {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--blue-200);
+  border-radius: 15px;
+  padding: 0.25rem 0.75rem;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.navbarSearch input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  color: var(--blue-800);
+  width: 100%;
+}
+
+.navbarSearch button {
+  background-color: transparent;
+  color: var(--blue-800);
+  border: none;
+  padding: 0;
+  margin-right: 0.25rem;
+  margin-left: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbarSearch button:hover {
+  color: var(--blue-500);
+}
+
+.navbarSearch:focus-within {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 2px rgba(0, 106, 234, 0.2);
+}
+
+/* FOOTER */
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--blue-800);
+  color: var(--white);
+  text-align: center;
+  padding: 1rem;
+  height: 10vh;
+  margin-top: auto;
+}
