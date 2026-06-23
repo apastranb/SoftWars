@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrar Eventos</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/admin-layout.css" />
+    <link rel="stylesheet" href="../css/admin-eventos.css" />
+  </head>
+  <body>
+    <!--MENU LATERAL-->>
+    <nav class="navSideMenu">
+      <div class="sideMenuHeader">
+        <div>
+          <img src="../img/eventos-cenfotec-icon-dark.png" alt="" />
+        </div>
+        <div>
+          <h2>Panel de Administrador</h2>
+          <p>Gestión Académica</p>
+        </div>
+      </div>
+      
+      <hr class="menuSeparator">
+
+      <div class="sideMenuLinks">
+        <a class="sideMenuActive" href="admin-eventos.html"
+          ><i class="bi bi-calendar"></i> Eventos</a
+        >
+        <a href="admin-oradores.html"
+          ><i class="bi bi-people-fill"></i> Presentadores</a
+        >
+        <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+        <a href="admin-usuarios.html"
+          ><i class="bi bi-key"></i> Administradores</a
+        >
+      </div>
+
+      <div class="sideMenuLinks">
+        <hr class="menuSeparator">
+        <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
+        <a id="btnLogOut" href="login.html"
+          ><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a
+        >
+      </div>
+    </nav>
+
+    <div class="admin-main-content">
+      <header>
+        <div class="headerTitle">
+          <h1>Gestión de Eventos</h1>
+        </div>
+        <div class="headerActions">
+          <div class="headerSearchBar">
+            <button id="searchButton"><i class="bi bi-search"></i></button>
+            <input
+              type="text"
+              placeholder="Buscar eventos..."
+              id="searchInput"
+            />
+          </div>
+
+          <div class="headerAdminInfo">
+            <p class="userName">Nombre Apellido</p>
+            <p class="userRol">Rol</p>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="eventsAdminActions">
+          <div class="eventsAdminFilters">
+            <div class="eventsFiltersCategory">
+              <select name="eventsAdminFilterCategory" id="eventsAdminFilterCategory">
+                <option value="" selected>Todas las categorías</option>
+                <option value="artistica">Artisticas</option>
+                <option value="cultural">Culturales</option>
+                <option value="deportiva">Deportivas</option>
+                <option value="recreativa">Recreativas</option>
+                <option value="tecnologica">Tecnologicas</option>
+                <option value="voluntariado">Voluntariados</option>
+              </select>
+            </div>
+
+            <div class="eventsFiltersStatus">
+              <select name="eventAdminFilterStatus" id="eventAdminFilterStatus">
+                <option value="" selected>Todos los Estados</option>
+                <option value="">Cancelado</option>
+                <option value="">Disponible</option>
+                <option value="">Finalizado</option>
+                <option value="">Lleno</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="eventsAdminBtns">
+            <button class="eventsAdminBtnSecondary">Editar Evento</button>
+            <button class="eventsAdminBtnSecondary btnDelete">
+              Eliminar Evento
+            </button>
+            <a class="eventsAdminBtnPrimary" href="admin-crear-evento.html">Crear Nuevo Evento</a>
+          </div>
+        </section>
+
+        <section class="eventsAdminTable">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    id="selectAllEvents"
+                    title="Seleccionar todos los eventos"
+                  />
+                </th>
+                <th>ID</th>
+                <th>Nombre del Evento</th>
+                <th>Estado</th>
+                <th>Lugar</th>
+                <th>Categoría</th>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Final</th>
+                <th>Cupo Máx.</th>
+                <th>Cupo Actual</th>
+                <th>Disponible</th>
+                <th>Responsables</th>
+              </tr>
+            </thead>
+
+            <tbody id="adminEventsTableBody"></tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/admin-eventos-logic.js"></script>
+    <script src="../js/validaciones.js"></script>
+  </body>
+</html>

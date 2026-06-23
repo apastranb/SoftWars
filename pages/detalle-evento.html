@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Evento</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/detalle-evento.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="navLogo">
+        <a href="index.html">
+          <img
+            src="../img/eventos-cenfotec-logo-dark.svg"
+            alt="Eventos CENFOTEC"
+          />
+        </a>
+      </div>
+      <div class="navLinks">
+        <a href="index.html">Eventos</a>
+        <a href="postular-participante.html">Postularse</a>
+      </div>
+      <div class="navLinks">
+        <div class="navbarSearch">
+          <button id="searchButton"><i class="bi bi-search"></i></button>
+          <input type="text" placeholder="Buscar eventos..." id="searchInput" />
+        </div>
+        <a href="pages/login.html">Acceso Admin</a>
+      </div>
+    </nav>
+
+    <div class="layout-container">
+      <main>
+        <section class="eventSummary">
+          <img
+            class="eventCover"
+            src="../img/img-placeholder.png"
+            alt="img Placeholder"
+          />
+          <h1 class="eventTitle"></h1>
+
+          <div>
+            <p class="eventDate"></p>
+            <p class="eventTime"></p>
+            <p class="eventLocation"></p>
+          </div>
+
+          <div>
+            <p class="eventClass"></p>
+            <p class="eventEntry"></p>
+          </div>
+
+          <div class="eventDescription">
+            <span> </span>
+          </div>
+
+          <hr />
+
+          <div class="eventActivities">
+            <h2><i class="bi bi-calendar-check"></i> Actividades</h2>
+
+            <div class="eventActivityCard">
+              <h3 class="eventActivityTitle"></h3>
+              <p class="eventActivityCategorie"></p>
+              <p class="eventActivityDescription"></p>
+              <p class="eventActivityDateTime"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="eventAgenda">
+          <div class="eventAgendaHeader">
+            <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+            <button class="btnExportAgenda">
+              <i class="bi bi-download"></i>
+              <span>Exportar Agenda</span>
+            </button>
+          </div>
+          <div class="eventAgendaDatesTab"></div>
+
+          <div class="eventAgendaTable">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hora</th>
+                  <th>Actividad</th>
+                  <th>Responsable</th>
+                  <th>Refrigerio</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="eventParticipants">
+          <div class="eventParticipantsHeader">
+            <h2><i class="bi bi-people-fill"></i> Participantes</h2>
+            <a class="btnPostularse" target="_blank" href="postular-participante.html" rel="noopener noreferrer">Postularse como Participante</a>
+          </div>
+          <div class="eventParticipantsContainer">
+            <div class="eventParticipantsCard">
+              <img src="" alt="" />
+              <h3 class="eventParticipantsName"></h3>
+              <p class="eventParticipantsTitle"></p>
+              <span class="eventParticipantsBio"> </span>
+            </div>
+          </div>
+        </section>
+
+        <section class="eventStands">
+          <h2><i class="bi bi-shop-window"></i> Stands</h2>
+          <div class="eventStandsCard">
+            <div class="standCategoryIcon">
+              <img src="" alt="" />
+            </div>
+            <div>
+              <h3 class="standName"></h3>
+              <p class="stancDescription"></p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside>
+        <h2>Inscripción</h2>
+        <p>Completa el formulario para asegurar tu lugar.</p>
+
+        <form id="inscribirVisitante" action="submit">
+          <label for="nombreVisitante">Nombre Completo</label>
+          <input
+            id="nombreVisitante"
+            name="nombreVisitante"
+            type="text"
+            placeholder="Juan Pérez"
+            required
+          />
+
+          <label for="cedulaVisitante">Cédula o ID</label>
+          <input
+            id="cedulaVisitante"
+            name="cedulaVisitante"
+            type="text"
+            placeholder="101230456"
+            required
+          />
+
+          <label for="emailVisitante">Correo Electrónico</label>
+          <input
+            id="emailVisitante"
+            name="emailVisitante"
+            type="email"
+            placeholder="email@example.com"
+            required
+          />
+
+          <label for="telefonoVisitante">Teléfono</label>
+          <input
+            id="telefonoVisitante"
+            name="telefonoVisitante"
+            type="text"
+            placeholder="60106010"
+          />
+
+          <label for="edadVisitante">Edad</label>
+          <input
+            id="edadVisitante"
+            name="edadVisitante"
+            type="number"
+            placeholder="Ej. 25"
+            required
+          />
+
+          <label for="carreraVisitante">Carrera / Profesión</label>
+          <input
+            id="carreraVisitante"
+            name="carreraVisitante"
+            type="text"
+            placeholder="Ej. Ingeniería de Software"
+          />
+
+          <h3>Actividades a las que quiere estar inscrito</h3>
+          <!--LOGICA ES: ACTIVIDADES QUE SE MUESTRAN EN eventActivities SE MUESTRAN AQUI CON EL NOMBRE, FECHA Y HORA PERO CON UN CHECKBOX, EL USUARIO PUEDE SELECCIONAR UNA O VARIAS-->
+
+          <label class="checkbox-actividad">
+            <input
+              type="checkbox"
+              name="actividades_seleccionadas"
+              value="id_de_la_actividad"
+            />
+
+            <div class="box-visual"></div>
+
+            <div class="info-actividad">
+              <span class="actividad-titulo"></span>
+              <span class="actividad-fecha"><i class="bi bi-clock"></i></span>
+            </div>
+          </label>
+
+          <button type="submit">
+            Inscribirse al Evento<i class="bi bi-arrow-right"></i>
+          </button>
+        </form>
+      </aside>
+    </div>
+
+    <footer>
+      <p>&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../js/detalle-evento-logic.js"></script>
+    <script src="../js/validaciones.js"></script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos CENFOTEC</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="navLogo">
+        <a href="index.html">
+          <img
+            src="img/eventos-cenfotec-logo-dark.svg"
+            alt="Eventos CENFOTEC"
+          />
+        </a>
+      </div>
+      <div class="navLinks">
+        <a class="active" href="index.html">Eventos</a>
+        <a href="pages/postular-participante.html">Postularse</a>
+      </div>
+      <div class="navLinks">
+        <div class="navbarSearch">
+          <button id="searchButton"><i class="bi bi-search"></i></button>
+          <input type="text" placeholder="Buscar eventos..." id="searchInput"/>
+        </div>
+        <a href="pages/login.html">Acceso Admin</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <div class="heroInnerContainer">
+          <h1>Próximos Eventos Académicos</h1>
+          <p>
+            Descubre y participa en una variedad de actividades diseñadas para
+            enriquecer tu experiencia universitaria. Encuentra desde charlas
+            técnicas hasta actividades de voluntariado de alto impacto.
+          </p>
+
+          <div class="heroCTA">
+            <div class="heroSearch">
+              <button id="searchButtonHero">
+                <i class="bi bi-search"></i>
+              </button>
+              <input
+                type="text"
+                placeholder="Buscar eventos..."
+                id="searchInputHero"
+              />
+            </div>
+            <div class="heroFilters">
+              <div class="heroDropdown">
+                <select id="categoryFilter">
+                  <option value="" selected>Todas las categorías</option>
+                  <option value="artistica">Artisticas</option>
+                  <option value="cultural">Culturales</option>
+                  <option value="deportiva">Deportivas</option>
+                  <option value="recreativa">Recreativas</option>
+                  <option value="tecnologica">Tecnologicas</option>
+                  <option value="voluntariado">Voluntariados</option>                 
+                </select>
+              </div>
+              <div class="heroDateFilter">
+                <input type="date" id="dateFilter" />
+              </div>
+              <div>
+                <button id="filterButton">Filtrar Eventos</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="eventsSection">
+        <h2>Eventos Destacados</h2>
+        <div id="eventsContainer" class="eventsContainer">
+          <!-- Aquí se cargarán los eventos dinámicamente -->
+        </div>
+        <button id="loadMoreButton" class="loadMoreButton">
+          Cargar Más Eventos
+        </button>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="js/index-logic.js"></script>
+    <script src="js/validaciones.js"></script>
+  </body>
+</html>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Evento</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/admin-layout.css" />
+    <link rel="stylesheet" href="../css/admin-crear-evento.css" />
+  </head>
+  <body>
+    <!--MENU LATERAL-->>
+    <nav class="navSideMenu">
+      <div class="sideMenuHeader">
+        <div>
+          <img src="../img/eventos-cenfotec-icon-dark.png" alt="" />
+        </div>
+        <div>
+          <h2>Panel de Administrador</h2>
+          <p>Gestión Académica</p>
+        </div>
+      </div>
+
+      <hr class="menuSeparator" />
+
+      <div class="sideMenuLinks">
+        <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+        <a href="admin-oradores.html"
+          ><i class="bi bi-people-fill"></i> Presentadores</a
+        >
+        <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+        <a href="admin-usuarios.html"
+          ><i class="bi bi-key"></i> Administradores</a
+        >
+      </div>
+
+      <div class="sideMenuLinks">
+        <hr class="menuSeparator" />
+        <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
+        <a id="btnLogOut" href="login.html"
+          ><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a
+        >
+      </div>
+    </nav>
+
+    <div class="admin-main-content">
+      <header>
+        <div class="headerTitle">
+          <h1>Crear Nuevo Evento</h1>
+          <nav aria-label="breadcrumb" class="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="admin-eventos.html">Eventos</a>
+              </li>
+              <li class="breadcrumb-item" aria-current="page">Crear Evento</li>
+            </ol>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="newEventFormSection">
+          <form id="formCrearEvento" action="">
+            <div class="form-card newEventUploadImg">
+              <h2><i class="bi bi-image"></i> Imagen de Portada</h2>
+              <div class="upload-area" id="uploadArea">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <p>Haz clic para subir o arrastra un archivo PNG o JPG</p>
+                <input
+                  type="file"
+                  id="portadaEvento"
+                  accept="image/png, image/jpeg"
+                  hidden
+                />
+              </div>
+            </div>
+
+            <div class="form-card newEventDetails">
+              <h2>
+                <i class="bi bi-card-text"></i> Información del Evento Principal
+              </h2>
+
+              <div class="form-grid">
+                <div class="input-group full-width">
+                  <label for="nombreEvento">Nombre del Evento</label>
+                  <input
+                    type="text"
+                    id="nombreEvento"
+                    placeholder="Ej. Congreso de Tecnología"
+                    required
+                  />
+                </div>
+
+                <div class="input-group">
+                  <label for="categoriaEvento">Categoría</label>
+                  <select id="categoriaEvento" required>
+                    <option value="" disabled selected>
+                      Seleccione una categoría
+                    </option>
+                    <option value="artistica">Artisticas</option>
+                    <option value="cultural">Culturales</option>
+                    <option value="deportiva">Deportivas</option>
+                    <option value="recreativa">Recreativas</option>
+                    <option value="tecnologica">Tecnologicas</option>
+                    <option value="voluntariado">Voluntariados</option>
+                  </select>
+                </div>
+
+                <div class="input-group">
+                  <label for="cupoEvento">Cupo Máximo</label>
+                  <input
+                    type="number"
+                    id="cupoEvento"
+                    placeholder="Ej. 150"
+                    required
+                  />
+                </div>
+
+                <div class="input-group full-width">
+                  <div class="label-with-action">
+                    <label for="descEvento">Descripción del Evento</label>
+                    <button
+                      type="button"
+                      class="btn-ai-enhance"
+                      id="btnMejorarDesc"
+                    >
+                      <i class="bi bi-stars"></i> Mejorar con IA
+                    </button>
+                  </div>
+                  <textarea
+                    id="descEvento"
+                    rows="4"
+                    placeholder="Describe los detalles principales..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card newEventLogistic">
+              <h2><i class="bi bi-geo-alt"></i> Logística y Ubicación</h2>
+
+              <div class="form-grid">
+                <div class="input-group">
+                  <label for="fechaEvento">Fecha</label>
+                  <input type="date" id="fechaEvento" required />
+                </div>
+                <div class="input-group">
+                  <label for="lugarEvento">Lugar / Salón</label>
+                  <input
+                    type="text"
+                    id="lugarEvento"
+                    placeholder="Ej. Auditorio Principal"
+                    required
+                  />
+                </div>
+                <div class="input-group">
+                  <label for="horaInicio">Hora de Inicio</label>
+                  <input type="time" id="horaInicio" required />
+                </div>
+                <div class="input-group">
+                  <label for="horaFin">Hora de Finalización</label>
+                  <input type="time" id="horaFin" required />
+                </div>
+                <div class="input-group full-width">
+                  <label for="responsableEvento">Nombre del Responsable</label>
+                  <input
+                    type="text"
+                    id="responsableEvento"
+                    placeholder="Nombre de quien organiza"
+                  />
+                </div>
+              </div>
+
+              <div class="radio-groups-container">
+                <div class="radio-group">
+                  <label class="radio-title">Tipo de Entrada</label>
+                  <div class="radio-options">
+                    <label
+                      ><input
+                        type="radio"
+                        name="tipoEntrada"
+                        value="libre"
+                        checked
+                      />
+                      Entrada Libre</label
+                    >
+                    <label
+                      ><input type="radio" name="tipoEntrada" value="pago" /> De
+                      Pago</label
+                    >
+                  </div>
+                </div>
+
+                <div class="radio-group">
+                  <label class="radio-title">Visibilidad</label>
+                  <div class="radio-options">
+                    <label
+                      ><input
+                        type="radio"
+                        name="visibilidad"
+                        value="publico"
+                        checked
+                      />
+                      Público</label
+                    >
+                    <label
+                      ><input type="radio" name="visibilidad" value="privado" />
+                      Privado</label
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card newEventStands">
+              <h2><i class="bi bi-shop"></i> Asignar Stands</h2>
+              <p class="section-subtitle">
+                Vincule stands existentes al evento.
+              </p>
+
+              <div class="search-assign-bar">
+                <i class="bi bi-search"></i>
+                <input
+                  type="text"
+                  id="searchStands"
+                  placeholder="Buscar stand por ID o Nombre..."
+                />
+              </div>
+
+              <div class="selected-items-container" id="standsContainer">
+                <!--EXAMPLE--
+                <div class="selection-card">
+                  <div class="selection-info">
+                    <h4>Stand de Robótica</h4>
+                    <span>Categoría: Tecnológica</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    title="Desligar Stand"
+                  >
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <!--EXAMPLE-->
+              </div>
+            </div>
+
+            <div class="form-card newEventParticipants">
+              <h2>
+                <i class="bi bi-people"></i> Asignar Participantes Principales
+              </h2>
+
+              <div class="search-assign-bar">
+                <i class="bi bi-search"></i>
+                <input
+                  type="text"
+                  id="searchParticipants"
+                  placeholder="Buscar por Nombre o Correo..."
+                />
+              </div>
+
+              <div class="selected-items-container" id="participantsContainer">
+                <!--EXAMPLE--
+                <div class="selection-card">
+                  <div class="selection-info">
+                    <h4>Carlos Carballo</h4>
+                    <span>email@example.com | Ing. Software | Empresa</span>
+                  </div>
+                  <button type="button" class="btn-remove" title="Desligar">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <!--EXAMPLE-->
+              </div>
+            </div>
+
+            <div class="form-card newEventActivities">
+              <h2>
+                <i class="bi bi-diagram-3"></i> Crear Actividades o Sub-eventos
+              </h2>
+
+              <div id="activitiesWrapper">
+                <div class="activity-block">
+                  <div class="activity-header">
+                    <h3>Actividad 1</h3>
+                    <button type="button" class="btn-remove-text">
+                      <i class="bi bi-trash"></i> Eliminar Actividad
+                    </button>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="input-group full-width">
+                      <label>Nombre de la Actividad</label>
+                      <input type="text" placeholder="Ej. Taller de Vue.js" />
+                    </div>
+
+                    <div class="input-group">
+                      <label>Categoría</label>
+                      <select required>
+                        <option value="" disabled selected>
+                          Seleccione categoría
+                        </option>
+                        <option value="artistica">Artisticas</option>
+                        <option value="cultural">Culturales</option>
+                        <option value="deportiva">Deportivas</option>
+                        <option value="recreativa">Recreativas</option>
+                        <option value="tecnologica">Tecnologicas</option>
+                        <option value="voluntariado">Voluntariados</option>
+                      </select>
+                    </div>
+
+                    <div class="input-group">
+                      <label>Fecha</label>
+                      <input type="date" required />
+                    </div>
+
+                    <div class="input-group">
+                      <label>Hora Inicio</label>
+                      <input type="time" required />
+                    </div>
+
+                    <div class="input-group">
+                      <label>Hora Final</label>
+                      <input type="time" required />
+                    </div>
+
+                    <div class="input-group">
+                      <label>Lugar / Salón</label>
+                      <input type="text" placeholder="Ej. Aula 404" />
+                    </div>
+
+                    <div class="input-group">
+                      <label>Cupo Máximo</label>
+                      <input type="number" placeholder="Ej. 30" />
+                    </div>
+
+                    <div class="input-group full-width">
+                      <label>Participante o Encargado</label>
+
+                      <div class="search-assign-bar">
+                        <i class="bi bi-search"></i>
+                        <input
+                          type="text"
+                          placeholder="Buscar por Nombre o Correo..."
+                        />
+                      </div>
+
+                      <div class="selected-items-container">
+                        <!--EXAMPLE--
+                        <div class="selection-card">
+                          <div class="selection-info">
+                            <h4>María López</h4>
+                            <span>maria@example.com | Ing. de Software</span>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-remove"
+                            title="Desligar Encargado"
+                          >
+                            <i class="bi bi-x"></i>
+                          </button>
+                        </div>
+                        <!--EXAMPLE-->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn-add-activity"
+                id="btnAddActivity"
+              >
+                <i class="bi bi-plus-circle"></i> Agregar Nueva Actividad
+              </button>
+            </div>
+
+            <div class="newEventButtons">
+              <button
+                type="button"
+                class="eventsAdminBtnSecondary btnDelete"
+                id="newEventCancel"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="eventsAdminBtnPrimary"
+                id="publicarEvento"
+              >
+                Publicar Evento
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/admin-crear-evento-logic.js"></script>
+    <script src="../js/validaciones.js"></script>
+  </body>
+</html>
