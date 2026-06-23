@@ -1,0 +1,79 @@
+/* Estilos específicos de la página de Stands */
+
+.stands-container {
+    padding: 1.5rem 2rem;
+    flex: 1;
+}
+
+/* ===== TOOLBAR ===== */
+.stands-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+.stands-filters {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ===== TABLA ===== */
+.stands-table-wrapper {
+    background-color: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--blue-200, #bfdbfe);
+    overflow: hidden;
+}
+
+.stands-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.stands-table thead tr {
+    background-color: var(--white);
+}
+
+.stands-table th {
+    text-align: left;
+    padding: 12px 14px;
+    color: var(--blue-800);
+    font-weight: 600;
+    border-bottom: 2px solid var(--blue-200, #bfdbfe);
+}
+
+.stands-table td {
+    padding: 12px 14px;
+    color: #333;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Filas alternas con azul claro igual al mockup */
+.stands-table tbody tr:nth-child(even) {
+    background-color: #dbeafe;
+}
+
+.stands-table tbody tr:hover {
+    background-color: #bfdbfe;
+    transition: background 0.2s;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
