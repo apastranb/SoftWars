@@ -1,12 +1,16 @@
 /* DETALLES EVENTO */
 
-.layout-container {
+.layoutContainer {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
   max-width: 1400px;
   margin: 2rem auto;
   padding: 0 1.5rem;
+}
+
+main {
+  min-width: 0;
 }
 
 main section {
@@ -40,6 +44,57 @@ main h2 {
   padding-bottom: 0.5rem;
 }
 
+/* EVENT SUMMARY*/
+
+.eventMetadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.eventDate,
+.eventTime,
+.eventLocation,
+.eventClass,
+.eventEntry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--gray-600);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.eventDate i,
+.eventTime i,
+.eventLocation i,
+.eventClass i,
+.eventEntry i {
+  color: var(--blue-500);
+  font-size: 1.1rem;
+}
+
+/* DESCRIPCIÓN DEL EVENTO */
+
+.eventDescription {
+  margin-top: 2rem;
+  color: var(--gray-800);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* SEPARADOR (Línea hr) */
+
+.eventSummary hr {
+  border: none;
+  border-top: 1px solid var(--gray-300);
+  margin: 2rem 0;
+}
+
+/* ACTIVITIES */
+
 .eventActivities {
   margin-top: 2rem;
 }
@@ -52,7 +107,9 @@ main h2 {
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .eventActivityCard:hover {
@@ -67,9 +124,42 @@ main h2 {
   margin-bottom: 0.5rem;
 }
 
+/* TABS DE AGENDA */
+
+.eventAgendaDatesTab {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gray-300);
+  overflow: hidden;
+}
+
+.eventAgendaDatesTabLinks {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  float: left;
+}
+
+.eventAgendaDatesTabLinks:hover {
+  color: var(--blue-500);
+}
+
+.eventAgendaDatesTabLinks.active {
+  color: var(--blue-800);
+  border-bottom-color: var(--blue-800);
+}
+
 /* AGENDA / PARTICIPANTES */
 
-.eventAgendaHeader, .eventParticipantsHeader {
+.eventAgendaHeader,
+.eventParticipantsHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,8 +168,9 @@ main h2 {
   padding-bottom: 0.5rem;
 }
 
-/* REMOVE main h2 LINE ABOVE */
-.eventAgendaHeader h2, .eventParticipantsHeader h2 {
+/* REMOVES main h2 LINE ABOVE */
+.eventAgendaHeader h2,
+.eventParticipantsHeader h2 {
   margin-bottom: 0;
   border-bottom: none;
   padding-bottom: 0;
@@ -224,7 +315,7 @@ aside p {
 
 /* CHECKBOX ACTIVITIES (JS)*/
 
-.checkbox-actividad {
+.checkboxActivity {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -237,7 +328,7 @@ aside p {
   margin-bottom: 0.8rem;
 }
 
-.checkbox-actividad input[type="checkbox"] {
+.checkboxActivity input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -273,20 +364,20 @@ aside p {
   font-size: 0.85rem;
 }
 
-.checkbox-actividad:hover {
+.checkboxActivity:hover {
   border-color: var(--blue-200);
 }
 
-.checkbox-actividad:hover .box-visual {
+.checkboxActivity:hover .box-visual {
   border-color: var(--blue-500);
 }
 
-.checkbox-actividad input[type="checkbox"]:checked + .box-visual {
+.checkboxActivity input[type="checkbox"]:checked + .box-visual {
   background-color: var(--blue-500);
   border-color: var(--blue-500);
 }
 
-.checkbox-actividad input[type="checkbox"]:checked + .box-visual::after {
+.checkboxActivity input[type="checkbox"]:checked + .box-visual::after {
   content: "";
   width: 6px;
   height: 12px;
@@ -296,8 +387,111 @@ aside p {
   margin-bottom: 2px;
 }
 
-.checkbox-actividad:has(input[type="checkbox"]:checked) {
+.checkboxActivity:has(input[type="checkbox"]:checked) {
   border-color: var(--blue-500);
   background-color: rgba(0, 106, 234, 0.05);
 }
 
+/* ACTIVITIES */
+
+.eventActivityHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.eventActivityCategory {
+  display: inline-block;
+  background-color: var(--blue-200);
+  color: var(--blue-800);
+  padding: 0.3rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-bottom: 0.75rem;
+}
+
+.eventActivityDescription {
+  color: var(--gray-600);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.eventActivityDateTime {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--gray-800);
+  font-size: 0.9rem;
+}
+
+.eventActivityDateTime i {
+  color: var(--blue-500);
+}
+
+/* PARTICIPANTS */
+
+.eventParticipantsContainer {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+}
+
+.eventParticipantsCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.eventParticipantsCard img {
+  width: 200px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid var(--blue-200);
+}
+
+.eventParticipantsSubTitle {
+  font-weight: 400;
+  font-size: 1rem !important;
+  color: var(--blue-500);
+  font-size: 0.9rem;
+}
+
+.eventParticipantsBio {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+/* STANDS */
+
+.eventStandsCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.standCategoryIcon {
+  flex-shrink: 0;
+}
+
+.standCategoryIcon img {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  background-color: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.standDescription {
+  color: var(--gray-600);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}

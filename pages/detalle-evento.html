@@ -30,7 +30,7 @@
       </div>
     </nav>
 
-    <div class="layout-container">
+    <div class="layoutContainer">
       <main>
         <section class="eventSummary">
           <img
@@ -38,34 +38,43 @@
             src="../img/img-placeholder.png"
             alt="img Placeholder"
           />
-          <h1 class="eventTitle"></h1>
+          <h1 class="eventTitle">Seminario de Inteligencia Artificial</h1>
 
-          <div>
-            <p class="eventDate"></p>
-            <p class="eventTime"></p>
-            <p class="eventLocation"></p>
+          <div class="eventMetadata">
+            <p class="eventDate"><i class="bi bi-calendar"></i> 15 de Octubre, 2026</p>
+            <p class="eventTime"><i class="bi bi-alarm"></i> 02:00PM - 05:00PM</p>
+            <p class="eventLocation"><i class="bi bi-geo-alt-fill"></i> Auditorio Principal</p>
           </div>
 
-          <div>
-            <p class="eventClass"></p>
-            <p class="eventEntry"></p>
+          <div class="eventMetadata">
+            <p class="eventClass"><i class="bi bi-ticket-perforated"></i> Entrada Libre</p>
+            <p class="eventEntry"><i class="bi bi-check-circle-fill"></i> Público</p>
           </div>
 
           <div class="eventDescription">
-            <span> </span>
+            <p>Únete a nosotros en el principal evento académico sobre Inteligencia Artificial de este año. 
+              Exploraremos las últimas tendencias, desde modelos fundacionales hasta aplicaciones éticas en el sector empresarial.
+            </p>
+            <p>Este evento reúne a expertos de la industria, académicos destacados y estudiantes apasionados para debatir el futuro de la tecnología. Con múltiples talleres prácticos, 
+              charlas magistrales y oportunidades de networking, el simposio está diseñado para proporcionar una visión integral del ecosistema actual de la IA.
+            </p>
           </div>
 
-          <hr />
+          <hr>
 
           <div class="eventActivities">
             <h2><i class="bi bi-calendar-check"></i> Actividades</h2>
 
+            <!--EXAMPLE-->
             <div class="eventActivityCard">
-              <h3 class="eventActivityTitle"></h3>
-              <p class="eventActivityCategorie"></p>
-              <p class="eventActivityDescription"></p>
-              <p class="eventActivityDateTime"></p>
+              <span class="eventActivityHeader">
+                <h3 class="eventActivityTitle">Taller: Prompt Engineering Avanzado</h3>
+                <p class="eventActivityCategory">Taller</p>
+              </span>
+              <p class="eventActivityDescription">Domina las técnicas de diseño de prompts para optimizar resultados en modelos generativos.</p>
+              <p class="eventActivityDateTime"><i class="bi bi-alarm"></i> 15 Nov 2026 | 02:00 PM</p>
             </div>
+            <!--EXAMPLE-->
           </div>
         </section>
 
@@ -77,9 +86,12 @@
               <span>Exportar Agenda</span>
             </button>
           </div>
-          <div class="eventAgendaDatesTab"></div>
+          <div class="eventAgendaDatesTab">
+            <button class="eventAgendaDatesTabLinks" onclick="openAgendaDay(event, 'Day1')">2 Nov</button>
+            <button class="eventAgendaDatesTabLinks" onclick="openAgendaDay(event, 'Day2')">3 Nov</button>
+          </div>
 
-          <div class="eventAgendaTable">
+          <div id="Day1" class="eventAgendaTable">
             <table>
               <thead>
                 <tr>
@@ -89,9 +101,52 @@
                   <th>Refrigerio</th>
                 </tr>
               </thead>
-              <tbody id="eventsTableBody"></tbody>
+              <tbody id="eventsTableBody">
+
+                <!--EXAMPLE-->
+                <tr>
+                  <td>08:00 AM</td>
+                  <td>
+                    <span>Registro Y Bienvenida</span>
+                    <span>Entrega de gafetes y materiales del evento.</span>
+                  </td>
+                  <td>Comité Organizador</td>
+                  <td><i class="bi bi-cup-hot"></i> Si</td>
+                </tr>
+                <!--EXAMPLE-->
+
+              </tbody>
             </table>
           </div>
+
+          <div id="Day2" class="eventAgendaTable" style="display: none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hora</th>
+                  <th>Actividad</th>
+                  <th>Responsable</th>
+                  <th>Refrigerio</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody">
+
+                <!--EXAMPLE-->
+                <tr>
+                  <td>10:00 AM</td>
+                  <td>
+                    <span>Panel: Ética en IA</span>
+                    <span>Discusión sobre sesgos y regulación.</span>
+                  </td>
+                  <td>Dra. Elena Rojas</td>
+                  <td>No</td>
+                </tr>
+                <!--EXAMPLE-->
+
+              </tbody>
+            </table>
+          </div>
+
         </section>
 
         <section class="eventParticipants">
@@ -99,27 +154,57 @@
             <h2><i class="bi bi-people-fill"></i> Participantes</h2>
             <a class="btnPostularse" target="_blank" href="postular-participante.html" rel="noopener noreferrer">Postularse como Participante</a>
           </div>
+
           <div class="eventParticipantsContainer">
+
+            <!--EXAMPLE-->
             <div class="eventParticipantsCard">
-              <img src="" alt="" />
-              <h3 class="eventParticipantsName"></h3>
-              <p class="eventParticipantsTitle"></p>
-              <span class="eventParticipantsBio"> </span>
+              <img src="../img/img-placeholder.png" alt="Imagen de Prueba" />
+              <h3 class="eventParticipantsName">Dra. Elena Rojas</h3>
+              <p class="eventParticipantsSubTitle">Investigadora AI - MIT</p>
+              <span class="eventParticipantsBio">
+                Especialista en procesamiento de lenguaje natural y modelos de lenguaje de gran escala. Lidera el departamento de investigación en OpenAI.
+              </span>
             </div>
+
+            <div class="eventParticipantsCard">
+              <img src="../img/img-placeholder.png" alt="Imagen de Prueba" />
+              <h3 class="eventParticipantsName">Dra. Elena Rojas</h3>
+              <p class="eventParticipantsSubTitle">Investigadora AI - MIT</p>
+              <span class="eventParticipantsBio">
+                Especialista en procesamiento de lenguaje natural y modelos de lenguaje de gran escala. Lidera el departamento de investigación en OpenAI.
+              </span>
+            </div>
+            <!--EXAMPLE-->
+
           </div>
         </section>
 
         <section class="eventStands">
           <h2><i class="bi bi-shop-window"></i> Stands</h2>
+          
+          <!--EXAMPLE-->
           <div class="eventStandsCard">
             <div class="standCategoryIcon">
-              <img src="" alt="" />
+              <img src="../img/img-placeholder.png" alt="Imagen de Prueba" />
             </div>
             <div>
-              <h3 class="standName"></h3>
-              <p class="stancDescription"></p>
+              <h3 class="standName">CloudSystems CR</h3>
+              <p class="standDescription">Infraestructura en la nube optimizada para despliegue de modelos de IA. Visítanos en el pasillo central.</p>
             </div>
           </div>
+
+          <div class="eventStandsCard">
+            <div class="standCategoryIcon">
+              <img src="../img/img-placeholder.png" alt="Imagen de Prueba" />
+            </div>
+            <div>
+              <h3 class="standName">CloudSystems CR</h3>
+              <p class="standDescription">Infraestructura en la nube optimizada para despliegue de modelos de IA. Visítanos en el pasillo central.</p>
+            </div>
+          </div>
+          <!--EXAMPLE-->
+
         </section>
       </main>
 
@@ -183,7 +268,7 @@
           <h3>Actividades a las que quiere estar inscrito</h3>
           <!--LOGICA ES: ACTIVIDADES QUE SE MUESTRAN EN eventActivities SE MUESTRAN AQUI CON EL NOMBRE, FECHA Y HORA PERO CON UN CHECKBOX, EL USUARIO PUEDE SELECCIONAR UNA O VARIAS-->
 
-          <label class="checkbox-actividad">
+          <label class="checkboxActivity">
             <input
               type="checkbox"
               name="actividades_seleccionadas"

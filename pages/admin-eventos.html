@@ -20,14 +20,16 @@
           <p>Gestión Académica</p>
         </div>
       </div>
-      
-      <hr class="menuSeparator">
+
+      <hr class="menuSeparator" />
 
       <div class="sideMenuLinks">
         <a class="sideMenuActive" href="admin-eventos.html"
           ><i class="bi bi-calendar"></i> Eventos</a
         >
-        <a href="admin-actividades.html"><i class="bi bi-list-task"></i> Actividades</a>
+        <a href="admin-actividades.html"
+          ><i class="bi bi-list-task"></i> Actividades</a
+        >
         <a href="admin-oradores.html"
           ><i class="bi bi-people-fill"></i> Presentadores</a
         >
@@ -38,7 +40,7 @@
       </div>
 
       <div class="sideMenuLinks">
-        <hr class="menuSeparator">
+        <hr class="menuSeparator" />
         <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
         <a id="btnLogOut" href="login.html"
           ><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a
@@ -72,7 +74,10 @@
         <section class="eventsAdminActions">
           <div class="eventsAdminFilters">
             <div class="eventsFiltersCategory">
-              <select name="eventsAdminFilterCategory" id="eventsAdminFilterCategory">
+              <select
+                name="eventsAdminFilterCategory"
+                id="eventsAdminFilterCategory"
+              >
                 <option value="" selected>Todas las categorías</option>
                 <option value="artistica">Artisticas</option>
                 <option value="cultural">Culturales</option>
@@ -92,6 +97,14 @@
                 <option value="">Lleno</option>
               </select>
             </div>
+
+            <div class="eventsFiltersDate">
+              <input
+                type="date"
+                name="eventsFiltersDate"
+                id="eventsFiltersDate"
+              />
+            </div>
           </div>
 
           <div class="eventsAdminBtns">
@@ -99,7 +112,9 @@
             <button class="eventsAdminBtnSecondary btnDelete">
               Eliminar Evento
             </button>
-            <a class="eventsAdminBtnPrimary" href="admin-crear-evento.html">Crear Nuevo Evento</a>
+            <a class="eventsAdminBtnPrimary" href="admin-crear-evento.html"
+              >Crear Nuevo Evento</a
+            >
           </div>
         </section>
 
@@ -129,7 +144,34 @@
               </tr>
             </thead>
 
-            <tbody id="adminEventsTableBody"></tbody>
+            <tbody id="adminEventsTableBody">
+              <!--EJEMPLO-->
+              <tr>
+                <td>
+                  <input type="checkbox" id="" title="" />
+                </td>
+                <td>EV-001</td>
+                <td>NombreEvento</td>
+                <td>
+                  <select name="" id="" class="tableSelectStatus">
+                    <option value="" selected>Disponible</option>
+                    <option value="">Cancelado</option>
+                    <option value="">Finalizado</option>
+                    <option value="">Lleno</option>
+                  </select>
+                </td>
+                <td>LugarEvento</td>
+                <td>CategoriaEvento</td>
+                <td>12/20/2026</td>
+                <td>06:00 PM</td>
+                <td>12:00 AM</td>
+                <td>200</td>
+                <td>100</td>
+                <td>100</td>
+                <td>NombreResponsable</td>
+              </tr>
+              <!--EJEMPLO-->
+            </tbody>
           </table>
         </section>
       </main>
