@@ -9,7 +9,133 @@
     <link rel="stylesheet" href="../css/admin-actividades.css">
 </head>
 <body>
-    
+
+    <aside class="navSideMenu">
+        <div class="sideMenuHeader">
+            <img src="../img/eventos-cenfotec-logo-dark.png" alt="Logo Cenfotec">
+            <div>
+                <h2>Panel de Administrador</h2>
+                <p>Gestión Académica</p>
+            </div>
+        </div>
+
+        <hr class="menuSeparator">
+
+      <div class="sideMenuLinks">
+        <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+        <a href="admin-actividades.html"
+          ><i class="bi bi-list-task"></i> Actividades</a
+        >
+        <a href="admin-oradores.html"
+          ><i class="bi bi-people-fill"></i> Presentadores</a
+        >
+        <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+        <a href="admin-usuarios.html"
+          ><i class="bi bi-key"></i> Administradores</a
+        >
+        </div>
+
+      <div class="sideMenuLinks">
+        <hr class="menuSeparator" />
+        <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
+        <a id="btnLogOut" href="login.html"
+          ><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a
+        >
+      </div>
+    </aside>
+
+    <div class="admin-main-content">
+        
+        <header>
+            <div class="headerTitle">
+                <h1>Gestión de Actividades</h1>
+            </div>
+            <div class="headerActions">
+                <div class="headerSearchBar">
+                    <button><i class="bi bi-search"></i></button>
+                    <input type="text" id="buscar-actividad" placeholder="Buscar actividad por nombre...">
+                </div>
+                <div class="headerAdminInfo">
+                    <p class="userName">Nombre Admin</p>
+                    <p class="userRol">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="actividades-workspace">
+            
+            <div class="actividades-toolbar">
+                <button id="btn-exportar-pdf" class="eventsAdminBtnSecondary">Exportar Agenda PDF</button>
+                <button id="btn-abrir-crear" class="eventsAdminBtnPrimary">+ Crear Actividad</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ACTIVIDAD</th>
+                            <th>CATEGORÍA</th>
+                            <th>FECHA / HORA</th>
+                            <th>LUGAR</th>
+                            <th>CUPO</th>
+                            <th>RESPONSABLE</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-actividades-body">
+                        <tr>
+                            <td class="txt-bold">ACT-01</td>
+                            <td class="txt-highlight">Conferencia de Inteligencia Artificial</td>
+                            <td><span class="badge-tag">Tecnología</span></td>
+                            <td>2026-07-10<br><small class="txt-muted">09:00 AM</small></td>
+                            <td>Auditorio Bloque A</td>
+                            <td>80 / 100</td>
+                            <td class="txt-highlight">Dr. Carlos Mendoza</td>
+                            <td>
+                                <button class="action-link-btn edit-link">Editar</button>
+                                <button class="action-link-btn delete-link">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="widgets-layout-grid">
+                
+                <div class="group-style-card">
+                    <div class="card-header-title">
+                        <i class="bi bi-calendar-check"></i>
+                        <h3>Consulta de Agenda</h3>
+                    </div>
+                    <div class="timeline-block block-blue">
+                        <strong>09:00 AM - Apertura del Evento</strong>
+                        <p>Lugar: Auditorio Principal</p>
+                    </div>
+                    <div class="timeline-block block-green">
+                        <strong>11:00 AM - Break / Networking de Stands</strong>
+                        <p>Lugar: Pasillo Central</p>
+                    </div>
+                </div>
+
+                <div class="group-style-card">
+                    <div class="card-header-title">
+                        <i class="bi bi-people"></i>
+                        <h3>Participantes Inscritos</h3>
+                    </div>
+                    <div class="participant-row-item">
+                        <div class="user-avatar-circle"></div>
+                        <div class="user-metadata">
+                            <strong>Esteban Rodríguez</strong>
+                            <p>esteban.rod@cenfotec.ac.cr</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
 
     <script src="../js/admin-actividades-logic.js"></script>
     <script src="../js/validaciones.js"></script>
