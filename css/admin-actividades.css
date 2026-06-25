@@ -269,8 +269,8 @@ main.actividades-workspace {
   border-left-color: var(--blue-500); 
 }
 
-.group-style-card .block-green { 
-  border-left-color: #10b981; 
+.group-style-card .block-blue { 
+  border-left-color: var(--blue-500); 
 }
 
 /* Bloque de Participantes */
