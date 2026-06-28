@@ -118,19 +118,30 @@ main {
 }
 
 /* UPLOAD IMG */
+
 .upload-area {
-  border: 1px dashed var(--blue-500);
-  border-radius: 12px;
-  padding: 3rem;
-  text-align: center;
-  background-color: rgba(0, 106, 234, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 160px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-sizing: border-box;
+  background-color: rgba(0, 106, 234, 0.05);
+  border: 2px dashed var(--blue-500); 
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 .upload-area:hover {
   background-color: rgba(0, 106, 234, 0.1);
   border-color: var(--blue-800);
+}
+
+.upload-area.dragover {
+  border-color: var(--blue-800); 
+  background-color: rgba(0, 86, 179, 0.05);
 }
 
 .upload-area i {
@@ -143,6 +154,21 @@ main {
 .upload-area p {
   color: var(--blue-800);
   margin: 0;
+  text-align: center;
+}
+
+/* IMAGE PREVIEW */
+
+.preview-portada {
+  display: none;
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.preview-portada--active {
+  display: block;
 }
 
 /* GEMINI AI BUTTON */

@@ -66,7 +66,7 @@
           <form id="formCrearEvento" action="">
             <div class="form-card newEventUploadImg">
               <h2><i class="bi bi-image"></i> Imagen de Portada</h2>
-              <div class="upload-area" id="uploadArea">
+              <label class="upload-area" id="uploadArea" for="portadaEvento">
                 <i class="bi bi-cloud-arrow-up"></i>
                 <p>Haz clic para subir o arrastra un archivo PNG o JPG</p>
                 <input
@@ -75,7 +75,8 @@
                   accept="image/png, image/jpeg"
                   hidden
                 />
-              </div>
+                <img id="previewPortada" class="preview-portada" src="" alt="Vista previa de la portada" />
+              </label>
             </div>
 
             <div class="form-card newEventDetails">
@@ -92,6 +93,10 @@
                     placeholder="Ej. Congreso de Tecnología"
                     required
                   />
+                  <span
+                    class="form__error-message"
+                    id="error-nombreEvento"
+                  ></span>
                 </div>
 
                 <div class="input-group">
@@ -100,13 +105,17 @@
                     <option value="" disabled selected>
                       Seleccione una categoría
                     </option>
-                    <option value="artistica">Artisticas</option>
+                    <option value="artistica">Artísticas</option>
                     <option value="cultural">Culturales</option>
                     <option value="deportiva">Deportivas</option>
                     <option value="recreativa">Recreativas</option>
-                    <option value="tecnologica">Tecnologicas</option>
+                    <option value="tecnologica">Tecnológicas</option>
                     <option value="voluntariado">Voluntariados</option>
                   </select>
+                  <span
+                    class="form__error-message"
+                    id="error-categoriaEvento"
+                  ></span>
                 </div>
 
                 <div class="input-group">
@@ -115,8 +124,13 @@
                     type="number"
                     id="cupoEvento"
                     placeholder="Ej. 150"
+                    min="1"
                     required
                   />
+                  <span
+                    class="form__error-message"
+                    id="error-cupoEvento"
+                  ></span>
                 </div>
 
                 <div class="input-group full-width">
@@ -134,7 +148,12 @@
                     id="descEvento"
                     rows="4"
                     placeholder="Describe los detalles principales..."
+                    required
                   ></textarea>
+                  <span
+                    class="form__error-message"
+                    id="error-descEvento"
+                  ></span>
                 </div>
               </div>
             </div>
@@ -144,25 +163,46 @@
 
               <div class="form-grid">
                 <div class="input-group">
-                  <label for="fechaEvento">Fecha</label>
-                  <input type="date" id="fechaEvento" required />
+                  <label for="fechaInicioEvento">Fecha de Inicio</label>
+                  <input type="date" id="fechaInicioEvento" required />
+                  <span
+                    class="form__error-message"
+                    id="error-fechaInicioEvento"
+                  ></span>
                 </div>
                 <div class="input-group">
-                  <label for="lugarEvento">Lugar / Salón</label>
+                  <label for="fechaFinEvento">Fecha de Finalización</label>
+                  <input type="date" id="fechaFinEvento" required />
+                  <span
+                    class="form__error-message"
+                    id="error-fechaFinEvento"
+                  ></span>
+                </div>
+                <div class="input-group full-width">
+                  <label for="lugarEvento">Lugar / Sala</label>
                   <input
                     type="text"
                     id="lugarEvento"
                     placeholder="Ej. Auditorio Principal"
                     required
                   />
+                  <span
+                    class="form__error-message"
+                    id="error-lugarEvento"
+                  ></span>
                 </div>
                 <div class="input-group">
                   <label for="horaInicio">Hora de Inicio</label>
                   <input type="time" id="horaInicio" required />
+                  <span
+                    class="form__error-message"
+                    id="error-horaInicio"
+                  ></span>
                 </div>
                 <div class="input-group">
                   <label for="horaFin">Hora de Finalización</label>
                   <input type="time" id="horaFin" required />
+                  <span class="form__error-message" id="error-horaFin"></span>
                 </div>
                 <div class="input-group full-width">
                   <label for="responsableEvento">Nombre del Responsable</label>
@@ -170,7 +210,12 @@
                     type="text"
                     id="responsableEvento"
                     placeholder="Nombre de quien organiza"
+                    required
                   />
+                  <span
+                    class="form__error-message"
+                    id="error-responsableEvento"
+                  ></span>
                 </div>
               </div>
 
