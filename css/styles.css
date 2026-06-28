@@ -225,6 +225,19 @@ tbody tr:hover {
     transition: background-color 0.2s ease;
 }
 
+/* FORM ERROR MESSAGE */
+
+.form__error-message {
+  display: none;
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.form__error-message--active {
+  display: block;
+}
+
 /* FOOTER */
 footer {
   display: flex;
