@@ -1,19 +1,5 @@
 /* ===== PAGO PAGE ===== */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #a0a0a0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* El reset, font-family, box-sizing y body base vienen de styles.css */
 
 /* Fondo gris que ocupa toda la pantalla */
 .pago-overlay {
@@ -27,7 +13,7 @@ body {
 
 /* Tarjeta blanca central */
 .pago-card {
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 12px;
     padding: 2.5rem 2.5rem 2rem 2.5rem;
     width: 100%;
@@ -53,7 +39,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--white);
     font-size: 1.3rem;
     font-weight: bold;
 }
@@ -67,21 +53,21 @@ body {
 
 .pago-field label {
     font-size: 0.82rem;
-    color: #555;
+    color: var(--gray-600);
 }
 
 .pago-field input {
-    border: 1px solid #ccc;
+    border: 1px solid var(--gray-300);
     border-radius: 4px;
     padding: 0.55rem 0.8rem;
     font-size: 0.95rem;
-    color: #333;
+    color: var(--blue-800);
     outline: none;
     transition: border-color 0.2s;
 }
 
 .pago-field input:focus {
-    border-color: #5b87c5;
+    border-color: var(--blue-500);
 }
 
 /* Fila vencimiento + CVV */
@@ -98,18 +84,18 @@ body {
 }
 
 .pago-expiry select {
-    border: 1px solid #ccc;
+    border: 1px solid var(--gray-300);
     border-radius: 4px;
     padding: 0.55rem 0.5rem;
     font-size: 0.95rem;
-    color: #333;
+    color: var(--blue-800);
     outline: none;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--white);
 }
 
 .pago-expiry select:focus {
-    border-color: #5b87c5;
+    border-color: var(--blue-500);
 }
 
 /* Campo CVV más angosto */
@@ -125,8 +111,8 @@ body {
 .pago-btn {
     width: 100%;
     padding: 0.75rem;
-    background-color: #5b87c5;
-    color: #fff;
+    background-color: var(--blue-500);
+    color: var(--white);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -138,5 +124,5 @@ body {
 }
 
 .pago-btn:hover {
-    background-color: #4a72aa;
+    background-color: var(--blue-800);
 }
