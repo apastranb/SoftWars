@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestión de Roles</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin-layout.css">
+    <link rel="stylesheet" href="css/admin-roles.css">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>Gestión de Roles</h1>
+        <div class="header-actions">
+            <button class="btn-primary" onclick="abrirModalRol()">+ Nuevo Rol</button>
+            <button onclick="cerrarSesion()" class="btn-secondary">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <main class="admin-content">
+        <section class="table-container">
+            <table id="tabla-roles">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Rol</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-roles">
+                    <!-- Los roles se cargan dinámicamente aquí -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Ventana Modal para Crear/Editar Rol -->
+    <div id="modal-rol" class="modal oculto">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2 id="modal-titulo">Crear Nuevo Rol</h2>
+                <span class="cerrar-modal" onclick="cerrarModal()">&times;</span>
+            </div>
+            <form id="form-rol">
+                <input type="hidden" id="rol-id">
+                <div class="input-group">
+                    <label for="rol-nombre">Nombre del Rol</label>
+                    <input type="text" id="rol-nombre" required placeholder="Ej: Administrador">
+                </div>
+                <div class="input-group">
+                    <label for="rol-desc">Descripción</label>
+                    <textarea id="rol-desc" required placeholder="Describe los permisos del rol..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Rol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data-store.js"></script>
+    <script src="js/admin-roles-logic.js"></script>
+    <script>
+        // Función rápida para el botón de cerrar sesión
+        function cerrarSesion() {
+            localStorage.removeItem('sesionActiva');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
