@@ -1,0 +1,52 @@
+/* Estilos generales de botones y formularios */
+.input-group {
+    margin-bottom: 15px;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-primary, .btn-secondary, .btn-edit, .btn-role, .btn-status {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary { background-color: #0056b3; color: white; }
+.btn-edit { background-color: #f0ad4e; color: white; }
+.btn-role { background-color: #17a2b8; color: white; }
+.btn-status { background-color: #6c757d; color: white; }
+
+/* Estilos de Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #f8f9fa;
+}
+
+/* Badges de estado */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+}
+.badge.activo { background-color: #28a745; color: white; }
+.badge.inactivo { background-color: #dc3545; color: white; }
