@@ -214,78 +214,57 @@
         <p>Completa el formulario para asegurar tu lugar.</p>
 
         <form id="inscribirVisitante" action="submit">
-          <label for="nombreVisitante">Nombre Completo</label>
-          <input
-            id="nombreVisitante"
-            name="nombreVisitante"
-            type="text"
-            placeholder="Juan Pérez"
-            required
-          />
+          
+          <div class="input-group">
+            <label for="nombreVisitante">Nombre Completo</label>
+            <input id="nombreVisitante" name="nombreVisitante" type="text" placeholder="Juan Pérez" required />
+            <span class="form__error-message" id="error-nombreVisitante"></span>
+          </div>
 
-          <label for="cedulaVisitante">Cédula o ID</label>
-          <input
-            id="cedulaVisitante"
-            name="cedulaVisitante"
-            type="text"
-            placeholder="101230456"
-            required
-          />
+          <div class="input-group">
+            <label for="cedulaVisitante">Cédula o ID</label>
+            <input id="cedulaVisitante" name="cedulaVisitante" type="text" placeholder="101230456" required />
+            <span class="form__error-message" id="error-cedulaVisitante"></span>
+          </div>
 
-          <label for="emailVisitante">Correo Electrónico</label>
-          <input
-            id="emailVisitante"
-            name="emailVisitante"
-            type="email"
-            placeholder="email@example.com"
-            required
-          />
+          <div class="input-group">
+            <label for="emailVisitante">Correo Electrónico</label>
+            <input id="emailVisitante" name="emailVisitante" type="email" placeholder="email@example.com" required />
+            <span class="form__error-message" id="error-emailVisitante"></span>
+          </div>
 
-          <label for="telefonoVisitante">Teléfono</label>
-          <input
-            id="telefonoVisitante"
-            name="telefonoVisitante"
-            type="text"
-            placeholder="60106010"
-          />
+          <div class="input-group">
+            <label for="telefonoVisitante">Teléfono</label>
+            <input id="telefonoVisitante" name="telefonoVisitante" type="text" placeholder="60106010" required />
+            <span class="form__error-message" id="error-telefonoVisitante"></span>
+          </div>
 
-          <label for="edadVisitante">Edad</label>
-          <input
-            id="edadVisitante"
-            name="edadVisitante"
-            type="number"
-            placeholder="Ej. 25"
-            required
-          />
+          <div class="input-group">
+            <label for="edadVisitante">Edad</label>
+            <input id="edadVisitante" name="edadVisitante" type="number" placeholder="Ej. 25" required />
+            <span class="form__error-message" id="error-edadVisitante"></span>
+          </div>
 
-          <label for="carreraVisitante">Carrera / Profesión</label>
-          <input
-            id="carreraVisitante"
-            name="carreraVisitante"
-            type="text"
-            placeholder="Ej. Ingeniería de Software"
-          />
+          <div class="input-group">
+            <label for="carreraVisitante">Carrera / Profesión</label>
+            <input id="carreraVisitante" name="carreraVisitante" type="text" placeholder="Ej. Ingeniería de Software" required />
+            <span class="form__error-message" id="error-carreraVisitante"></span>
+          </div>
 
           <h3>Actividades a las que quiere estar inscrito</h3>
-          <!--LOGICA ES: ACTIVIDADES QUE SE MUESTRAN EN eventActivities SE MUESTRAN AQUI CON EL NOMBRE, FECHA Y HORA PERO CON UN CHECKBOX, EL USUARIO PUEDE SELECCIONAR UNA O VARIAS-->
+          <span class="form__error-message" id="error-actividades" style="margin-bottom: 10px;"></span>
 
           <label class="checkboxActivity">
-            <input
-              type="checkbox"
-              name="actividades_seleccionadas"
-              value="id_de_la_actividad"
-            />
-
+            <input type="checkbox" name="actividades_seleccionadas" value="act-1" data-hora="14:00" />
             <div class="box-visual"></div>
-
             <div class="info-actividad">
-              <span class="actividad-titulo"></span>
-              <span class="actividad-fecha"><i class="bi bi-clock"></i></span>
+              <span class="actividad-titulo">Taller: Prompt Engineering Avanzado</span>
+              <span class="actividad-fecha"><i class="bi bi-clock"></i> 02:00 PM</span>
             </div>
           </label>
 
           <button type="submit">
-            Inscribirse al Evento<i class="bi bi-arrow-right"></i>
+            Inscribirse al Evento <i class="bi bi-arrow-right"></i>
           </button>
         </form>
       </aside>
