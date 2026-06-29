@@ -206,6 +206,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  border: none;
+  padding: 0.5rem;
 }
 
 .radio-title {

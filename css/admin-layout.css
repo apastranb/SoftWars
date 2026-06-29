@@ -1,9 +1,5 @@
 /* ADMIN LAYOUT */
 
-body {
-  background-color: var(--white);
-}
-
 .admin-main-content {
   background-color: #f0f0f0;
   margin-left: 290px; /* mismo que navSideMenu */

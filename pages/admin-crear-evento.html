@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/admin-layout.css" />
     <link rel="stylesheet" href="../css/admin-crear-evento.css" />
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
   </head>
   <body>
-    <!--MENU LATERAL-->>
+    <!--MENU LATERAL-->
     <nav class="navSideMenu">
       <div class="sideMenuHeader">
         <div>
@@ -75,7 +76,12 @@
                   accept="image/png, image/jpeg"
                   hidden
                 />
-                <img id="previewPortada" class="preview-portada" src="" alt="Vista previa de la portada" />
+                <img
+                  id="previewPortada"
+                  class="preview-portada"
+                  src=""
+                  alt="Vista previa de la portada"
+                />
               </label>
             </div>
 
@@ -220,43 +226,43 @@
               </div>
 
               <div class="radio-groups-container">
-                <div class="radio-group">
-                  <label class="radio-title">Tipo de Entrada</label>
+                <fieldset class="radio-group">
+                  <legend class="radio-title">Tipo de Entrada</legend>
                   <div class="radio-options">
-                    <label
-                      ><input
+                    <label>
+                      <input
                         type="radio"
                         name="tipoEntrada"
                         value="libre"
-                        checked
+                        required
                       />
-                      Entrada Libre</label
-                    >
-                    <label
-                      ><input type="radio" name="tipoEntrada" value="pago" /> De
-                      Pago</label
-                    >
+                      Entrada Libre
+                    </label>
+                    <label>
+                      <input type="radio" name="tipoEntrada" value="pago" />
+                      De Pago
+                    </label>
                   </div>
-                </div>
+                </fieldset>
 
-                <div class="radio-group">
-                  <label class="radio-title">Visibilidad</label>
+                <fieldset class="radio-group">
+                  <legend class="radio-title">Visibilidad</legend>
                   <div class="radio-options">
-                    <label
-                      ><input
+                    <label>
+                      <input
                         type="radio"
                         name="visibilidad"
                         value="publico"
-                        checked
+                        required
                       />
-                      Público</label
-                    >
-                    <label
-                      ><input type="radio" name="visibilidad" value="privado" />
-                      Privado</label
-                    >
+                      Público
+                    </label>
+                    <label>
+                      <input type="radio" name="visibilidad" value="privado" />
+                      Privado
+                    </label>
                   </div>
-                </div>
+                </fieldset>
               </div>
             </div>
 
