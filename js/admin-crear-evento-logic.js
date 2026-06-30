@@ -211,7 +211,7 @@ const validarFormularioEvento = (e) => {
         hoy.setHours(0, 0, 0, 0); 
 
         if (dateFin < hoy && esValido) {
-            const confirmacion = confirm('⚠️ La fecha de finalización ya pasó. Este evento se registrará como histórico (Finalizado). ¿Desea continuar?');
+            const confirmacion = confirm('La fecha de finalización ya pasó. Este evento se registrará como histórico (Finalizado). ¿Desea continuar?');
             
             if (!confirmacion) {
                 mostrarError('fechaFinEvento', 'Cambie la fecha para publicar el evento de forma activa.');
