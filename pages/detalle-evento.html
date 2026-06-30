@@ -88,8 +88,8 @@
             </button>
           </div>
           <div class="eventAgendaDatesTab">
-            <button class="eventAgendaDatesTabLinks" onclick="openAgendaDay(event, 'Day1')">2 Nov</button>
-            <button class="eventAgendaDatesTabLinks" onclick="openAgendaDay(event, 'Day2')">3 Nov</button>
+            <button class="eventAgendaDatesTabLinks active" data-day="Day1">2 Nov</button>
+            <button class="eventAgendaDatesTabLinks" data-day="Day2">3 Nov</button>
           </div>
 
           <div id="Day1" class="eventAgendaTable">
@@ -102,7 +102,7 @@
                   <th>Refrigerio</th>
                 </tr>
               </thead>
-              <tbody id="eventsTableBody">
+              <tbody id="eventsTableBodyDay1">
 
                 <!--EXAMPLE-->
                 <tr>
@@ -120,7 +120,7 @@
             </table>
           </div>
 
-          <div id="Day2" class="eventAgendaTable" style="display: none;">
+          <div id="Day2" class="eventAgendaTable oculto">
             <table>
               <thead>
                 <tr>
@@ -130,7 +130,7 @@
                   <th>Refrigerio</th>
                 </tr>
               </thead>
-              <tbody id="eventsTableBody">
+              <tbody id="eventsTableBodyDay2">
 
                 <!--EXAMPLE-->
                 <tr>

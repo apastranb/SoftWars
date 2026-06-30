@@ -1,21 +1,37 @@
 // LÓGICA DE LA INTERFAZ (TABS DE AGENDA)
-function openAgendaDay(evt, day) {
-  // Selecciona todos los contenedores de las tablas y los oculta
+
+const openAgendaDay = (evt) => {
+  // 1. Obtener el ID del día a mostrar desde el atributo data-day
+  const day = evt.currentTarget.dataset.day;
+
+  // 2. Ocultar todas las tablas agregándoles la clase 'oculto'
   const eventAgendaTables = document.querySelectorAll(".eventAgendaTable");
   eventAgendaTables.forEach(table => {
-    table.style.display = "none";
+    table.classList.add("oculto"); 
   });
 
-  // Selecciona todos los botones de las pestañas y les quita la clase "active"
+  // 3. Quitar la clase 'active' de todos los botones para reiniciarlos
   const tabLinks = document.querySelectorAll(".eventAgendaDatesTabLinks");
   tabLinks.forEach(link => {
     link.classList.remove("active");
   });
 
-  // Muestra la tabla del día correspondiente y le agrega "active" al botón clickeado
-  document.getElementById(day).style.display = "block";
+  // 4. Mostrar la tabla seleccionada quitándole la clase 'oculto'
+  document.getElementById(day).classList.remove("oculto");
+
+  // 5. Resaltar el botón que recibió el clic agregándole 'active'
   evt.currentTarget.classList.add("active");
-}
+};
+
+// INICIALIZACIÓN DE EVENTOS
+document.addEventListener('DOMContentLoaded', () => {
+  const tabLinks = document.querySelectorAll(".eventAgendaDatesTabLinks");
+  
+  // Asignar el evento 'click' a cada pestaña
+  tabLinks.forEach(link => {
+    link.addEventListener('click', openAgendaDay);
+  });
+});
 
 // FUNCIONES DE UTILIDAD PARA ERRORES
 const mostrarError = (idCampo, mensaje) => {

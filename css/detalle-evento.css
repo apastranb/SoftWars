@@ -153,7 +153,13 @@ main h2 {
 
 .eventAgendaDatesTabLinks.active {
   color: var(--blue-800);
+  background-color: #007bff1f;
   border-bottom-color: var(--blue-800);
+  border-radius: 5px 5px 0px 0px;
+}
+
+.oculto {
+  display: none;
 }
 
 /* AGENDA / PARTICIPANTES */
