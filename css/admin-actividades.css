@@ -324,5 +324,74 @@ main.actividades-workspace {
   margin-right: 0.75rem;
 }
 
+
+/* Contenedor oscuro de fondo */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Tarjeta del formulario */
+.modal-content-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 550px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--gray-300);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-card-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--blue-800);
+}
+
+.modal-close-x {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--gray-600);
+}
+
+.modal-form-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.modal-card-footer {
+  padding: 1.2rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--gray-300);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+@keyframes modalFadeIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 .edit-link { color: var(--blue-500); }
 .delete-link { color: var(--danger); }
