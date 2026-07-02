@@ -1,4 +1,4 @@
-// LÓGICA DE LA INTERFAZ (TABS DE AGENDA)
+// TABS DE AGENDA
 
 const openAgendaDay = (evt) => {
   // 1. Obtener el ID del día a mostrar desde el atributo data-day
@@ -23,7 +23,7 @@ const openAgendaDay = (evt) => {
   evt.currentTarget.classList.add("active");
 };
 
-// INICIALIZACIÓN DE EVENTOS
+// INICIAR TAB AGENDA EVENTOS
 document.addEventListener('DOMContentLoaded', () => {
   const tabLinks = document.querySelectorAll(".eventAgendaDatesTabLinks");
   
@@ -55,7 +55,7 @@ const inicializarFiltrosEntrada = () => {
     const telefonoInput = document.getElementById('telefonoVisitante');
 
     const bloquearLetras = (e) => {
-        // Expresión Regular: Reemplaza cualquier carácter que no sea un número del 0 al 9 por nada
+        // Reemplaza cualquier carácter que no sea un número del 0 al 9 por nada
         e.target.value = e.target.value.replace(/[^0-9]/g, '');
     };
 
@@ -64,7 +64,7 @@ const inicializarFiltrosEntrada = () => {
     if (telefonoInput) telefonoInput.addEventListener('input', bloquearLetras);
 };
 
-// VALIDACIÓN DEL FORMULARIO PÚBLICO
+// VALIDACIÓN DEL FORMULARIO
 const validarInscripcion = (e) => {
     e.preventDefault();
     limpiarErrores();
@@ -73,7 +73,9 @@ const validarInscripcion = (e) => {
     // 1. Validar campos de texto requeridos
     const camposRequeridos = [
         { id: 'nombreVisitante', mensaje: 'El nombre completo es requerido.' },
-        { id: 'cedulaVisitante', mensaje: 'La cédula es requerida.' }
+        { id: 'cedulaVisitante', mensaje: 'La cédula es requerida.' },
+        { id: 'telefonoVisitante', mensaje: 'El teléfono es requerido.' }, // NUEVO
+        { id: 'carreraVisitante', mensaje: 'La carrera o profesión es requerida.' } // NUEVO
     ];
 
     camposRequeridos.forEach(campo => {
@@ -138,7 +140,7 @@ const validarInscripcion = (e) => {
         }
     }
 
-    // 5. Envío exitoso
+    // 5. Final
     if (esValido) {
         console.log("Inscripción validada correctamente.");
         alert("¡Inscripción exitosa! Te hemos enviado un correo con los detalles.");
@@ -152,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializar bloqueo de letras
     inicializarFiltrosEntrada();
 
-    // Asignar el validador al botón de submit
+    // Asignar evento de validación al formulario
     const formInscripcion = document.getElementById('inscribirVisitante');
     if (formInscripcion) {
         formInscripcion.addEventListener('submit', validarInscripcion);

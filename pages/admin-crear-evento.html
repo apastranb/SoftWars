@@ -97,7 +97,6 @@
                     type="text"
                     id="nombreEvento"
                     placeholder="Ej. Congreso de Tecnología"
-                    required
                   />
                   <span
                     class="form__error-message"
@@ -107,7 +106,7 @@
 
                 <div class="input-group">
                   <label for="categoriaEvento">Categoría</label>
-                  <select id="categoriaEvento" required>
+                  <select id="categoriaEvento">
                     <option value="" disabled selected>
                       Seleccione una categoría
                     </option>
@@ -131,7 +130,6 @@
                     id="cupoEvento"
                     placeholder="Ej. 150"
                     min="1"
-                    required
                   />
                   <span
                     class="form__error-message"
@@ -154,7 +152,6 @@
                     id="descEvento"
                     rows="4"
                     placeholder="Describe los detalles principales..."
-                    required
                   ></textarea>
                   <span
                     class="form__error-message"
@@ -170,7 +167,7 @@
               <div class="form-grid">
                 <div class="input-group">
                   <label for="fechaInicioEvento">Fecha de Inicio</label>
-                  <input type="date" id="fechaInicioEvento" required />
+                  <input type="date" id="fechaInicioEvento"/>
                   <span
                     class="form__error-message"
                     id="error-fechaInicioEvento"
@@ -178,7 +175,7 @@
                 </div>
                 <div class="input-group">
                   <label for="fechaFinEvento">Fecha de Finalización</label>
-                  <input type="date" id="fechaFinEvento" required />
+                  <input type="date" id="fechaFinEvento"/>
                   <span
                     class="form__error-message"
                     id="error-fechaFinEvento"
@@ -190,7 +187,6 @@
                     type="text"
                     id="lugarEvento"
                     placeholder="Ej. Auditorio Principal"
-                    required
                   />
                   <span
                     class="form__error-message"
@@ -199,7 +195,7 @@
                 </div>
                 <div class="input-group">
                   <label for="horaInicio">Hora de Inicio</label>
-                  <input type="time" id="horaInicio" required />
+                  <input type="time" id="horaInicio"/>
                   <span
                     class="form__error-message"
                     id="error-horaInicio"
@@ -207,7 +203,7 @@
                 </div>
                 <div class="input-group">
                   <label for="horaFin">Hora de Finalización</label>
-                  <input type="time" id="horaFin" required />
+                  <input type="time" id="horaFin"/>
                   <span class="form__error-message" id="error-horaFin"></span>
                 </div>
                 <div class="input-group full-width">
@@ -216,7 +212,6 @@
                     type="text"
                     id="responsableEvento"
                     placeholder="Nombre de quien organiza"
-                    required
                   />
                   <span
                     class="form__error-message"
@@ -234,7 +229,6 @@
                         type="radio"
                         name="tipoEntrada"
                         value="libre"
-                        required
                       />
                       Entrada Libre
                     </label>
@@ -243,6 +237,7 @@
                       De Pago
                     </label>
                   </div>
+                  <span class="form__error-message" id="error-tipoEntrada"></span>
                 </fieldset>
 
                 <fieldset class="radio-group">
@@ -253,7 +248,6 @@
                         type="radio"
                         name="visibilidad"
                         value="publico"
-                        required
                       />
                       Público
                     </label>
@@ -262,6 +256,7 @@
                       Privado
                     </label>
                   </div>
+                  <span class="form__error-message" id="error-visibilidad"></span>
                 </fieldset>
               </div>
             </div>

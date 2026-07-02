@@ -1,4 +1,4 @@
-// --- FUNCIONES DE UTILIDAD ---
+// FUNCIONES DE UTILIDAD
 const mostrarError = (idCampo, mensaje) => {
     const spanError = document.getElementById(`error-${idCampo}`);
     if (spanError) {
@@ -15,7 +15,7 @@ const limpiarErrores = () => {
 };
 
 
-// --- MÓDULOS DE FUNCIONALIDAD ---
+// MODULOS DE FUNCIONALIDAD
 
 const inicializarDragAndDrop = () => {
     const uploadArea = document.getElementById('uploadArea');
@@ -63,7 +63,7 @@ const inicializarDragAndDrop = () => {
         }
     });
 
-    // Lógica de validación y actualización del DOM para el Drag & Drop
+    // Validación y actualización del DOM para el Drag & Drop
     function procesarArchivo(file) {
         const formatosValidos = ['image/jpeg', 'image/png'];
         
@@ -141,7 +141,7 @@ const inicializarFechasInteligentes = () => {
 };
 
 
-// --- VALIDACIÓN PRINCIPAL DEL FORMULARIO ---
+// VALIDACION DEL FORMULARIO
 
 const validarFormularioEvento = (e) => {
     e.preventDefault();
@@ -169,7 +169,20 @@ const validarFormularioEvento = (e) => {
         }
     });
 
-    // 2. Validación de Regla de Negocio: Cupo
+    // 2 Validación de Radio Buttons
+    const tipoEntrada = document.querySelector('input[name="tipoEntrada"]:checked');
+    if (!tipoEntrada) {
+        mostrarError('tipoEntrada', 'Debe seleccionar el tipo de entrada.');
+        esValido = false;
+    }
+
+    const visibilidad = document.querySelector('input[name="visibilidad"]:checked');
+    if (!visibilidad) {
+        mostrarError('visibilidad', 'Debe seleccionar la visibilidad del evento.');
+        esValido = false;
+    }
+
+    // 3. Validación de Cupo
     const cupoEvento = document.getElementById('cupoEvento');
     if (cupoEvento) {
         if (cupoEvento.value.trim() === '') {
@@ -181,7 +194,7 @@ const validarFormularioEvento = (e) => {
         }
     }
 
-    // 3. Validación de Regla de Negocio: Lógica de Horas
+    // 4. Validación de Lógica de Horas
     const horaInicio = document.getElementById('horaInicio');
     const horaFin = document.getElementById('horaFin');
     
@@ -192,7 +205,7 @@ const validarFormularioEvento = (e) => {
         }
     }
 
-    // 4. Validación de Regla de Negocio: Lógica de Fechas
+    // 5. Validación de Lógica de Fechas
     const fechaInicio = document.getElementById('fechaInicioEvento');
     const fechaFin = document.getElementById('fechaFinEvento');
 
@@ -222,16 +235,17 @@ const validarFormularioEvento = (e) => {
         }
     }
 
-    // 5. Resultado Final
+    // 6. Final
     if (esValido) {
         console.log('Formulario válido. Todos los campos están correctos.');
         alert('¡Evento creado exitosamente!');
-        // document.getElementById('formCrearEvento').reset(); 
+        // limpiar el formulario
+        document.getElementById('formCrearEvento').reset(); 
     }
 };
 
 
-// --- INICIALIZADOR PRINCIPAL ---
+// INICIALIZADOR PRINCIPAL
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializar todos los módulos independientes
     inicializarDragAndDrop();
