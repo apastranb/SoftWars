@@ -130,8 +130,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /** Actualiza las opciones del filtro de Empresa con los valores únicos del db */
+    function actualizarFiltroEmpresas() {
+        const empresaActual = filterEmpresa.value;
+        const empresas = [...new Set(window.db.stands.map(s => s.empresa))].sort();
+
+        filterEmpresa.innerHTML = '<option value="">Empresa</option>';
+        empresas.forEach(emp => {
+            const opt = document.createElement('option');
+            opt.value = emp;
+            opt.textContent = emp;
+            if (emp === empresaActual) opt.selected = true;
+            filterEmpresa.appendChild(opt);
+        });
+    }
+
     /** Renderiza las filas en la tabla */
     function renderTabla() {
+        actualizarFiltroEmpresas();
         const stands = obtenerStandsFiltrados();
         tbody.innerHTML = '';
 
