@@ -2,104 +2,231 @@
    Archivo: css/admin-oradores.css
    ========================================= */
 
-/* Encabezado principal de la vista */
-.main-content header {
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.oradores-container {
+    padding: 1.5rem 2rem;
+    flex: 1;
+}
+
+/* ===== TOOLBAR ===== */
+.oradores-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+.oradores-filters {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ===== FILTROS DROPDOWN (igual a admin-stands) ===== */
+.filter-select {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--blue-500, #2563eb);
+    background-color: #fff;
+    color: var(--blue-800, #1e3a5f);
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-select:focus {
+    border-color: var(--blue-800, #1e3a5f);
+    box-shadow: 0 0 0 3px rgba(0, 106, 234, 0.15);
+}
+
+/* ===== TABLA (igual a admin-stands) ===== */
+.oradores-table-wrapper {
+    background-color: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--blue-200, #bfdbfe);
+    overflow-x: auto;
+}
+
+.oradores-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.oradores-table thead tr {
+    background-color: var(--white);
+}
+
+.oradores-table th {
+    text-align: left;
+    padding: 12px 14px;
+    color: var(--blue-800);
+    font-weight: 600;
+    border-bottom: 2px solid var(--blue-200, #bfdbfe);
+    white-space: nowrap;
+}
+
+.oradores-table td {
+    padding: 12px 14px;
+    color: #333;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+/* Filas alternas con azul claro (igual al mockup) */
+.oradores-table tbody tr:nth-child(even) {
+    background-color: #dbeafe;
+}
+
+.oradores-table tbody tr:hover {
+    background-color: #bfdbfe;
+    transition: background 0.2s;
+}
+
+/* ===== FOTO DEL ORADOR ===== */
+.orador-foto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--blue-200, #bfdbfe);
+}
+
+/* ===== BADGES DE ESTADO ===== */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #eaeaea;
-    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.main-content header h1 {
-    font-size: 1.8rem;
-    color: #2c3e50;
+.modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a1a1a;
     margin: 0;
 }
 
-/* Barra de búsqueda / Filtros */
-.filtros {
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: flex-start;
-}
-
-#filtro-orador {
-    width: 100%;
-    max-width: 400px;
-    padding: 0.8rem 1rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-#filtro-orador:focus {
-    outline: none;
-    border-color: #3b82f6; /* Azul primario */
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Contenedor de la tabla */
-.tabla-container {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    overflow-x: auto; /* Para que no se rompa en pantallas pequeñas */
-}
-
-/* Tabla de oradores */
-#tabla-oradores {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-#tabla-oradores th, 
-#tabla-oradores td {
-    padding: 1.2rem 1rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-#tabla-oradores th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #475569;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-}
-
-#tabla-oradores tbody tr {
-    transition: background-color 0.2s ease;
-}
-
-#tabla-oradores tbody tr:hover {
-    background-color: #f8fafc;
-}
-
-/* Botones de acción dentro de la tabla */
-.btn-edit, .btn-delete {
-    padding: 0.5rem 1rem;
+.modal-close {
+    background: none;
     border: none;
-    border-radius: 5px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #333;
+    line-height: 1;
+    padding: 0;
+}
+
+.modal-close:hover {
+    color: #000;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.modal-field label {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.modal-field input {
+    border: 1.5px solid #ccc;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.modal-field input:focus {
+    border-color: var(--blue-500, #2563eb);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 1.8rem;
+}
+
+.modal-btn-cancelar {
+    padding: 0.65rem 2rem;
+    border-radius: 50px;
+    border: 1.5px solid #333;
+    background-color: #fff;
+    color: #333;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-btn-cancelar:hover {
+    background-color: #f0f0f0;
+}
+
+.modal-btn-registrar {
+    padding: 0.65rem 2rem;
+    border-radius: 50px;
+    border: none;
+    background-color: #1a3a6b;
+    color: #fff;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    margin-right: 0.5rem;
-    transition: opacity 0.2s;
+    transition: background 0.2s;
 }
 
-.btn-edit {
-    background-color: #f59e0b; /* Amarillo/Naranja */
-    color: white;
-}
-
-.btn-delete {
-    background-color: #ef4444; /* Rojo */
-    color: white;
-}
-
-.btn-edit:hover, .btn-delete:hover {
-    opacity: 0.85;
+.modal-btn-registrar:hover {
+    background-color: #2563eb;
 }
