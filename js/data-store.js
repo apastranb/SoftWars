@@ -55,4 +55,3 @@ window.db = window.db || {
 
     sesionActual: null
 };
-
