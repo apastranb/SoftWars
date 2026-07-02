@@ -2,7 +2,6 @@
 // MÓDULO: GESTIÓN DE LA TABLA Y CONTROL DE VISTA DE ACTIVIDADES
 // ==========================================================================
 
-// Base de datos simulada (Mock Data) siguiendo el formato real de tu tabla
 let actividadesBaseDatos = [
     {
         id: "ACT-01",
