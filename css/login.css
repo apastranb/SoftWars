@@ -1,12 +1,32 @@
 /* LOGIN PAGE (HU-01, HU-02, HU-03, HU-04) */
 
 .login-container {
+    position: relative;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--blue-800), var(--blue-500));
     padding: 2rem 1rem;
+}
+
+.login-back-home {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--white);
+    font-size: 0.95rem;
+    font-weight: bold;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+.login-back-home:hover {
+    opacity: 1;
+    text-decoration: underline;
 }
 
 .login-box {
