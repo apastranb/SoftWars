@@ -53,7 +53,7 @@
             <div class="headerActions">
                 <div class="headerSearchBar">
                     <button type="button"><i class="bi bi-search"></i></button>
-                    <input type="text" placeholder="Buscar stand...">
+                    <input type="text" placeholder="Buscar stand..." id="searchStandInput">
                 </div>
                 <div class="headerAdminInfo">
                     <p class="userName">Nombre Admin</p>
@@ -68,19 +68,19 @@
             <!-- Toolbar -->
             <div class="stands-toolbar">
                 <div class="stands-filters">
-                    <select class="filter-select">
+                    <select class="filter-select" id="filterEstadoStand">
                         <option value="">Estado</option>
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
 
-                    <select class="filter-select">
+                    <select class="filter-select" id="filterEmpresaStand">
                         <option value="">Empresa</option>
-                        <option value="tech-corp">Tech Corp</option>
-                        <option value="robotech">RoboTech</option>
-                        <option value="ai-solutions">AI Solutions</option>
-                        <option value="securenet">SecureNet</option>
-                        <option value="webdev">WebDev Co.</option>
+                        <option value="Tech Corp">Tech Corp</option>
+                        <option value="RoboTech">RoboTech</option>
+                        <option value="AI Solutions">AI Solutions</option>
+                        <option value="SecureNet">SecureNet</option>
+                        <option value="WebDev Co.">WebDev Co.</option>
                     </select>
                 </div>
                 <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
@@ -220,6 +220,7 @@
         </div>
     </div>
 
+    <script src="../js/data-store.js"></script>
     <script src="../js/admin-stands-logic.js"></script>
     <script src="../js/validaciones.js"></script>
 
