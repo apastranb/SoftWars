@@ -1,0 +1,128 @@
+/* ===== PAGO PAGE ===== */
+/* El reset, font-family, box-sizing y body base vienen de styles.css */
+
+/* Fondo gris que ocupa toda la pantalla */
+.pago-overlay {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #a0a0a0;
+}
+
+/* Tarjeta blanca central */
+.pago-card {
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Ícono > en círculo gris */
+.pago-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.pago-icon span {
+    width: 48px;
+    height: 48px;
+    background-color: #8a9bb0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Campos individuales */
+.pago-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.pago-field label {
+    font-size: 0.82rem;
+    color: var(--gray-600);
+}
+
+.pago-field input {
+    border: 1px solid var(--gray-300);
+    border-radius: 4px;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.95rem;
+    color: var(--blue-800);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.pago-field input:focus {
+    border-color: var(--blue-500);
+}
+
+/* Fila vencimiento + CVV */
+.pago-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+}
+
+/* Dropdowns de mes y año */
+.pago-expiry {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pago-expiry select {
+    border: 1px solid var(--gray-300);
+    border-radius: 4px;
+    padding: 0.55rem 0.5rem;
+    font-size: 0.95rem;
+    color: var(--blue-800);
+    outline: none;
+    cursor: pointer;
+    background-color: var(--white);
+}
+
+.pago-expiry select:focus {
+    border-color: var(--blue-500);
+}
+
+/* Campo CVV más angosto */
+.pago-cvv {
+    flex: 0 0 140px;
+}
+
+.pago-cvv input {
+    width: 100%;
+}
+
+/* Botón confirmar */
+.pago-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--blue-500);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.pago-btn:hover {
+    background-color: var(--blue-800);
+}

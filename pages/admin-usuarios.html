@@ -3,15 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrar Usuarios</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/admin-layout.css">
-    <link rel="stylesheet" href="../css/admin-usuarios.css"> 
+    <title>Admin - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin-layout.css">
+    <link rel="stylesheet" href="css/admin-usuarios.css">
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 <body>
-    
+    <header class="admin-header">
+        <h1>Gestión de Usuarios</h1>
+        <button onclick="cerrarSesion()" class="btn-secondary">Cerrar Sesión</button>
+    </header>
 
-    <script src="../js/admin-usuarios-logic.js"></script>
-    <script src="../js/validaciones.js"></script>
+    <main class="admin-content">
+        <!-- HU-05 y HU-36: Listar Usuarios y Responsables -->
+        <section class="table-container">
+            <div class="table-actions">
+                <select id="filtro-rol">
+                    <option value="todos">Todos los usuarios</option>
+                    <option value="responsable">Solo Responsables</option>
+                </select>
+            </div>
+            
+            <table id="tabla-usuarios">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-usuarios">
+                    <!-- Los datos se inyectan mediante JS -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="js/data-store.js"></script>
+    <script src="js/admin-usuarios-logic.js"></script>
 </body>
 </html>

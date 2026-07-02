@@ -8,30 +8,37 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin-layout.css">
     <link rel="stylesheet" href="../css/admin-stands.css">
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
+    <!--MENU LATERAL-->
     <nav class="navSideMenu">
         <div class="sideMenuHeader">
-            <img src="../images/logo.png" alt="Logo">
             <div>
-                <h2>Panel Administrativo</h2>
+                <img src="../img/eventos-cenfotec-icon-dark.png" alt="" />
+            </div>
+            <div>
+                <h2>Panel de Administrador</h2>
                 <p>Gestión Académica</p>
             </div>
         </div>
 
+        <hr class="menuSeparator" />
+
         <div class="sideMenuLinks">
-            <a href="#"><i class="fas fa-calendar-alt"></i> Eventos</a>
-            <a href="#"><i class="fas fa-chalkboard-teacher"></i> Presentadores</a>
-            <a href="#" class="sideMenuActive"><i class="fas fa-store"></i> Stands</a>
-            <a href="#"><i class="fas fa-user-shield"></i> Administradores</a>
+            <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+            <a href="admin-actividades.html"><i class="bi bi-list-task"></i> Actividades</a>
+            <a href="admin-oradores.html"><i class="bi bi-people-fill"></i> Presentadores</a>
+            <a class="sideMenuActive" href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+            <a href="admin-usuarios.html"><i class="bi bi-key"></i> Administradores</a>
         </div>
 
         <div class="sideMenuLinks">
-            <hr class="menuSeparator">
-            <a href="#" id="btnLogOut"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            <hr class="menuSeparator" />
+            <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
+            <a id="btnLogOut" href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
         </div>
     </nav>
 
@@ -45,8 +52,8 @@
             </div>
             <div class="headerActions">
                 <div class="headerSearchBar">
-                    <button type="button"><i class="fas fa-search"></i></button>
-                    <input type="text" placeholder="Buscar Stand...">
+                    <button type="button"><i class="bi bi-search"></i></button>
+                    <input type="text" placeholder="Buscar stand...">
                 </div>
                 <div class="headerAdminInfo">
                     <p class="userName">Nombre Admin</p>
@@ -61,11 +68,22 @@
             <!-- Toolbar -->
             <div class="stands-toolbar">
                 <div class="stands-filters">
-                    <button class="eventsAdminBtnSecondary">Filtro 1</button>
-                    <button class="eventsAdminBtnSecondary">Filtro 2</button>
-                    <button class="eventsAdminBtnSecondary">Filtro 3</button>
+                    <select class="filter-select">
+                        <option value="">Estado</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+
+                    <select class="filter-select">
+                        <option value="">Empresa</option>
+                        <option value="tech-corp">Tech Corp</option>
+                        <option value="robotech">RoboTech</option>
+                        <option value="ai-solutions">AI Solutions</option>
+                        <option value="securenet">SecureNet</option>
+                        <option value="webdev">WebDev Co.</option>
+                    </select>
                 </div>
-                <button class="eventsAdminBtnPrimary">Crear Stand</button>
+                <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
             </div>
 
             <!-- Tabla -->
@@ -162,8 +180,49 @@
         </main>
     </div>
 
+    <!-- MODAL REGISTRAR STAND -->
+    <div class="modal-overlay" id="modalCrearStand">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Registrar Stand</h2>
+                <button class="modal-close" id="btnCerrarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>Nombre del Stand</label>
+                    <input type="text" placeholder="">
+                </div>
+                <div class="modal-field">
+                    <label>Descripción</label>
+                    <input type="text" placeholder="">
+                </div>
+                <div class="modal-field">
+                    <label>Nombre del Encargado</label>
+                    <input type="text" placeholder="">
+                </div>
+                <div class="modal-field">
+                    <label>Empresa</label>
+                    <input type="text" placeholder="">
+                </div>
+                <div class="modal-field">
+                    <label>Correo del Encargado</label>
+                    <input type="text" placeholder="">
+                </div>
+                <div class="modal-field">
+                    <label>Teléfono del Encargado</label>
+                    <input type="text" placeholder="">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancelar" id="btnCancelarModal">Cancelar</button>
+                <button class="modal-btn-registrar">Registrar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/admin-stands-logic.js"></script>
     <script src="../js/validaciones.js"></script>
+
 </body>
 
 </html>

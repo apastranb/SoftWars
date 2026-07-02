@@ -14,7 +14,7 @@ main {
 }
 
 main section {
-  background-color: var(--white, #ffffff);
+  background-color: var(--white);
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -153,7 +153,13 @@ main h2 {
 
 .eventAgendaDatesTabLinks.active {
   color: var(--blue-800);
+  background-color: #007bff1f;
   border-bottom-color: var(--blue-800);
+  border-radius: 5px 5px 0px 0px;
+}
+
+.oculto {
+  display: none;
 }
 
 /* AGENDA / PARTICIPANTES */
@@ -248,13 +254,11 @@ main h2 {
 /* FORM ASIDE */
 
 aside {
-  background-color: var(--white, #ffffff);
+  background-color: var(--white);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   height: fit-content;
-  position: sticky;
-  top: 100px;
 }
 
 aside h2 {
@@ -276,7 +280,13 @@ aside p {
 #inscribirVisitante label {
   color: var(--blue-800);
   font-size: 0.9rem;
-  margin-bottom: -0.5rem;
+  margin-bottom: 0;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 #inscribirVisitante input {
@@ -297,7 +307,7 @@ aside p {
   margin-top: 1rem;
   padding: 1rem;
   background-color: var(--blue-800);
-  color: var(--white, #ffffff);
+  color: var(--white);
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
@@ -323,7 +333,7 @@ aside p {
   border: 1px solid var(--gray-300);
   border-radius: 8px;
   cursor: pointer;
-  background-color: var(--white, #ffffff);
+  background-color: var(--white);
   transition: all 0.2s ease;
   margin-bottom: 0.8rem;
 }

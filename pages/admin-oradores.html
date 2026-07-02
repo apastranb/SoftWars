@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Oradores</title>
+    <button class="btn-primary" id="btn-nuevo-orador">+ Nuevo Orador</button>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin-layout.css">
     <link rel="stylesheet" href="../css/admin-oradores.css">
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 <body>
-    
+    <section class="filtros">
+            <input type="text" id="filtro-orador" placeholder="Buscar por nombre o tema...">
+        </section>
+
+        <section class="tabla-container">
+            <table id="tabla-oradores">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Especialidad</th>
+                        <th>Empresa</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- El JS indexará los datos aquí -->
+                </tbody>
+            </table>
+        </section>
 
     <script src="../js/admin-oradores-logic.js"></script>
     <script src="../js/validaciones.js"></script>

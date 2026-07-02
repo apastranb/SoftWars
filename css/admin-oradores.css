@@ -1,0 +1,105 @@
+/* =========================================
+   Archivo: css/admin-oradores.css
+   ========================================= */
+
+/* Encabezado principal de la vista */
+.main-content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 1rem;
+}
+
+.main-content header h1 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin: 0;
+}
+
+/* Barra de búsqueda / Filtros */
+.filtros {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#filtro-orador {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#filtro-orador:focus {
+    outline: none;
+    border-color: #3b82f6; /* Azul primario */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Contenedor de la tabla */
+.tabla-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow-x: auto; /* Para que no se rompa en pantallas pequeñas */
+}
+
+/* Tabla de oradores */
+#tabla-oradores {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#tabla-oradores th, 
+#tabla-oradores td {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+#tabla-oradores th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+#tabla-oradores tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#tabla-oradores tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Botones de acción dentro de la tabla */
+.btn-edit, .btn-delete {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.btn-edit {
+    background-color: #f59e0b; /* Amarillo/Naranja */
+    color: white;
+}
+
+.btn-delete {
+    background-color: #ef4444; /* Rojo */
+    color: white;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    opacity: 0.85;
+}

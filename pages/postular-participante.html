@@ -6,10 +6,35 @@
     <title>Postularse como Participante</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/postular-participante.css" />
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 <body>
     
-
+<!-- Estructura base para postular-participante.html -->
+<div class="public-container">
+    <!-- Aquí pegas tu <nav> principal público -->
+    
+    <main class="form-container">
+        <h2>Postúlate como Participante</h2>
+        <p>Llena el siguiente formulario para reservar tu espacio en Cenfotec.</p>
+        
+        <form id="form-postulacion">
+            <div class="form-group">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" required>
+            </div>
+            <div class="form-group">
+                <label for="motivo">¿Por qué deseas participar?</label>
+                <textarea id="motivo" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Enviar Postulación</button>
+        </form>
+    </main>
+</div>
 
     <script src="../js/postular-participante-logic.js"></script>
     <script src="../js/validaciones.js"></script>
