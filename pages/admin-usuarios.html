@@ -4,45 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Gestión de Usuarios</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/admin-layout.css">
-    <link rel="stylesheet" href="css/admin-usuarios.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin-layout.css">
+    <link rel="stylesheet" href="../css/admin-usuarios.css">
     <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 <body>
-    <header class="admin-header">
-        <h1>Gestión de Usuarios</h1>
-        <button onclick="cerrarSesion()" class="btn-secondary">Cerrar Sesión</button>
-    </header>
 
-    <main class="admin-content">
-        <!-- HU-05 y HU-36: Listar Usuarios y Responsables -->
-        <section class="table-container">
-            <div class="table-actions">
-                <select id="filtro-rol">
-                    <option value="todos">Todos los usuarios</option>
-                    <option value="responsable">Solo Responsables</option>
-                </select>
+    <!-- MENU LATERAL -->
+    <nav class="navSideMenu">
+        <div class="sideMenuHeader">
+            <div>
+                <img src="../img/eventos-cenfotec-icon-dark.png" alt="" />
             </div>
-            
-            <table id="tabla-usuarios">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-usuarios">
-                    <!-- Los datos se inyectan mediante JS -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+            <div>
+                <h2>Panel de Administrador</h2>
+                <p>Gestión Académica</p>
+            </div>
+        </div>
 
-    <script src="js/data-store.js"></script>
-    <script src="js/admin-usuarios-logic.js"></script>
+        <hr class="menuSeparator" />
+
+        <div class="sideMenuLinks">
+            <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+            <a href="admin-actividades.html"><i class="bi bi-list-task"></i> Actividades</a>
+            <a href="admin-oradores.html"><i class="bi bi-people-fill"></i> Presentadores</a>
+            <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+            <a href="admin-participantes.html"><i class="bi bi-person-check"></i> Participantes</a>
+            <a class="sideMenuActive" href="admin-usuarios.html"><i class="bi bi-key"></i> Administradores</a>
+        </div>
+
+        <div class="sideMenuLinks">
+            <hr class="menuSeparator" />
+            <a href="../index.html"><i class="bi bi-house"></i> Sitio Público</a>
+            <a id="btnLogOut" href="login.html" onclick="cerrarSesion(); return false;"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="admin-main-content">
+        <header>
+            <div class="headerTitle">
+                <h1>Gestión de Usuarios</h1>
+            </div>
+            <div class="headerActions">
+                <div class="headerSearchBar">
+                    <button type="button" id="buscar-usuario"><i class="bi bi-search"></i></button>
+                    <input type="text" placeholder="Buscar por nombre o correo..." id="searchInput">
+                </div>
+                <div class="headerAdminInfo">
+                    <p class="userName" id="headerUserName">Nombre Apellido</p>
+                    <p class="userRol" id="headerUserRol">Rol</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-content">
+            <!-- HU-05 y HU-36: Listar Usuarios y Responsables -->
+            <section class="usuarios-toolbar">
+                <div class="usuarios-filters">
+                    <select id="filtro-vista">
+                        <option value="usuarios" selected>Administradores</option>
+                        <option value="responsables">Responsables (HU-36)</option>
+                    </select>
+
+                    <select id="filtro-rol">
+                        <option value="todos" selected>Todos los roles</option>
+                    </select>
+
+                    <select id="filtro-estado">
+                        <option value="todos" selected>Todos los estados</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- RF-03: Creación de Cuentas de Administrador -->
+                <button type="button" class="eventsAdminBtnPrimary" id="btnNuevoUsuario">
+                    <i class="bi bi-person-plus"></i> Nuevo Administrador
+                </button>
+            </section>
+
+            <section class="table-container">
+                <table id="tabla-usuarios">
+                    <thead id="thead-usuarios">
+                        <!-- Encabezados renderizados por JS según la vista seleccionada -->
+                    </thead>
+                    <tbody id="tbody-usuarios">
+                        <!-- Los datos se inyectan mediante JS -->
+                    </tbody>
+                </table>
+                <p class="tabla-vacia" id="tabla-vacia" style="display:none;">No se encontraron resultados.</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- HU-06: Modal Modificar Usuario -->
+    <div class="modal-overlay" id="modalEditarUsuario">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Modificar Usuario</h2>
+                <button class="modal-close" id="btnCerrarEditar" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="edit-nombre">Nombre</label>
+                    <input type="text" id="edit-nombre">
+                    <span class="form__error-message" id="error-edit-nombre"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-email">Correo Electrónico</label>
+                    <input type="email" id="edit-email" readonly>
+                    <span class="form__error-message" id="error-edit-email"></span>
+                </div>
+                <p class="modal-hint">El correo electrónico no se puede modificar; es el identificador único de la cuenta.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancelar" id="btnCancelarEditar" type="button">Cancelar</button>
+                <button class="modal-btn-registrar" id="btnGuardarEditar" type="button">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RF-03: Modal Crear Administrador -->
+    <div class="modal-overlay" id="modalCrearUsuario">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Nuevo Administrador</h2>
+                <button class="modal-close" id="btnCerrarCrear" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="crear-nombre">Nombre Completo</label>
+                    <input type="text" id="crear-nombre">
+                    <span class="form__error-message" id="error-crear-nombre"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="crear-email">Correo Electrónico</label>
+                    <input type="email" id="crear-email">
+                    <span class="form__error-message" id="error-crear-email"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="crear-password">Contraseña Temporal</label>
+                    <input type="password" id="crear-password">
+                    <span class="form__error-message" id="error-crear-password"></span>
+                </div>
+                <p class="modal-hint">La contraseña debe tener entre 8 y 16 caracteres, sin vocales, e incluir al menos una mayúscula, una minúscula, un número y un carácter especial.</p>
+                <div class="modal-field">
+                    <label for="crear-rol">Rol</label>
+                    <select id="crear-rol"></select>
+                    <span class="form__error-message" id="error-crear-rol"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancelar" id="btnCancelarCrear" type="button">Cancelar</button>
+                <button class="modal-btn-registrar" id="btnGuardarCrear" type="button">Crear Administrador</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HU-08: Modal Asignar Rol -->
+    <div class="modal-overlay" id="modalAsignarRol">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Asignar Rol</h2>
+                <button class="modal-close" id="btnCerrarRol" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc" id="rol-usuario-nombre"></p>
+                <div class="modal-field">
+                    <label for="select-rol">Rol</label>
+                    <select id="select-rol"></select>
+                    <span class="form__error-message" id="error-select-rol"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancelar" id="btnCancelarRol" type="button">Cancelar</button>
+                <button class="modal-btn-registrar" id="btnGuardarRol" type="button">Asignar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación tipo toast (reemplaza el uso de alert()) -->
+    <div class="toast" id="toast"></div>
+
+    <script src="../js/data-store.js"></script>
+    <script src="../js/validaciones.js"></script>
+    <script src="../js/admin-usuarios-logic.js"></script>
 </body>
 </html>

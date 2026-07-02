@@ -1,99 +1,346 @@
-/* =========================================
-   Archivo: css/postular-participante.css
-   ========================================= */
+/* POSTULARSE COMO PARTICIPANTE - Inscripción a Actividades */
 
-/* Contenedor principal para centrar el formulario */
 .public-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 80px); /* Asumiendo que hay un nav arriba */
-    background-color: #f4f7f6; /* Fondo gris claro */
-    padding: 2rem;
+    padding: 3rem 1.5rem;
+    background-color: #f0f0f0;
+    min-height: calc(100vh - 160px);
 }
 
-/* Tarjeta del formulario */
 .form-container {
-    background: #ffffff;
+    background: var(--white);
     padding: 2.5rem 3rem;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    max-width: 550px;
+    max-width: 640px;
     width: 100%;
 }
 
 .form-container h2 {
-    margin-bottom: 0.5rem;
-    color: #1e293b;
-    font-size: 1.8rem;
+    margin-bottom: 0.4rem;
+    font-size: 1.7rem;
     text-align: center;
 }
 
-.form-container p {
-    margin-bottom: 2rem;
-    color: #64748b;
+.form-container > section > p {
+    margin-bottom: 1.5rem;
+    color: var(--gray-600);
     font-size: 0.95rem;
     text-align: center;
     line-height: 1.5;
 }
 
-/* Grupos de inputs */
+.form-container h3 {
+    margin: 1.5rem 0 0.6rem;
+    font-size: 1.1rem;
+}
+
+/* ===== TABS (Inscribirme / Cancelar Inscripción) ===== */
+.postulacion-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--gray-300);
+}
+
+.postulacion-tab {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    background: none;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--gray-600);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+}
+
+.postulacion-tab:hover {
+    color: var(--blue-500);
+}
+
+.postulacion-tab.active {
+    color: var(--blue-800);
+    border-bottom-color: var(--blue-500);
+}
+
+.oculto {
+    display: none;
+}
+
+/* ===== FORM GROUPS ===== */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.3rem;
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.form-group-row {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
 }
 
 .form-group label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #334155;
+    margin-bottom: 0.4rem;
+    font-weight: bold;
+    color: var(--blue-800);
     font-size: 0.9rem;
 }
 
-.form-group input,
-.form-group textarea {
-    padding: 0.8rem 1rem;
-    border: 1px solid #cbd5e1;
+.form-group input {
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--blue-500);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 106, 234, 0.15);
+}
+
+/* ===== ACTIVIDADES (checkboxes con estilo personalizado) ===== */
+.lista-actividades {
+    margin-bottom: 1rem;
+}
+
+.checkboxActivity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: var(--white);
+    transition: all 0.2s ease;
+    margin-bottom: 0.8rem;
+}
+
+.checkboxActivity input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.box-visual {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--gray-300);
     border-radius: 6px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    background-color: var(--white);
+}
+
+.info-actividad {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+}
+
+.actividad-titulo {
+    color: var(--blue-800);
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.actividad-meta {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.actividad-cupo {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.actividad-cupo.disponible { color: #0a7a57; }
+.actividad-cupo.lleno { color: var(--danger); }
+
+.checkboxActivity:hover {
+    border-color: var(--blue-200);
+}
+
+.checkboxActivity:hover .box-visual {
+    border-color: var(--blue-500);
+}
+
+.checkboxActivity input[type="checkbox"]:checked + .box-visual {
+    background-color: var(--blue-500);
+    border-color: var(--blue-500);
+}
+
+.checkboxActivity input[type="checkbox"]:checked + .box-visual::after {
+    content: "";
+    width: 6px;
+    height: 12px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+
+.checkboxActivity:has(input[type="checkbox"]:checked) {
+    border-color: var(--blue-500);
+    background-color: rgba(0, 106, 234, 0.05);
+}
+
+.checkboxActivity.actividad-deshabilitada {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.actividad-libre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
     background-color: #f8fafc;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-    background-color: #ffffff;
-    border-color: #3b82f6;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.actividad-libre .info-actividad {
+    flex: 1;
 }
 
-.form-group textarea {
-    resize: vertical; /* Permite al usuario ajustar solo la altura */
-    min-height: 100px;
+.tag-entrada-libre {
+    background-color: rgba(14, 165, 233, 0.12);
+    color: var(--info);
+    font-size: 0.78rem;
+    font-weight: bold;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    white-space: nowrap;
 }
 
-/* Botón principal del formulario */
-.form-container .btn-primary {
+/* ===== BOTÓN PRINCIPAL ===== */
+.btn-primary {
     width: 100%;
-    padding: 1rem;
-    margin-top: 1rem;
-    background-color: #0f172a; /* Azul muy oscuro / Negro */
-    color: #ffffff;
+    padding: 0.95rem;
+    margin-top: 0.5rem;
+    background-color: var(--blue-800);
+    color: var(--white);
     border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    font-size: 1.05rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.form-container .btn-primary:hover {
-    background-color: #334155;
+.btn-primary:hover {
+    background-color: var(--blue-500);
 }
 
-.form-container .btn-primary:active {
+.btn-primary:active {
     transform: scale(0.98);
+}
+
+/* ===== MENSAJES ===== */
+#error-general,
+#error-actividades {
+    display: block;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.form__result-message {
+    display: none;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.form__result-message--success {
+    display: block;
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #0a7a57;
+}
+
+.form__result-message--error {
+    display: block;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* ===== CANCELAR INSCRIPCIÓN ===== */
+.resultado-busqueda {
+    margin-top: 1.5rem;
+}
+
+.participante-card {
+    border: 1px solid var(--gray-300);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.participante-card h4 {
+    color: var(--blue-800);
+    margin-bottom: 0.3rem;
+    font-size: 1.05rem;
+}
+
+.participante-card p {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+}
+
+.actividad-cancelar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--gray-300);
+}
+
+.actividad-cancelar-row:first-of-type {
+    border-top: none;
+}
+
+.btn-cancelar-actividad {
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--danger);
+    background-color: var(--white);
+    color: var(--danger);
+    font-size: 0.82rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancelar-actividad:hover {
+    background-color: var(--danger);
+    color: var(--white);
+}
+
+@media (max-width: 600px) {
+    .form-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-group-row {
+        flex-direction: column;
+        gap: 0;
+    }
 }

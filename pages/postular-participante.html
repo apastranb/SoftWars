@@ -9,34 +9,124 @@
     <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
 </head>
 <body>
-    
-<!-- Estructura base para postular-participante.html -->
-<div class="public-container">
-    <!-- Aquí pegas tu <nav> principal público -->
-    
-    <main class="form-container">
-        <h2>Postúlate como Participante</h2>
-        <p>Llena el siguiente formulario para reservar tu espacio en Cenfotec.</p>
-        
-        <form id="form-postulacion">
-            <div class="form-group">
-                <label for="nombre">Nombre Completo</label>
-                <input type="text" id="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="correo">Correo Electrónico</label>
-                <input type="email" id="correo" required>
-            </div>
-            <div class="form-group">
-                <label for="motivo">¿Por qué deseas participar?</label>
-                <textarea id="motivo" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn-primary">Enviar Postulación</button>
-        </form>
-    </main>
-</div>
 
-    <script src="../js/postular-participante-logic.js"></script>
+    <nav>
+        <div class="navLogo">
+            <a href="../index.html">
+                <img src="../img/eventos-cenfotec-logo-dark.svg" alt="Eventos CENFOTEC" />
+            </a>
+        </div>
+        <div class="navLinks">
+            <a href="../index.html">Eventos</a>
+            <a class="active" href="postular-participante.html">Postularse</a>
+        </div>
+        <div class="navLinks">
+            <div class="navbarSearch">
+                <button id="searchButtonIndex"><i class="bi bi-search"></i></button>
+                <input type="text" placeholder="Buscar eventos..." id="searchInput" />
+            </div>
+            <a href="login.html">Acceso Admin</a>
+        </div>
+    </nav>
+
+    <div class="public-container">
+        <main class="form-container">
+
+            <div class="postulacion-tabs">
+                <button type="button" class="postulacion-tab active" id="tab-inscribirse">Inscribirme</button>
+                <button type="button" class="postulacion-tab" id="tab-cancelar">Cancelar Inscripción</button>
+            </div>
+
+            <!-- ===================== INSCRIPCIÓN ===================== -->
+            <section id="panel-inscribirse">
+                <h2>Postúlate como Participante</h2>
+                <p>Completa tus datos y elige las actividades a las que deseas asistir. Algunas actividades son de entrada libre y no requieren inscripción.</p>
+
+                <span class="form__error-message" id="error-general"></span>
+                <span class="form__result-message" id="resultado-inscripcion"></span>
+
+                <form id="form-postulacion" novalidate>
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo</label>
+                        <input type="text" id="nombre" placeholder="Juan Pérez" required>
+                        <span class="form__error-message" id="error-nombre"></span>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="idDocumento">Cédula o ID</label>
+                            <input type="text" id="idDocumento" placeholder="101230456" required>
+                            <span class="form__error-message" id="error-idDocumento"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="edad">Edad</label>
+                            <input type="number" id="edad" placeholder="Ej. 22" required>
+                            <span class="form__error-message" id="error-edad"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico</label>
+                            <input type="email" id="correo" placeholder="correo@dominio.com" required>
+                            <span class="form__error-message" id="error-correo"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" id="telefono" placeholder="8888-8888" required>
+                            <span class="form__error-message" id="error-telefono"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="carrera">Carrera / Profesión</label>
+                        <input type="text" id="carrera" placeholder="Ej. Ingeniería de Software" required>
+                        <span class="form__error-message" id="error-carrera"></span>
+                    </div>
+
+                    <h3>Actividades disponibles</h3>
+                    <span class="form__error-message" id="error-actividades"></span>
+                    <span class="form__warning-message" id="warning-horario"></span>
+                    <div id="lista-actividades" class="lista-actividades">
+                        <!-- Actividades renderizadas por JS desde window.db.actividades -->
+                    </div>
+
+                    <button type="submit" class="btn-primary">Enviar Postulación</button>
+                </form>
+            </section>
+
+            <!-- ===================== CANCELAR INSCRIPCIÓN ===================== -->
+            <section id="panel-cancelar" class="oculto">
+                <h2>Cancelar Inscripción</h2>
+                <p>Ingresa el correo y la cédula/ID con los que te inscribiste para ver y cancelar tus actividades.</p>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="buscar-correo">Correo Electrónico</label>
+                        <input type="email" id="buscar-correo" placeholder="correo@dominio.com">
+                        <span class="form__error-message" id="error-buscar-correo"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="buscar-id">Cédula o ID</label>
+                        <input type="text" id="buscar-id" placeholder="101230456">
+                        <span class="form__error-message" id="error-buscar-id"></span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-primary" id="btnBuscarInscripcion">Buscar mi Inscripción</button>
+
+                <div id="resultado-busqueda" class="resultado-busqueda"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../js/data-store.js"></script>
     <script src="../js/validaciones.js"></script>
+    <script src="../js/postular-participante-logic.js"></script>
 </body>
 </html>
