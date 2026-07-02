@@ -21,6 +21,12 @@
     gap: 0.75rem;
 }
 
+.oradores-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 /* ===== FILTROS DROPDOWN (igual a admin-stands) ===== */
 .filter-select {
     padding: 0.5rem 1rem;
