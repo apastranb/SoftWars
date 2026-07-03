@@ -218,6 +218,12 @@ const editarEventoSeleccionado = () => {
 // INICIALIZADOR PRINCIPAL
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar sesión activa
+    if (localStorage.getItem('sesionActiva') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+    }
+
     aplicarFiltros();
     inicializarCheckboxGlobal();
 

@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('sesionNombre', usuario.nombre);
         localStorage.setItem('sesionRol', usuario.rol);
 
-        window.location.href = 'admin-usuarios.html';
+        window.location.href = 'admin-eventos.html';
     });
 
     // ==========================================================

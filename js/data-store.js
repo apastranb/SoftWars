@@ -1,8 +1,10 @@
 // Base de datos simulada en memoria
 window.db = window.db || {
     usuarios: [
-        { id: "U-001", nombre: "Admin Principal", email: "admin@ucenfotec.ac.cr", password: "T3st.Pswrd!", rol: "Super Administrador", estado: "Activo", fechaCreacion: "2026-06-01" },
-        { id: "U-002", nombre: "Gestor Eventos", email: "gestor@ucenfotec.ac.cr", password: "G3st.Pswrd!", rol: "Editor", estado: "Inactivo", fechaCreacion: "2026-06-05" }
+        { id: "U-001", nombre: "Carlos Carballo", email: "ccarballov@ucenfotec.ac.cr", password: "8yfrRY7IYVPuaai", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
+        { id: "U-002", nombre: "Kenner Gamboa",   email: "kgamboas@ucenfotec.ac.cr",   password: "ZbptISbkKbtUCFd",  rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
+        { id: "U-003", nombre: "Adonis Pastrana", email: "apastranb@ucenfotec.ac.cr",  password: "lAHhDPTPYqipP10", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
+        { id: "U-004", nombre: "Josue Arroyo",   email: "jarroyor@ucenfotec.ac.cr",   password: "Ya9HjuR2SLWKfoDb", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" }
     ],
     responsables: [
         { id: "R-001", nombre: "Juan Pérez", correo: "jperez@test.com", telefonos: "8888-8888", especialidad: "DevOps", empresa: "TechCorp", estado: "Aprobado" },

@@ -159,6 +159,12 @@ const inicializarToolbarActividades = () => {
 // INICIALIZADOR PRINCIPAL Y ENVÍO DEL FORMULARIO
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar sesión activa
+    if (localStorage.getItem('sesionActiva') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+    }
+
     renderizarTablaActividades();
     inicializarBuscadorActividades();
     inicializarToolbarActividades();

@@ -322,6 +322,12 @@ const validarFormularioEvento = (e) => {
 
 // INICIALIZADOR PRINCIPAL
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar sesión activa
+    if (localStorage.getItem('sesionActiva') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+    }
+
     inicializarDragAndDrop();
     inicializarPreviewImagen();
     inicializarAsistenteIA();

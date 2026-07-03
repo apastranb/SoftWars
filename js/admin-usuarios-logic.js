@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const thead = document.querySelector('#thead-usuarios');
     const tbody = document.querySelector('#tbody-usuarios');
     const tablaVacia = document.querySelector('#tabla-vacia');
-    const filtroVista = document.querySelector('#filtro-vista');
     const filtroRol = document.querySelector('#filtro-rol');
     const filtroEstado = document.querySelector('#filtro-estado');
     const searchInput = document.querySelector('#searchInput');
@@ -84,110 +83,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================================
-    // HU-05 y HU-36: Listar Usuarios / Listar Responsables
+    // HU-05: Listar Administradores
     // ==========================================================
     const renderTabla = () => {
-        const vista = filtroVista.value;
         const texto = searchInput.value.trim().toLowerCase();
 
-        if (vista === 'usuarios') {
-            filtroRol.style.display = '';
-            thead.innerHTML = `
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Fecha Creación</th>
-                    <th>Acciones</th>
-                </tr>
+        thead.innerHTML = `
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha Creación</th>
+                <th>Acciones</th>
+            </tr>
+        `;
+
+        const usuarios = window.db.usuarios.filter(u => {
+            const coincideTexto = !texto || u.nombre.toLowerCase().includes(texto) || u.email.toLowerCase().includes(texto);
+            const coincideRol   = filtroRol.value === 'todos'   || u.rol    === filtroRol.value;
+            const coincideEstado = filtroEstado.value === 'todos' || u.estado === filtroEstado.value;
+            return coincideTexto && coincideRol && coincideEstado;
+        });
+
+        tbody.innerHTML = '';
+        usuarios.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.nombre}</td>
+                <td>${user.email}</td>
+                <td>${user.rol}</td>
+                <td>
+                    <select class="tableSelectStatus estado-${user.estado.toLowerCase()}" data-email="${user.email}">
+                        <option value="Activo"   ${user.estado === 'Activo'   ? 'selected' : ''}>Activo</option>
+                        <option value="Inactivo" ${user.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
+                    </select>
+                </td>
+                <td>${user.fechaCreacion || '-'}</td>
+                <td class="acciones-cell">
+                    <button class="btn-edit" data-email="${user.email}">Editar</button>
+                    <button class="btn-role" data-email="${user.email}">Rol</button>
+                </td>
             `;
+            tbody.appendChild(tr);
+        });
 
-            let usuarios = window.db.usuarios.filter(u => {
-                const coincideTexto = !texto || u.nombre.toLowerCase().includes(texto) || u.email.toLowerCase().includes(texto);
-                const coincideRol = filtroRol.value === 'todos' || u.rol === filtroRol.value;
-                const coincideEstado = filtroEstado.value === 'todos' || u.estado === filtroEstado.value;
-                return coincideTexto && coincideRol && coincideEstado;
-            });
-
-            tbody.innerHTML = '';
-            usuarios.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.nombre}</td>
-                    <td>${user.email}</td>
-                    <td>${user.rol}</td>
-                    <td>
-                        <select class="tableSelectStatus estado-${user.estado.toLowerCase()}" data-email="${user.email}">
-                            <option value="Activo" ${user.estado === 'Activo' ? 'selected' : ''}>Activo</option>
-                            <option value="Inactivo" ${user.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
-                        </select>
-                    </td>
-                    <td>${user.fechaCreacion || '-'}</td>
-                    <td class="acciones-cell">
-                        <button class="btn-edit" data-email="${user.email}">Editar</button>
-                        <button class="btn-role" data-email="${user.email}">Rol</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            tablaVacia.style.display = usuarios.length ? 'none' : 'block';
-
-        } else {
-            // Vista de responsables (solo lectura - HU-36)
-            filtroRol.style.display = 'none';
-            thead.innerHTML = `
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Especialidad</th>
-                    <th>Empresa</th>
-                    <th>Estado</th>
-                </tr>
-            `;
-
-            let responsables = window.db.responsables.filter(r => {
-                const coincideTexto = !texto || r.nombre.toLowerCase().includes(texto) || r.correo.toLowerCase().includes(texto);
-                const coincideEstado = filtroEstado.value === 'todos' || r.estado === filtroEstado.value;
-                return coincideTexto && coincideEstado;
-            });
-
-            tbody.innerHTML = '';
-            responsables.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${r.nombre}</td>
-                    <td>${r.correo}</td>
-                    <td>${r.telefonos}</td>
-                    <td>${r.especialidad}</td>
-                    <td>${r.empresa}</td>
-                    <td><span class="badge ${r.estado.toLowerCase()}">${r.estado}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            tablaVacia.style.display = responsables.length ? 'none' : 'block';
-        }
+        tablaVacia.style.display = usuarios.length ? 'none' : 'block';
     };
 
-    // RF-03: el botón de creación solo aplica a la vista de Administradores,
-    // ya que la vista de Responsables (HU-36) es de solo lectura.
-    const btnNuevoUsuario = document.querySelector('#btnNuevoUsuario');
-    const actualizarVisibilidadBtnNuevo = () => {
-        btnNuevoUsuario.style.display = filtroVista.value === 'usuarios' ? '' : 'none';
-    };
-
-    filtroVista.addEventListener('change', () => {
-        renderTabla();
-        actualizarVisibilidadBtnNuevo();
-    });
     filtroRol.addEventListener('change', renderTabla);
     filtroEstado.addEventListener('change', renderTabla);
     searchInput.addEventListener('input', renderTabla);
     document.querySelector('#buscar-usuario').addEventListener('click', renderTabla);
-    actualizarVisibilidadBtnNuevo();
 
     // ==========================================================
     // HU-07: Cambiar Estado de Usuario (select en la tabla)
@@ -290,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cerrarModalCrear = () => modalCrear.classList.remove('active');
 
+    const btnNuevoUsuario = document.querySelector('#btnNuevoUsuario');
     btnNuevoUsuario.addEventListener('click', abrirModalCrear);
     document.querySelector('#btnCerrarCrear').addEventListener('click', cerrarModalCrear);
     document.querySelector('#btnCancelarCrear').addEventListener('click', cerrarModalCrear);

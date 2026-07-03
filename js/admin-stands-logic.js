@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Verificar sesión activa
+    if (localStorage.getItem('sesionActiva') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+    }
+
     // ── Referencias al DOM ──────────────────────────────────────────────────
     const modalOverlay     = document.getElementById('modalCrearStand');
     const modalTitulo      = document.getElementById('modalStandTitulo');
