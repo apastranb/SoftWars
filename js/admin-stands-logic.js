@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
         let valido = true;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telRegex   = /^\d{4}-\d{4}$/;
+        const telRegex   = /^\d{4}-?\d{4}$/;
 
         if (!inputNombre.value.trim()) {
             mostrarError(inputNombre, 'El nombre del stand es requerido.');
@@ -130,8 +130,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /** Actualiza las opciones del filtro de empresa según los stands actuales */
+    function actualizarFiltroEmpresas() {
+        const empresaActual = filterEmpresa.value;
+        const empresas = [...new Set(window.db.stands.map(s => s.empresa))].sort();
+
+        filterEmpresa.innerHTML = '<option value="">Empresa</option>';
+        empresas.forEach(emp => {
+            const opt = document.createElement('option');
+            opt.value = emp;
+            opt.textContent = emp;
+            if (emp === empresaActual) opt.selected = true;
+            filterEmpresa.appendChild(opt);
+        });
+    }
+
     /** Renderiza las filas en la tabla */
     function renderTabla() {
+        actualizarFiltroEmpresas();
         const stands = obtenerStandsFiltrados();
         tbody.innerHTML = '';
 
@@ -257,7 +273,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalOverlay) cerrarModal();
     });
 
-    btnGuardar.addEventListener('click', guardarStand);
+    // Evitar que clicks dentro del modal propaguen al overlay
+    document.querySelector('#modalCrearStand .modal').addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    btnGuardar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        guardarStand();
+    });
 
     // Filtros y búsqueda en tiempo real
     searchInput.addEventListener('input', renderTabla);
