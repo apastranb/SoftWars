@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
+    // Nombre y rol en el header
+    document.getElementById('headerUserName').textContent = localStorage.getItem('sesionNombre') || 'Administrador';
+    document.getElementById('headerUserRol').textContent  = localStorage.getItem('sesionRol')    || '';
+
     // ── Referencias al DOM ──────────────────────────────────────────────────
     const modalOverlay     = document.getElementById('modalCrearOrador');
     const modalTitulo      = document.getElementById('modalOradorTitulo');
