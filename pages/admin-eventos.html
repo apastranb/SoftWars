@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -92,10 +92,10 @@
             <div class="eventsFiltersStatus">
               <select name="eventAdminFilterStatus" id="eventAdminFilterStatus">
                 <option value="" selected>Todos los Estados</option>
-                <option value="">Cancelado</option>
-                <option value="">Disponible</option>
-                <option value="">Finalizado</option>
-                <option value="">Lleno</option>
+                <option value="cancelado">Cancelado</option>
+                <option value="disponible">Disponible</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="lleno">Lleno</option>
               </select>
             </div>
 
@@ -109,8 +109,8 @@
           </div>
 
           <div class="eventsAdminBtns">
-            <button class="eventsAdminBtnSecondary">Editar Evento</button>
-            <button class="eventsAdminBtnSecondary btnDelete">
+            <button class="eventsAdminBtnSecondary" id="btnEditarEvento">Editar Evento</button>
+            <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarEvento">
               Eliminar Evento
             </button>
             <a class="eventsAdminBtnPrimary" href="admin-crear-evento.html"
@@ -147,33 +147,7 @@
             </thead>
 
             <tbody id="adminEventsTableBody">
-              <!--EJEMPLO-->
-              <tr>
-                <td>
-                  <input type="checkbox" id="" title="" />
-                </td>
-                <td>EV-001</td>
-                <td>NombreEvento</td>
-                <td>
-                  <select name="" id="" class="tableSelectStatus">
-                    <option value="" selected>Disponible</option>
-                    <option value="">Cancelado</option>
-                    <option value="">Finalizado</option>
-                    <option value="">Lleno</option>
-                  </select>
-                </td>
-                <td>LugarEvento</td>
-                <td>CategoriaEvento</td>
-                <td>12/20/2026</td>
-                <td>12/20/2026</td>
-                <td>06:00 PM</td>
-                <td>12:00 AM</td>
-                <td>200</td>
-                <td>100</td>
-                <td>100</td>
-                <td>NombreResponsable</td>
-              </tr>
-              <!--EJEMPLO-->
+              <!-- Los eventos se renderizan desde admin-eventos-logic.js -->
             </tbody>
           </table>
         </section>

@@ -23,7 +23,6 @@ const inicializarDragAndDrop = () => {
 
     if (!uploadArea || !fileInput) return;
 
-    // Evitar comportamientos por defecto del navegador al arrastrar
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, preventDefaults, false);
     });
@@ -33,7 +32,6 @@ const inicializarDragAndDrop = () => {
         e.stopPropagation();
     }
 
-    // Manejo visual del estado "dragover"
     ['dragenter', 'dragover'].forEach(eventName => {
         uploadArea.addEventListener(eventName, () => {
             uploadArea.classList.add('dragover');
@@ -46,13 +44,11 @@ const inicializarDragAndDrop = () => {
         }, false);
     });
 
-    // Capturar el archivo al soltarlo (Drop)
     uploadArea.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
         const files = dt.files;
-        
         if (files.length) {
-            fileInput.files = files; // Sincroniza el input nativo
+            fileInput.files = files;
             procesarArchivo(files[0]);
         }
     });
@@ -63,20 +59,15 @@ const inicializarDragAndDrop = () => {
         }
     });
 
-    // Validación y actualización del DOM para el Drag & Drop
     function procesarArchivo(file) {
         const formatosValidos = ['image/jpeg', 'image/png'];
-        
         if (!formatosValidos.includes(file.type)) {
             alert('Formato inválido. Por favor, selecciona un archivo PNG o JPG.');
-            fileInput.value = ''; 
+            fileInput.value = '';
             return;
         }
-
-        // Actualiza UI para mostrar éxito (sin borrar la imagen de preview que maneja el otro módulo)
         const icon = uploadArea.querySelector('i');
         const text = uploadArea.querySelector('p');
-        
         if (icon) icon.className = "bi bi-check-circle-fill";
         if (icon) icon.style.color = "var(--success)";
         if (text) text.textContent = file.name;
@@ -113,7 +104,6 @@ const inicializarAsistenteIA = () => {
             mostrarError('descEvento', 'Escribe algo primero para que la IA lo mejore.');
             return;
         }
-        
         const textoOriginal = btnMejorarDesc.innerHTML;
         btnMejorarDesc.innerHTML = '<i class="bi bi-hourglass-split"></i> Procesando...';
         btnMejorarDesc.disabled = true;
@@ -141,23 +131,84 @@ const inicializarFechasInteligentes = () => {
 };
 
 
+// MODO EDICIÓN: rellenar el formulario si venimos a editar un evento existente
+
+const cargarDatosEdicion = () => {
+    const params = new URLSearchParams(window.location.search);
+    const indice = params.get('editar');
+
+    if (indice === null) return; // modo creación normal
+
+    const eventos = obtenerEventos();
+    const evento = eventos[parseInt(indice)];
+    if (!evento) return;
+
+    // Cambiar título y breadcrumb
+    const titulo = document.querySelector('.headerTitle h1');
+    if (titulo) titulo.textContent = 'Editar Evento';
+    const breadcrumbActual = document.querySelector('.breadcrumb-item[aria-current="page"]');
+    if (breadcrumbActual) breadcrumbActual.textContent = 'Editar Evento';
+
+    // Rellenar campos
+    document.getElementById('nombreEvento').value = evento.nombre || '';
+    document.getElementById('categoriaEvento').value = evento.categoria || '';
+    document.getElementById('cupoEvento').value = evento.cupoMax || '';
+    document.getElementById('descEvento').value = evento.descripcion || '';
+    document.getElementById('fechaInicioEvento').value = evento.fechaInicio || '';
+    document.getElementById('fechaFinEvento').value = evento.fechaFin || '';
+    document.getElementById('lugarEvento').value = evento.lugar || '';
+    document.getElementById('horaInicio').value = evento.horaInicio || '';
+    document.getElementById('horaFin').value = evento.horaFin || '';
+    document.getElementById('responsableEvento').value = evento.responsable || '';
+
+    if (evento.tipoEntrada) {
+        const radioTipo = document.querySelector(`input[name="tipoEntrada"][value="${evento.tipoEntrada}"]`);
+        if (radioTipo) radioTipo.checked = true;
+    }
+    if (evento.visibilidad) {
+        const radioVis = document.querySelector(`input[name="visibilidad"][value="${evento.visibilidad}"]`);
+        if (radioVis) radioVis.checked = true;
+    }
+
+    // Guardar el índice en el formulario para usarlo al guardar
+    const form = document.getElementById('formCrearEvento');
+    if (form) form.dataset.indiceEdicion = indice;
+
+    // Cambiar texto del botón publicar
+    const btnPublicar = document.getElementById('publicarEvento');
+    if (btnPublicar) btnPublicar.textContent = 'Guardar Cambios';
+};
+
+
+// ALMACENAMIENTO SIMPLE EN sessionStorage
+
+const obtenerEventos = () => {
+    const datos = sessionStorage.getItem('eventos');
+    return datos ? JSON.parse(datos) : [];
+};
+
+const guardarEventos = (eventos) => {
+    sessionStorage.setItem('eventos', JSON.stringify(eventos));
+};
+
+
 // VALIDACION DEL FORMULARIO
 
 const validarFormularioEvento = (e) => {
     e.preventDefault();
-    limpiarErrores(); 
+    limpiarErrores();
     let esValido = true;
 
-    // 1. Validar campos obligatorios que están vacíos
+    // 1. Campos obligatorios
     const camposRequeridos = [
-        { id: 'nombreEvento', mensaje: 'El nombre del evento es obligatorio.' },
-        { id: 'categoriaEvento', mensaje: 'Debe seleccionar una categoría.' },
-        { id: 'descEvento', mensaje: 'La descripción es obligatoria.' },
+        { id: 'nombreEvento',      mensaje: 'El nombre del evento es obligatorio.' },
+        { id: 'categoriaEvento',   mensaje: 'Debe seleccionar una categoría.' },
+        { id: 'descEvento',        mensaje: 'La descripción es obligatoria.' },
         { id: 'fechaInicioEvento', mensaje: 'Debe seleccionar una fecha de inicio.' },
-        { id: 'fechaFinEvento', mensaje: 'Debe seleccionar una fecha de finalización.' },
-        { id: 'lugarEvento', mensaje: 'El lugar es obligatorio.' },
-        { id: 'horaInicio', mensaje: 'Establezca una hora de inicio.' },
-        { id: 'horaFin', mensaje: 'Establezca una hora de finalización.' },
+        { id: 'fechaFinEvento',    mensaje: 'Debe seleccionar una fecha de finalización.' },
+        { id: 'lugarEvento',       mensaje: 'El lugar es obligatorio.' },
+        { id: 'horaInicio',        mensaje: 'Establezca una hora de inicio.' },
+        { id: 'horaFin',           mensaje: 'Establezca una hora de finalización.' },
         { id: 'responsableEvento', mensaje: 'El nombre del responsable es obligatorio.' }
     ];
 
@@ -169,7 +220,7 @@ const validarFormularioEvento = (e) => {
         }
     });
 
-    // 2 Validación de Radio Buttons
+    // 2. Radio buttons
     const tipoEntrada = document.querySelector('input[name="tipoEntrada"]:checked');
     if (!tipoEntrada) {
         mostrarError('tipoEntrada', 'Debe seleccionar el tipo de entrada.');
@@ -182,7 +233,7 @@ const validarFormularioEvento = (e) => {
         esValido = false;
     }
 
-    // 3. Validación de Cupo
+    // 3. Cupo
     const cupoEvento = document.getElementById('cupoEvento');
     if (cupoEvento) {
         if (cupoEvento.value.trim() === '') {
@@ -194,10 +245,9 @@ const validarFormularioEvento = (e) => {
         }
     }
 
-    // 4. Validación de Lógica de Horas
+    // 4. Lógica de horas
     const horaInicio = document.getElementById('horaInicio');
     const horaFin = document.getElementById('horaFin');
-    
     if (horaInicio && horaFin && horaInicio.value.trim() !== '' && horaFin.value.trim() !== '') {
         if (horaInicio.value >= horaFin.value) {
             mostrarError('horaFin', 'La hora de finalización debe ser posterior a la de inicio.');
@@ -205,57 +255,89 @@ const validarFormularioEvento = (e) => {
         }
     }
 
-    // 5. Validación de Lógica de Fechas
+    // 5. Lógica de fechas
     const fechaInicio = document.getElementById('fechaInicioEvento');
     const fechaFin = document.getElementById('fechaFinEvento');
-
     if (fechaInicio && fechaFin && fechaInicio.value.trim() !== '' && fechaFin.value.trim() !== '') {
         const dateInicio = new Date(fechaInicio.value + 'T00:00:00');
         const dateFin = new Date(fechaFin.value + 'T00:00:00');
 
-        // La fecha final no puede ser antes de la de inicio
         if (dateFin < dateInicio) {
             mostrarError('fechaFinEvento', 'La fecha final no puede ser anterior a la de inicio.');
             esValido = false;
         }
 
-        // Evaluar si la fecha final ya pasó
         const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0); 
-
+        hoy.setHours(0, 0, 0, 0);
         if (dateFin < hoy && esValido) {
             const confirmacion = confirm('La fecha de finalización ya pasó. Este evento se registrará como histórico (Finalizado). ¿Desea continuar?');
-            
             if (!confirmacion) {
                 mostrarError('fechaFinEvento', 'Cambie la fecha para publicar el evento de forma activa.');
                 esValido = false;
-            } else {
-                console.log('El administrador ha confirmado la creación de un evento histórico.');
             }
         }
     }
 
-    // 6. Final
+    // 6. Si todo es válido, guardar y redirigir
     if (esValido) {
-        console.log('Formulario válido. Todos los campos están correctos.');
-        alert('¡Evento creado exitosamente!');
-        // limpiar el formulario
-        document.getElementById('formCrearEvento').reset(); 
+        const form = document.getElementById('formCrearEvento');
+        const cupoMax = parseInt(document.getElementById('cupoEvento').value);
+
+        const nuevoEvento = {
+            nombre:      document.getElementById('nombreEvento').value.trim(),
+            categoria:   document.getElementById('categoriaEvento').value,
+            cupoMax:     cupoMax,
+            cupoActual:  0,
+            descripcion: document.getElementById('descEvento').value.trim(),
+            fechaInicio: document.getElementById('fechaInicioEvento').value,
+            fechaFin:    document.getElementById('fechaFinEvento').value,
+            lugar:       document.getElementById('lugarEvento').value.trim(),
+            horaInicio:  document.getElementById('horaInicio').value,
+            horaFin:     document.getElementById('horaFin').value,
+            responsable: document.getElementById('responsableEvento').value.trim(),
+            tipoEntrada: document.querySelector('input[name="tipoEntrada"]:checked').value,
+            visibilidad: document.querySelector('input[name="visibilidad"]:checked').value,
+            estado:      'disponible'
+        };
+
+        const eventos = obtenerEventos();
+
+        // Si estamos editando, reemplazamos el evento; si no, lo agregamos
+        if (form.dataset.indiceEdicion !== undefined && form.dataset.indiceEdicion !== '') {
+            const indice = parseInt(form.dataset.indiceEdicion);
+            // Conservar el estado y cupo actual del evento original
+            nuevoEvento.estado = eventos[indice].estado;
+            nuevoEvento.cupoActual = eventos[indice].cupoActual;
+            eventos[indice] = nuevoEvento;
+        } else {
+            nuevoEvento.id = 'EV-' + String(eventos.length + 1).padStart(3, '0');
+            eventos.push(nuevoEvento);
+        }
+
+        guardarEventos(eventos);
+        window.location.href = 'admin-eventos.html';
     }
 };
 
 
 // INICIALIZADOR PRINCIPAL
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar todos los módulos independientes
     inicializarDragAndDrop();
     inicializarPreviewImagen();
     inicializarAsistenteIA();
     inicializarFechasInteligentes();
+    cargarDatosEdicion();
 
-    // Asignar evento de validación al formulario
     const form = document.getElementById('formCrearEvento');
     if (form) {
         form.addEventListener('submit', validarFormularioEvento);
+    }
+
+    // Botón cancelar regresa a la lista
+    const btnCancelar = document.getElementById('newEventCancel');
+    if (btnCancelar) {
+        btnCancelar.addEventListener('click', () => {
+            window.location.href = 'admin-eventos.html';
+        });
     }
 });
