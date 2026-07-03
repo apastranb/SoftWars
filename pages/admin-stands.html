@@ -80,7 +80,10 @@
                         <option value="">Empresa</option>
                     </select>
                 </div>
-                <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
+                <div class="stands-actions">
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarStands">Eliminar Stands</button>
+                    <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
+                </div>
             </div>
 
             <!-- Tabla -->
@@ -88,6 +91,7 @@
                 <table class="stands-table">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllStands" title="Seleccionar todos"></th>
                             <th>ID</th>
                             <th>Nombre Stand</th>
                             <th>Descripción</th>

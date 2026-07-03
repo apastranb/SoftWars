@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay     = document.getElementById('modalCrearStand');
     const modalTitulo      = document.getElementById('modalStandTitulo');
     const btnCrearStand    = document.getElementById('btnCrearStand');
+    const btnEliminarBulk  = document.getElementById('btnEliminarStands');
     const btnCerrarModal   = document.getElementById('btnCerrarModal');
     const btnCancelarModal = document.getElementById('btnCancelarModal');
     const btnGuardar       = document.getElementById('btnGuardarStand');
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput      = document.getElementById('searchStandInput');
     const filterEstado     = document.getElementById('filterEstadoStand');
     const filterEmpresa    = document.getElementById('filterEmpresaStand');
+    const selectAll        = document.getElementById('selectAllStands');
 
     // Inputs del modal
     const inputNombre    = document.getElementById('inputNombreStand');
@@ -158,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '';
 
         if (stands.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:#6b7280;">No se encontraron stands.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:#6b7280;">No se encontraron stands.</td></tr>`;
+            selectAll.checked = false;
             return;
         }
 
@@ -168,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td><input type="checkbox" class="stand-check" data-id="${stand.id}"></td>
                 <td>${stand.id}</td>
                 <td>${stand.nombre}</td>
                 <td>${stand.descripcion}</td>
@@ -191,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.querySelectorAll('.btn-eliminar-stand').forEach(btn => {
             btn.addEventListener('click', () => eliminarStand(btn.dataset.id));
         });
+
+        // Sync checkbox "seleccionar todos"
+        selectAll.checked = false;
     }
 
     // ── Crear stand ─────────────────────────────────────────────────────────
@@ -293,6 +300,27 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', renderTabla);
     filterEstado.addEventListener('change', renderTabla);
     filterEmpresa.addEventListener('change', renderTabla);
+
+    // Eliminar seleccionados (botón del toolbar)
+    btnEliminarBulk.addEventListener('click', () => {
+        const seleccionados = [...tbody.querySelectorAll('.stand-check:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            alert('Seleccioná al menos un stand para eliminar.');
+            return;
+        }
+        const confirmar = confirm(`¿Eliminar ${seleccionados.length} stand(s) seleccionado(s)? Esta acción no se puede deshacer.`);
+        if (!confirmar) return;
+        window.db.stands = window.db.stands.filter(s => !seleccionados.includes(s.id));
+        selectAll.checked = false;
+        renderTabla();
+    });
+
+    // Checkbox "seleccionar todos"
+    selectAll.addEventListener('change', () => {
+        tbody.querySelectorAll('.stand-check').forEach(cb => {
+            cb.checked = selectAll.checked;
+        });
+    });
 
     // ── Render inicial ──────────────────────────────────────────────────────
     renderTabla();
