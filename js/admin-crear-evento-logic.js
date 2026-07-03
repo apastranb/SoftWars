@@ -328,6 +328,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Cerrar sesión
+    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('sesionActiva');
+        localStorage.removeItem('sesionEmail');
+        localStorage.removeItem('sesionNombre');
+        localStorage.removeItem('sesionRol');
+        window.location.href = 'login.html';
+    });
+
     inicializarDragAndDrop();
     inicializarPreviewImagen();
     inicializarAsistenteIA();

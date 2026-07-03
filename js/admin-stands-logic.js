@@ -6,6 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Cerrar sesión
+    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('sesionActiva');
+        localStorage.removeItem('sesionEmail');
+        localStorage.removeItem('sesionNombre');
+        localStorage.removeItem('sesionRol');
+        window.location.href = 'login.html';
+    });
+
     // ── Referencias al DOM ──────────────────────────────────────────────────
     const modalOverlay     = document.getElementById('modalCrearStand');
     const modalTitulo      = document.getElementById('modalStandTitulo');

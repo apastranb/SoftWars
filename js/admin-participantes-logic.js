@@ -75,6 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('headerUserName').textContent = localStorage.getItem('sesionNombre') || 'Administrador';
     document.getElementById('headerUserRol').textContent  = localStorage.getItem('sesionRol')    || '';
 
+    // Cerrar sesión
+    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('sesionActiva');
+        localStorage.removeItem('sesionEmail');
+        localStorage.removeItem('sesionNombre');
+        localStorage.removeItem('sesionRol');
+        window.location.href = 'login.html';
+    });
+
     renderizarTablaParticipantes();
 
     // Filtros en tiempo real
