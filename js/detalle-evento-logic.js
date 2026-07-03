@@ -142,9 +142,47 @@ const validarInscripcion = (e) => {
 
     // 5. Final
     if (esValido) {
-        console.log("Inscripción validada correctamente.");
-        alert("¡Inscripción exitosa! Te hemos enviado un correo con los detalles.");
-        // limpiar el formulario
+        const nombre   = document.getElementById('nombreVisitante').value.trim();
+        const cedula   = document.getElementById('cedulaVisitante').value.trim();
+        const email    = document.getElementById('emailVisitante').value.trim();
+        const telefono = document.getElementById('telefonoVisitante').value.trim();
+        const edad     = parseInt(document.getElementById('edadVisitante').value.trim());
+        const carrera  = document.getElementById('carreraVisitante').value.trim();
+        const actividadesSeleccionadas = Array.from(
+            document.querySelectorAll('input[name="actividades_seleccionadas"]:checked')
+        ).map(cb => cb.value);
+
+        // Buscar si ya existe una inscripción activa con el mismo correo
+        const inscripcionExistente = window.db.participantes.find(
+            p => p.estado === 'Activo' && p.correo.toLowerCase() === email.toLowerCase()
+        );
+
+        if (inscripcionExistente) {
+            // Agregar actividades nuevas a la inscripción existente
+            actividadesSeleccionadas.forEach(actId => {
+                if (!inscripcionExistente.actividades.includes(actId)) {
+                    inscripcionExistente.actividades.push(actId);
+                }
+            });
+            alert('¡Ya tenías una inscripción activa! Se agregaron las nuevas actividades a tu registro.');
+        } else {
+            // Registrar nueva inscripción
+            const nuevoId = 'P-' + String(window.db.participantes.length + 1).padStart(3, '0');
+            window.db.participantes.push({
+                id: nuevoId,
+                idDocumento: cedula,
+                nombreCompleto: nombre,
+                correo: email,
+                telefono: telefono,
+                edad: edad,
+                carrera: carrera,
+                actividades: actividadesSeleccionadas,
+                estado: 'Activo',
+                fechaInscripcion: new Date().toISOString().slice(0, 10)
+            });
+            alert('¡Inscripción exitosa! Te hemos enviado un correo con los detalles.');
+        }
+
         document.getElementById('inscribirVisitante').reset();
     }
 };
