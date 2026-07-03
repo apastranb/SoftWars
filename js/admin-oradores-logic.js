@@ -117,30 +117,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const telRegex   = /^\d{4}-?\d{4}$/;
 
+        // Obligatorios: nombre y especialidad
         if (!inputNombre.value.trim()) {
             mostrarError(inputNombre, 'El nombre es requerido.');
-            valido = false;
-        }
-        if (!emailRegex.test(inputCorreo.value.trim())) {
-            mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
-            valido = false;
-        }
-        if (!telRegex.test(inputTelefono.value.trim())) {
-            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
             valido = false;
         }
         if (!inputEspecialidad.value.trim()) {
             mostrarError(inputEspecialidad, 'La profesión / especialidad es requerida.');
             valido = false;
         }
-        if (!inputEmpresa.value.trim()) {
-            mostrarError(inputEmpresa, 'La empresa es requerida.');
+
+        // Opcionales con formato: solo valida si el usuario ingresó algo
+        if (inputCorreo.value.trim() && !emailRegex.test(inputCorreo.value.trim())) {
+            mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (!inputBiografia.value.trim()) {
-            mostrarError(inputBiografia, 'La biografía es requerida.');
+        if (inputTelefono.value.trim() && !telRegex.test(inputTelefono.value.trim())) {
+            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
             valido = false;
         }
+
         return valido;
     }
 
