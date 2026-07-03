@@ -126,3 +126,41 @@
 .pago-btn:hover {
     background-color: var(--blue-800);
 }
+
+/* ===== TÍTULO ===== */
+.pago-titulo {
+    text-align: center;
+    color: var(--blue-800);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+.pago-error {
+    color: #ef4444;
+    font-size: 0.8rem;
+    min-height: 1rem;
+    display: block;
+}
+
+/* ===== SELECT DE ACTIVIDAD ===== */
+#pagoActividad {
+    border: 1px solid var(--gray-300);
+    border-radius: 4px;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.95rem;
+    color: var(--blue-800);
+    outline: none;
+    cursor: pointer;
+    background-color: var(--white);
+    transition: border-color 0.2s;
+}
+
+#pagoActividad:focus {
+    border-color: var(--blue-500);
+}
+
+/* Input con error */
+.input-invalido {
+    border-color: #ef4444 !important;
+}

@@ -18,16 +18,28 @@
                 <span>&#10095;</span>
             </div>
 
+            <h2 class="pago-titulo">Datos de Pago</h2>
+
+            <!-- Actividad -->
+            <div class="pago-field">
+                <label for="pagoActividad">Actividad:</label>
+                <select id="pagoActividad">
+                    <option value="">Seleccionar actividad...</option>
+                </select>
+            </div>
+
             <!-- Número de tarjeta -->
             <div class="pago-field">
-                <label>Número de tarjeta:</label>
-                <input type="text" placeholder="">
+                <label for="pagoNumTarjeta">Número de tarjeta:</label>
+                <input type="text" id="pagoNumTarjeta" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number">
+                <span class="pago-error" id="errorNumTarjeta"></span>
             </div>
 
             <!-- Nombre -->
             <div class="pago-field">
-                <label>Nombre (como figura en la tarjeta):</label>
-                <input type="text" placeholder="">
+                <label for="pagoNombre">Nombre (como figura en la tarjeta):</label>
+                <input type="text" id="pagoNombre" placeholder="Juan Pérez" autocomplete="cc-name">
+                <span class="pago-error" id="errorNombre"></span>
             </div>
 
             <!-- Vencimiento + CVV -->
@@ -35,43 +47,46 @@
                 <div class="pago-field">
                     <label>Vencimiento:</label>
                     <div class="pago-expiry">
-                        <select>
-                            <option>01</option>
-                            <option>02</option>
-                            <option>03</option>
-                            <option>04</option>
-                            <option>05</option>
-                            <option>06</option>
-                            <option>07</option>
-                            <option>08</option>
-                            <option>09</option>
-                            <option selected>10</option>
-                            <option>11</option>
-                            <option>12</option>
+                        <select id="pagoMes">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10" selected>10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
                         </select>
-                        <select>
-                            <option>2024</option>
-                            <option>2025</option>
-                            <option>2026</option>
-                            <option>2027</option>
-                            <option>2028</option>
-                            <option>2029</option>
-                            <option selected>2020</option>
+                        <select id="pagoAnio">
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                            <option value="2031">2031</option>
                         </select>
                     </div>
+                    <span class="pago-error" id="errorVencimiento"></span>
                 </div>
 
                 <div class="pago-field pago-cvv">
-                    <label>Código de verificación:</label>
-                    <input type="text" placeholder="CVV">
+                    <label for="pagoCVV">Código de seguridad:</label>
+                    <input type="text" id="pagoCVV" placeholder="CVV" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+                    <span class="pago-error" id="errorCVV"></span>
                 </div>
             </div>
 
             <!-- Botón confirmar -->
-            <button class="pago-btn">CONFIRMAR</button>
+            <button class="pago-btn" id="btnConfirmarPago">CONFIRMAR</button>
 
         </div>
     </div>
 
+    <script src="../js/data-store.js"></script>
+    <script src="../js/pago-logic.js"></script>
 </body>
 </html>
