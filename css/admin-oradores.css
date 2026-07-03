@@ -48,7 +48,7 @@
 /* ===== TABLA (igual a admin-stands) ===== */
 .oradores-table-wrapper {
     background-color: var(--white);
-    border-radius: 12px;
+    border-radius: 0;
     border: 1px solid var(--blue-200, #bfdbfe);
     overflow-x: auto;
 }
