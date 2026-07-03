@@ -52,22 +52,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** Muestra mensaje de error bajo un input */
-    function mostrarError(idCampo, mensaje) {
-        const span = document.getElementById(`error-${idCampo}`);
-        if (span) {
-            span.textContent = mensaje;
-            span.classList.add('form__error-message--active');
+    function mostrarError(input, mensaje) {
+        input.style.borderColor = '#ef4444';
+        let span = input.nextElementSibling;
+        if (!span || !span.classList.contains('input-error')) {
+            span = document.createElement('span');
+            span.classList.add('input-error');
+            span.style.cssText = 'color:#ef4444;font-size:0.8rem;margin-top:2px;';
+            input.after(span);
         }
+        span.textContent = mensaje;
     }
 
     /** Limpia todos los errores del modal */
     function limpiarErrores() {
-        document.querySelectorAll('#modalCrearStand .form__error-message').forEach(span => {
-            span.classList.remove('form__error-message--active');
-            span.textContent = '';
-        });
         [inputNombre, inputDesc, inputEncargado, inputEmpresa, inputCorreo, inputTelefono].forEach(inp => {
             inp.style.borderColor = '';
+            const span = inp.nextElementSibling;
+            if (span && span.classList.contains('input-error')) span.remove();
         });
     }
 
@@ -76,32 +78,30 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
         let valido = true;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const telRegex   = /^\d{4}-\d{4}$/;
 
         if (!inputNombre.value.trim()) {
-            mostrarError('inputNombreStand', 'El nombre del stand es requerido.');
+            mostrarError(inputNombre, 'El nombre del stand es requerido.');
             valido = false;
         }
         if (!inputDesc.value.trim()) {
-            mostrarError('inputDescStand', 'La descripción es requerida.');
+            mostrarError(inputDesc, 'La descripción es requerida.');
             valido = false;
         }
         if (!inputEncargado.value.trim()) {
-            mostrarError('inputEncargadoStand', 'El nombre del encargado es requerido.');
+            mostrarError(inputEncargado, 'El nombre del encargado es requerido.');
             valido = false;
         }
         if (!inputEmpresa.value.trim()) {
-            mostrarError('inputEmpresaStand', 'La empresa es requerida.');
+            mostrarError(inputEmpresa, 'La empresa es requerida.');
             valido = false;
         }
-        if (inputCorreo.value.trim() === '') {
-            mostrarError('inputCorreoStand', 'El correo es requerido.');
-            valido = false;
-        } else if (!emailRegex.test(inputCorreo.value.trim())) {
-            mostrarError('inputCorreoStand', 'Ingrese un correo válido (ej. usuario@empresa.com).');
+        if (!emailRegex.test(inputCorreo.value.trim())) {
+            mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (!validaciones.validarTelefono(inputTelefono.value.trim())) {
-            mostrarError('inputTelefonoStand', 'El teléfono debe tener 8 dígitos (ej. 8888-0001).');
+        if (!telRegex.test(inputTelefono.value.trim())) {
+            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
             valido = false;
         }
 
@@ -130,24 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /** Actualiza las opciones del filtro de Empresa con los valores únicos del db */
-    function actualizarFiltroEmpresas() {
-        const empresaActual = filterEmpresa.value;
-        const empresas = [...new Set(window.db.stands.map(s => s.empresa))].sort();
-
-        filterEmpresa.innerHTML = '<option value="">Empresa</option>';
-        empresas.forEach(emp => {
-            const opt = document.createElement('option');
-            opt.value = emp;
-            opt.textContent = emp;
-            if (emp === empresaActual) opt.selected = true;
-            filterEmpresa.appendChild(opt);
-        });
-    }
-
     /** Renderiza las filas en la tabla */
     function renderTabla() {
-        actualizarFiltroEmpresas();
         const stands = obtenerStandsFiltrados();
         tbody.innerHTML = '';
 

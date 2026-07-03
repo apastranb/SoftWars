@@ -77,6 +77,11 @@
 
                     <select class="filter-select" id="filterEmpresaStand">
                         <option value="">Empresa</option>
+                        <option value="Tech Corp">Tech Corp</option>
+                        <option value="RoboTech">RoboTech</option>
+                        <option value="AI Solutions">AI Solutions</option>
+                        <option value="SecureNet">SecureNet</option>
+                        <option value="WebDev Co.">WebDev Co.</option>
                     </select>
                 </div>
                 <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
@@ -118,32 +123,26 @@
                 <div class="modal-field">
                     <label for="inputNombreStand">Nombre del Stand</label>
                     <input type="text" id="inputNombreStand" placeholder="Ej. Stand Alpha">
-                    <span class="form__error-message" id="error-inputNombreStand"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputDescStand">Descripción</label>
                     <input type="text" id="inputDescStand" placeholder="Breve descripción del stand">
-                    <span class="form__error-message" id="error-inputDescStand"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputEncargadoStand">Nombre del Encargado</label>
                     <input type="text" id="inputEncargadoStand" placeholder="Nombre completo">
-                    <span class="form__error-message" id="error-inputEncargadoStand"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputEmpresaStand">Empresa</label>
                     <input type="text" id="inputEmpresaStand" placeholder="Nombre de la empresa">
-                    <span class="form__error-message" id="error-inputEmpresaStand"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputCorreoStand">Correo del Encargado</label>
                     <input type="email" id="inputCorreoStand" placeholder="correo@empresa.com">
-                    <span class="form__error-message" id="error-inputCorreoStand"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputTelefonoStand">Teléfono del Encargado</label>
                     <input type="text" id="inputTelefonoStand" placeholder="0000-0000">
-                    <span class="form__error-message" id="error-inputTelefonoStand"></span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -154,8 +153,8 @@
     </div>
 
     <script src="../js/data-store.js"></script>
-    <script src="../js/validaciones.js"></script>
     <script src="../js/admin-stands-logic.js"></script>
+    <script src="../js/validaciones.js"></script>
 
 </body>
 
