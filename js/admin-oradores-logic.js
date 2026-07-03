@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = String(hoy.getDate()).padStart(2, '0');
         const m = String(hoy.getMonth() + 1).padStart(2, '0');
         const y = hoy.getFullYear();
-        return `${d}/${m}/${y}`;
+        return `${y}/${m}/${d}`;
     }
 
     function abrirModal()  { modalOverlay.classList.add('active'); }
