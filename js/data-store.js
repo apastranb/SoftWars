@@ -66,3 +66,12 @@ if (!window.db.stands) {
         { id: "S-005", nombre: "Stand Epsilon", descripcion: "Desarrollo web",           encargado: "Luis Vargas",   empresa: "WebDev Co.",   correo: "luis@web.com",    telefono: "8888-0005", estado: "activo" }
     ];
 }
+
+// Garantizar que oradores siempre exista
+if (!window.db.oradores) {
+    window.db.oradores = [
+        { id: "OR-001", nombre: "Ana Rodríguez",  correo: "ana@cenfotec.ac.cr", telefono: "8888-0001", especialidad: "Ingeniería de Software", empresa: "Tech Corp",    biografia: "Especialista en arquitectura de software con 10 años de experiencia.", foto: null, eventoId: "EV-001", estado: "activo",   fechaRegistro: "2026-06-01" },
+        { id: "OR-002", nombre: "Carlos Mora",     correo: "carlos@ai.com",      telefono: "8888-0002", especialidad: "Inteligencia Artificial", empresa: "AI Solutions", biografia: "Investigador en modelos de aprendizaje profundo y NLP.",              foto: null, eventoId: "EV-002", estado: "inactivo", fechaRegistro: "2026-06-05" },
+        { id: "OR-003", nombre: "María López",     correo: "maria@secure.com",   telefono: "8888-0003", especialidad: "Ciberseguridad",          empresa: "SecureNet",    biografia: "Experta en seguridad ofensiva y defensa de infraestructuras críticas.", foto: null, eventoId: "EV-001", estado: "activo",   fechaRegistro: "2026-06-10" }
+    ];
+}

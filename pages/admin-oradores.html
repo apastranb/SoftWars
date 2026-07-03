@@ -75,18 +75,10 @@
 
                     <select class="filter-select" id="filterEspecialidad">
                         <option value="">Profesión / Especialidad</option>
-                        <option value="ingenieria">Ingeniería de Software</option>
-                        <option value="ia">Inteligencia Artificial</option>
-                        <option value="ciberseguridad">Ciberseguridad</option>
-                        <option value="datos">Ciencia de Datos</option>
-                        <option value="redes">Redes y Telecomunicaciones</option>
                     </select>
 
                     <select class="filter-select" id="filterEvento">
                         <option value="">Eventos / Actividades</option>
-                        <option value="ev001">Congreso Tech 2026</option>
-                        <option value="ev002">Hackathon Cenfotec</option>
-                        <option value="ev003">Feria de Innovación</option>
                     </select>
                 </div>
                 <div class="oradores-actions">
@@ -117,57 +109,7 @@
                         </tr>
                     </thead>
                     <tbody id="adminOradoresTableBody">
-                        <tr>
-                            <td><input type="checkbox" class="orador-check"></td>
-                            <td>01/06/2026</td>
-                            <td>Ana Rodríguez</td>
-                            <td>ana@cenfotec.ac.cr</td>
-                            <td>8888-0001</td>
-                            <td>Ingeniería de Software</td>
-                            <td>Tech Corp</td>
-                            <td>Especialista en arquitectura de software con 10 años de experiencia.</td>
-                            <td><img src="../img/img-placeholder.png" alt="Foto Ana" class="orador-foto"></td>
-                            <td>Congreso Tech 2026</td>
-                            <td><span class="badge badge-active">Activo</span></td>
-                            <td>
-                                <button class="eventsAdminBtnSecondary">Editar</button>
-                                <button class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="orador-check"></td>
-                            <td>05/06/2026</td>
-                            <td>Carlos Mora</td>
-                            <td>carlos@ai.com</td>
-                            <td>8888-0002</td>
-                            <td>Inteligencia Artificial</td>
-                            <td>AI Solutions</td>
-                            <td>Investigador en modelos de aprendizaje profundo y NLP.</td>
-                            <td><img src="../img/img-placeholder.png" alt="Foto Carlos" class="orador-foto"></td>
-                            <td>Hackathon Cenfotec</td>
-                            <td><span class="badge badge-inactive">Inactivo</span></td>
-                            <td>
-                                <button class="eventsAdminBtnSecondary">Editar</button>
-                                <button class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="orador-check"></td>
-                            <td>10/06/2026</td>
-                            <td>María López</td>
-                            <td>maria@secure.com</td>
-                            <td>8888-0003</td>
-                            <td>Ciberseguridad</td>
-                            <td>SecureNet</td>
-                            <td>Experta en seguridad ofensiva y defensa de infraestructuras críticas.</td>
-                            <td><img src="../img/img-placeholder.png" alt="Foto María" class="orador-foto"></td>
-                            <td>Feria de Innovación</td>
-                            <td><span class="badge badge-active">Activo</span></td>
-                            <td>
-                                <button class="eventsAdminBtnSecondary">Editar</button>
-                                <button class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
-                            </td>
-                        </tr>
+                        <!-- Renderizado dinámicamente por JS -->
                     </tbody>
                 </table>
             </div>
@@ -175,50 +117,63 @@
         </main>
     </div>
 
-    <!-- MODAL REGISTRAR PRESENTADOR -->
+    <!-- MODAL REGISTRAR / EDITAR PRESENTADOR -->
     <div class="modal-overlay" id="modalCrearOrador">
         <div class="modal">
             <div class="modal-header">
-                <h2>Registrar Presentador</h2>
+                <h2 id="modalOradorTitulo">Registrar Presentador</h2>
                 <button class="modal-close" id="btnCerrarModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-field">
-                    <label>Nombre Completo</label>
-                    <input type="text" placeholder="Nombre del presentador">
+                    <label for="inputNombreOrador">Nombre Completo</label>
+                    <input type="text" id="inputNombreOrador" placeholder="Nombre del presentador">
                 </div>
                 <div class="modal-field">
-                    <label>Correo Electrónico</label>
-                    <input type="email" placeholder="correo@ejemplo.com">
+                    <label for="inputCorreoOrador">Correo Electrónico</label>
+                    <input type="email" id="inputCorreoOrador" placeholder="correo@ejemplo.com">
                 </div>
                 <div class="modal-field">
-                    <label>Teléfono</label>
-                    <input type="text" placeholder="0000-0000">
+                    <label for="inputTelefonoOrador">Teléfono</label>
+                    <input type="text" id="inputTelefonoOrador" placeholder="0000-0000">
                 </div>
                 <div class="modal-field">
-                    <label>Profesión / Especialidad</label>
-                    <input type="text" placeholder="Ej. Ingeniería de Software">
+                    <label for="inputEspecialidadOrador">Profesión / Especialidad</label>
+                    <input type="text" id="inputEspecialidadOrador" placeholder="Ej. Ingeniería de Software">
                 </div>
                 <div class="modal-field">
-                    <label>Empresa</label>
-                    <input type="text" placeholder="Nombre de la empresa">
+                    <label for="inputEmpresaOrador">Empresa</label>
+                    <input type="text" id="inputEmpresaOrador" placeholder="Nombre de la empresa">
                 </div>
                 <div class="modal-field">
-                    <label>Biografía</label>
-                    <input type="text" placeholder="Breve descripción del presentador">
+                    <label for="inputBiografiaOrador">Biografía</label>
+                    <input type="text" id="inputBiografiaOrador" placeholder="Breve descripción del presentador">
                 </div>
                 <div class="modal-field">
-                    <label>Fotografía (URL)</label>
-                    <input type="text" placeholder="https://...">
+                    <label>Fotografía</label>
+                    <div class="foto-upload-area" id="fotoUploadArea">
+                        <img id="fotoPreview" src="../img/img-placeholder.png" alt="Vista previa" class="orador-foto-preview">
+                        <label for="inputFotoOrador" class="btn-upload-foto">
+                            <i class="bi bi-upload"></i> Subir foto desde PC
+                        </label>
+                        <input type="file" id="inputFotoOrador" accept="image/*" style="display:none">
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label for="inputEventoOrador">Evento / Actividad</label>
+                    <select id="inputEventoOrador" class="filter-select" style="border-radius:50px;width:100%;padding:0.65rem 1.2rem;">
+                        <option value="">Seleccionar evento...</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn-cancelar" id="btnCancelarModal">Cancelar</button>
-                <button class="modal-btn-registrar">Registrar</button>
+                <button class="modal-btn-registrar" id="btnGuardarOrador">Registrar</button>
             </div>
         </div>
     </div>
 
+    <script src="../js/data-store.js"></script>
     <script src="../js/admin-oradores-logic.js"></script>
     <script src="../js/validaciones.js"></script>
 </body>
