@@ -61,11 +61,11 @@ window.db = window.db || {
 // Garantizar que stands siempre exista aunque el objeto ya estuviera inicializado
 if (!window.db.stands) {
     window.db.stands = [
-        { id: "S-001", nombre: "Stand Alpha",   descripcion: "Tecnología e innovación",  encargado: "Juan Pérez",    empresa: "Tech Corp",    correo: "juan@tech.com",   telefono: "8888-0001", estado: "activo" },
-        { id: "S-002", nombre: "Stand Beta",    descripcion: "Robótica y manufactura",   encargado: "María López",   empresa: "RoboTech",     correo: "maria@robo.com",  telefono: "8888-0002", estado: "inactivo" },
-        { id: "S-003", nombre: "Stand Gamma",   descripcion: "Inteligencia Artificial",  encargado: "Carlos Mora",   empresa: "AI Solutions", correo: "carlos@ai.com",   telefono: "8888-0003", estado: "activo" },
-        { id: "S-004", nombre: "Stand Delta",   descripcion: "Ciberseguridad",           encargado: "Ana Rodríguez", empresa: "SecureNet",    correo: "ana@secure.com",  telefono: "8888-0004", estado: "inactivo" },
-        { id: "S-005", nombre: "Stand Epsilon", descripcion: "Desarrollo web",           encargado: "Luis Vargas",   empresa: "WebDev Co.",   correo: "luis@web.com",    telefono: "8888-0005", estado: "activo" }
+        { id: "S-001", nombre: "Stand Alpha",   categoria: "Tecnología",            descripcion: "Tecnología e innovación",  encargado: "Juan Pérez",    empresa: "Tech Corp",    correo: "juan@tech.com",   telefono: "8888-0001", estado: "activo" },
+        { id: "S-002", nombre: "Stand Beta",    categoria: "Robótica",              descripcion: "Robótica y manufactura",   encargado: "María López",   empresa: "RoboTech",     correo: "maria@robo.com",  telefono: "8888-0002", estado: "inactivo" },
+        { id: "S-003", nombre: "Stand Gamma",   categoria: "Inteligencia Artificial", descripcion: "Inteligencia Artificial", encargado: "Carlos Mora",   empresa: "AI Solutions", correo: "carlos@ai.com",   telefono: "8888-0003", estado: "activo" },
+        { id: "S-004", nombre: "Stand Delta",   categoria: "Ciberseguridad",        descripcion: "Ciberseguridad",           encargado: "Ana Rodríguez", empresa: "SecureNet",    correo: "ana@secure.com",  telefono: "8888-0004", estado: "inactivo" },
+        { id: "S-005", nombre: "Stand Epsilon", categoria: "Desarrollo Web",        descripcion: "Desarrollo web",           encargado: "Luis Vargas",   empresa: "WebDev Co.",   correo: "luis@web.com",    telefono: "8888-0005", estado: "activo" }
     ];
 }
 

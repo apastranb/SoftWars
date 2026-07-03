@@ -76,6 +76,10 @@
                         <option value="inactivo">Inactivo</option>
                     </select>
 
+                    <select class="filter-select" id="filterCategoriaStand">
+                        <option value="">Categoría</option>
+                    </select>
+
                     <select class="filter-select" id="filterEmpresaStand">
                         <option value="">Empresa</option>
                     </select>
@@ -94,6 +98,7 @@
                             <th><input type="checkbox" id="selectAllStands" title="Seleccionar todos"></th>
                             <th>ID</th>
                             <th>Nombre Stand</th>
+                            <th>Categoría</th>
                             <th>Descripción</th>
                             <th>Nombre Encargado</th>
                             <th>Empresa</th>
@@ -123,6 +128,19 @@
                 <div class="modal-field">
                     <label for="inputNombreStand">Nombre del Stand</label>
                     <input type="text" id="inputNombreStand" placeholder="Ej. Stand Alpha">
+                </div>
+                <div class="modal-field">
+                    <label for="inputCategoriaStand">Categoría</label>
+                    <select id="inputCategoriaStand" class="filter-select" style="border-radius:8px;width:100%;padding:0.65rem 1.2rem;">
+                        <option value="">Seleccionar categoría...</option>
+                        <option value="Tecnología">Tecnología</option>
+                        <option value="Robótica">Robótica</option>
+                        <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+                        <option value="Ciberseguridad">Ciberseguridad</option>
+                        <option value="Desarrollo Web">Desarrollo Web</option>
+                        <option value="Ciencia de Datos">Ciencia de Datos</option>
+                        <option value="Otro">Otro</option>
+                    </select>
                 </div>
                 <div class="modal-field">
                     <label for="inputDescStand">Descripción</label>

@@ -31,11 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody            = document.getElementById('standsTableBody');
     const searchInput      = document.getElementById('searchStandInput');
     const filterEstado     = document.getElementById('filterEstadoStand');
+    const filterCategoria  = document.getElementById('filterCategoriaStand');
     const filterEmpresa    = document.getElementById('filterEmpresaStand');
     const selectAll        = document.getElementById('selectAllStands');
 
     // Inputs del modal
     const inputNombre    = document.getElementById('inputNombreStand');
+    const inputCategoria = document.getElementById('inputCategoriaStand');
     const inputDesc      = document.getElementById('inputDescStand');
     const inputEncargado = document.getElementById('inputEncargadoStand');
     const inputEmpresa   = document.getElementById('inputEmpresaStand');
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Limpia los campos del modal */
     function limpiarModal() {
         inputNombre.value    = '';
+        inputCategoria.value = '';
         inputDesc.value      = '';
         inputEncargado.value = '';
         inputEmpresa.value   = '';
@@ -93,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const span = inp.nextElementSibling;
             if (span && span.classList.contains('input-error')) span.remove();
         });
+        // Limpiar error del select categoría
+        inputCategoria.style.borderColor = '';
+        const spanCat = inputCategoria.nextElementSibling;
+        if (spanCat && spanCat.classList.contains('input-error')) spanCat.remove();
     }
 
     /** Valida los campos del modal. Retorna true si todo es válido */
@@ -104,6 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!inputNombre.value.trim()) {
             mostrarError(inputNombre, 'El nombre del stand es requerido.');
+            valido = false;
+        }
+        if (!inputCategoria.value) {
+            mostrarError(inputCategoria, 'La categoría es requerida.');
             valido = false;
         }
         if (!inputDesc.value.trim()) {
@@ -136,19 +147,37 @@ document.addEventListener('DOMContentLoaded', () => {
     function obtenerStandsFiltrados() {
         const busqueda = searchInput.value.trim().toLowerCase();
         const estado   = filterEstado.value;
+        const categoria = filterCategoria.value;
         const empresa  = filterEmpresa.value;
 
         return window.db.stands.filter(s => {
             const coincideBusqueda = !busqueda ||
+                s.id.toLowerCase().includes(busqueda) ||
                 s.nombre.toLowerCase().includes(busqueda) ||
                 s.encargado.toLowerCase().includes(busqueda) ||
                 s.empresa.toLowerCase().includes(busqueda) ||
-                s.correo.toLowerCase().includes(busqueda);
+                s.correo.toLowerCase().includes(busqueda) ||
+                (s.categoria || '').toLowerCase().includes(busqueda);
 
-            const coincideEstado  = !estado  || s.estado === estado;
-            const coincideEmpresa = !empresa || s.empresa === empresa;
+            const coincideEstado    = !estado    || s.estado === estado;
+            const coincideCategoria = !categoria || s.categoria === categoria;
+            const coincideEmpresa   = !empresa   || s.empresa === empresa;
 
-            return coincideBusqueda && coincideEstado && coincideEmpresa;
+            return coincideBusqueda && coincideEstado && coincideCategoria && coincideEmpresa;
+        });
+    }
+
+    /** Actualiza el filtro de categoría dinámicamente */
+    function actualizarFiltroCategorias() {
+        const actual = filterCategoria.value;
+        const cats = [...new Set(window.db.stands.map(s => s.categoria).filter(Boolean))].sort();
+        filterCategoria.innerHTML = '<option value="">Categoría</option>';
+        cats.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            if (c === actual) opt.selected = true;
+            filterCategoria.appendChild(opt);
         });
     }
 
@@ -170,11 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Renderiza las filas en la tabla */
     function renderTabla() {
         actualizarFiltroEmpresas();
+        actualizarFiltroCategorias();
         const stands = obtenerStandsFiltrados();
         tbody.innerHTML = '';
 
         if (stands.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:#6b7280;">No se encontraron stands.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:2rem;color:#6b7280;">No se encontraron stands.</td></tr>`;
             selectAll.checked = false;
             return;
         }
@@ -188,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><input type="checkbox" class="stand-check" data-id="${stand.id}"></td>
                 <td>${stand.id}</td>
                 <td>${stand.nombre}</td>
+                <td>${stand.categoria || '—'}</td>
                 <td>${stand.descripcion}</td>
                 <td>${stand.encargado}</td>
                 <td>${stand.empresa}</td>
@@ -220,21 +251,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!validarFormulario()) return;
 
         if (editandoId) {
-            // Modo editar
             const stand = window.db.stands.find(s => s.id === editandoId);
             if (stand) {
-                stand.nombre     = inputNombre.value.trim();
+                stand.nombre      = inputNombre.value.trim();
+                stand.categoria   = inputCategoria.value;
                 stand.descripcion = inputDesc.value.trim();
-                stand.encargado  = inputEncargado.value.trim();
-                stand.empresa    = inputEmpresa.value.trim();
-                stand.correo     = inputCorreo.value.trim();
-                stand.telefono   = inputTelefono.value.trim();
+                stand.encargado   = inputEncargado.value.trim();
+                stand.empresa     = inputEmpresa.value.trim();
+                stand.correo      = inputCorreo.value.trim();
+                stand.telefono    = inputTelefono.value.trim();
             }
         } else {
-            // Modo crear
             const nuevoStand = {
                 id:          generarId(),
                 nombre:      inputNombre.value.trim(),
+                categoria:   inputCategoria.value,
                 descripcion: inputDesc.value.trim(),
                 encargado:   inputEncargado.value.trim(),
                 empresa:     inputEmpresa.value.trim(),
@@ -260,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnGuardar.textContent   = 'Guardar Cambios';
 
         inputNombre.value    = stand.nombre;
+        inputCategoria.value = stand.categoria || '';
         inputDesc.value      = stand.descripcion;
         inputEncargado.value = stand.encargado;
         inputEmpresa.value   = stand.empresa;
@@ -313,13 +345,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Filtros y búsqueda en tiempo real
     searchInput.addEventListener('input', renderTabla);
     filterEstado.addEventListener('change', renderTabla);
+    filterCategoria.addEventListener('change', renderTabla);
     filterEmpresa.addEventListener('change', renderTabla);
 
     // Eliminar seleccionados (botón del toolbar)
     btnEliminarBulk.addEventListener('click', () => {
         const seleccionados = [...tbody.querySelectorAll('.stand-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
-            alert('Seleccioná al menos un stand para eliminar.');
+            alert('Debes seleccionar al menos un stand para eliminar.');
             return;
         }
         const confirmar = confirm(`¿Eliminar ${seleccionados.length} stand(s) seleccionado(s)? Esta acción no se puede deshacer.`);
