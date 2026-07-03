@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
         let valido = true;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telRegex   = /^\d{4}-\d{4}$/;
 
         if (!inputNombre.value.trim()) {
             mostrarError(inputNombre, 'El nombre del stand es requerido.');
@@ -100,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (!telRegex.test(inputTelefono.value.trim())) {
-            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
+        if (!validaciones.validarTelefono(inputTelefono.value.trim())) {
+            mostrarError(inputTelefono, 'El teléfono debe tener 8 dígitos (ej. 8888-0001).');
             valido = false;
         }
 
