@@ -18,6 +18,12 @@
     gap: 0.75rem;
 }
 
+.stands-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 /* ===== TABLA ===== */
 .stands-table-wrapper {
     background-color: var(--white);
