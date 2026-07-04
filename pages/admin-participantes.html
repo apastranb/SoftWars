@@ -60,21 +60,27 @@
             </div>
         </header>
 
-        <main class="admin-content">
-            <section class="usuarios-toolbar">
-                <div class="usuarios-filters">
-                    <select id="filtro-estado">
+        <main class="admin-page-content">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filtro-estado">
                         <option value="">Todos los estados</option>
                         <option value="Activo">Activo</option>
                         <option value="Cancelado">Cancelado</option>
                     </select>
+                    <input type="date" class="filter-select" id="filtro-fecha" />
+                </div>
+                <div class="admin-toolbar__actions">
+                    <button type="button" class="eventsAdminBtnSecondary" id="btnEditarParticipante">Editar</button>
+                    <button type="button" class="eventsAdminBtnSecondary btnDelete" id="btnEliminarParticipante">Eliminar</button>
                 </div>
             </section>
 
-            <section class="table-container">
-                <table id="tabla-participantes">
+            <section class="admin-table-wrapper">
+                <table class="admin-table" id="tabla-participantes">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Cédula / ID</th>

@@ -66,33 +66,58 @@
             </div>
         </header>
 
-        <main class="actividades-workspace">
+        <main class="admin-page-content">
             
-            <div class="actividades-toolbar">
-                <button id="btn-exportar-pdf" class="eventsAdminBtnSecondary">Exportar Agenda PDF</button>
-                <button id="btn-abrir-crear" class="eventsAdminBtnPrimary">+ Crear Actividad</button>
-            </div>
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filterCategoriaActividad">
+                        <option value="">Todas las categorías</option>
+                        <option value="Culturales">Culturales</option>
+                        <option value="Deportivas">Deportivas</option>
+                        <option value="Tecnológicas">Tecnológicas</option>
+                        <option value="Artísticas">Artísticas</option>
+                        <option value="Voluntariado">Voluntariado</option>
+                        <option value="Recreación">Recreación</option>
+                    </select>
+                    <select class="filter-select" id="filterEstadoActividad">
+                        <option value="">Todos los estados</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Llena">Llena</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="Finalizada">Finalizada</option>
+                    </select>
+                    <input type="date" class="filter-select" id="filterFechaActividad" />
+                </div>
+                <div class="admin-toolbar__actions">
+                    <button id="btn-editar-actividad" class="eventsAdminBtnSecondary">Editar</button>
+                    <button id="btn-eliminar-actividad" class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
+                    <button id="btn-exportar-pdf" class="eventsAdminBtnSecondary">Exportar PDF</button>
+                    <button id="btn-abrir-crear" class="eventsAdminBtnPrimary"><i class="bi bi-plus-lg"></i> Crear Actividad</button>
+                </div>
+            </section>
 
-            <div class="table-container">
-                <table>
+            <section class="admin-table-wrapper">
+                <table class="admin-table">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
                             <th>ID</th>
-                            <th>ACTIVIDAD</th>
-                            <th>CATEGORÍA</th>
-                            <th>FECHA / HORA</th>
-                            <th>LUGAR</th>
-                            <th>CUPO</th>
-                            <th>RESPONSABLE</th>
-                            <th>ACCIONES</th>
+                            <th>Actividad</th>
+                            <th>Categoría</th>
+                            <th>Fecha / Hora</th>
+                            <th>Lugar</th>
+                            <th>Cupo</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Visibilidad</th>
+                            <th>Entrada</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-actividades-body">
                         <!-- Renderizado dinámicamente por JS -->
                     </tbody>
                 </table>
-            </div>
-
+            </section>
             <div class="widgets-layout-grid">
                 
                 <div class="group-style-card">

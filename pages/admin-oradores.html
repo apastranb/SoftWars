@@ -60,58 +60,45 @@
             </div>
         </header>
 
-        <!-- Tabla de Presentadores -->
-        <main class="oradores-container">
+        <main class="admin-page-content">
 
-            <!-- Toolbar -->
-            <div class="oradores-toolbar">
-                <div class="oradores-filters">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
                     <select class="filter-select" id="filterEstado">
                         <option value="">Estado</option>
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
-
-                    <select class="filter-select" id="filterEspecialidad">
-                        <option value="">Profesión / Especialidad</option>
-                    </select>
-
-                    <select class="filter-select" id="filterEvento">
-                        <option value="">Eventos / Actividades</option>
-                    </select>
+                    <input type="date" class="filter-select" id="filterFechaOrador" />
                 </div>
-                <div class="oradores-actions">
-                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarOrador">Eliminar Presentador</button>
+                <div class="admin-toolbar__actions">
+                    <button class="eventsAdminBtnSecondary" id="btnEditarOrador">Editar</button>
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarOrador">Eliminar</button>
                     <button class="eventsAdminBtnPrimary" id="btnCrearOrador">
-                        <i class="bi bi-person-plus-fill"></i> Nuevo Presentador
+                        <i class="bi bi-plus-lg"></i> Crear Presentador
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <!-- Tabla -->
-            <div class="oradores-table-wrapper">
-                <table class="oradores-table" id="tabla-oradores">
+            <section class="admin-table-wrapper">
+                <table class="admin-table" id="tabla-oradores">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="selectAllOradores" title="Seleccionar todos"></th>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
                             <th>Fecha Registro</th>
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Teléfonos</th>
-                            <th>Profesión / Especialidad</th>
-                            <th>Empresa</th>
-                            <th>Biografía</th>
-                            <th>Fotografía</th>
-                            <th>Eventos / Actividades</th>
+                            <th>Especialidad</th>
+                            <th>Organización</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="adminOradoresTableBody">
                          <!-- Renderizado dinámicamente por JS -->
                     </tbody>
                 </table>
-            </div>
+            </section>
 
         </main>
     </div>

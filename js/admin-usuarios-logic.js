@@ -86,12 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         thead.innerHTML = `
             <tr>
+                <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
                 <th>Nombre</th>
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Estado</th>
                 <th>Fecha Creacion</th>
-                <th>Acciones</th>
             </tr>
         `;
 
@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         usuarios.forEach(user => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td><input type="checkbox" class="row-check" data-email="${user.email}"></td>
                 <td>${user.nombre}</td>
                 <td>${user.email}</td>
                 <td>${user.rol}</td>
@@ -116,14 +117,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     </select>
                 </td>
                 <td>${user.fechaCreacion || '-'}</td>
-                <td class="acciones-cell">
-                    <button class="btn-edit" data-email="${user.email}">Editar</button>
-                </td>
             `;
             tbody.appendChild(tr);
         });
 
         tablaVacia.style.display = usuarios.length ? 'none' : 'block';
+
+        // Select all checkbox
+        document.getElementById('selectAll')?.addEventListener('change', (e) => {
+            tbody.querySelectorAll('.row-check').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+        });
     };
 
     filtroRol.addEventListener('change', renderTabla);
@@ -155,10 +160,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cerrarModalEditar = () => modalEditar.classList.remove('active');
 
-    tbody.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('btn-edit')) return;
+    // Edit from toolbar button
+    document.getElementById('btnEditarUsuario').addEventListener('click', () => {
+        const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.email);
+        if (seleccionados.length === 0) {
+            alert('Seleccione un usuario para editar.');
+            return;
+        }
+        if (seleccionados.length > 1) {
+            alert('Solo puede editar un usuario a la vez.');
+            return;
+        }
 
-        const email = e.target.dataset.email;
+        const email = seleccionados[0];
         const usuario = window.db.usuarios.find(u => u.email === email);
         if (!usuario) return;
 

@@ -24,16 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay     = document.getElementById('modalCrearOrador');
     const modalTitulo      = document.getElementById('modalOradorTitulo');
     const btnCrearOrador   = document.getElementById('btnCrearOrador');
-    const btnEliminarBulk  = document.getElementById('btnEliminarOrador');
     const btnCerrarModal   = document.getElementById('btnCerrarModal');
     const btnCancelarModal = document.getElementById('btnCancelarModal');
     const btnGuardar       = document.getElementById('btnGuardarOrador');
     const tbody            = document.getElementById('adminOradoresTableBody');
     const searchInput      = document.getElementById('searchInput');
     const filterEstado     = document.getElementById('filterEstado');
-    const filterEspecialidad = document.getElementById('filterEspecialidad');
-    const filterEvento     = document.getElementById('filterEvento');
-    const selectAll        = document.getElementById('selectAllOradores');
+    const filterFecha      = document.getElementById('filterFechaOrador');
 
     // Inputs del modal
     const inputNombre       = document.getElementById('inputNombreOrador');
@@ -165,52 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return valido;
     }
 
-    // ── Filtros dinámicos ───────────────────────────────────────────────────
-
-    function actualizarFiltroEspecialidad() {
-        const actual = filterEspecialidad.value;
-        const valores = [...new Set(window.db.oradores.map(o => o.especialidad))].sort();
-        filterEspecialidad.innerHTML = '<option value="">Profesión / Especialidad</option>';
-        valores.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v;
-            opt.textContent = v;
-            if (v === actual) opt.selected = true;
-            filterEspecialidad.appendChild(opt);
-        });
-    }
-
-    function actualizarFiltroEventos() {
-        const actual = filterEvento.value;
-        filterEvento.innerHTML = '<option value="">Eventos / Actividades</option>';
-        window.db.eventos.forEach(ev => {
-            const opt = document.createElement('option');
-            opt.value = ev.id;
-            opt.textContent = ev.nombre;
-            if (ev.id === actual) opt.selected = true;
-            filterEvento.appendChild(opt);
-        });
-    }
-
-    function actualizarSelectEventosModal() {
-        const actual = inputEvento.value;
-        inputEvento.innerHTML = '<option value="">Seleccionar evento...</option>';
-        window.db.eventos.forEach(ev => {
-            const opt = document.createElement('option');
-            opt.value = ev.id;
-            opt.textContent = ev.nombre;
-            if (ev.id === actual) opt.selected = true;
-            inputEvento.appendChild(opt);
-        });
-    }
-
     // ── Renderizado ─────────────────────────────────────────────────────────
 
     function obtenerOradorFiltrados() {
-        const busqueda  = searchInput.value.trim().toLowerCase();
-        const estado    = filterEstado.value;
-        const especialidad = filterEspecialidad.value;
-        const eventoId  = filterEvento.value;
+        const busqueda = searchInput.value.trim().toLowerCase();
+        const estado = filterEstado.value;
+        const fecha = filterFecha.value;
 
         return window.db.oradores.filter(o => {
             const coincideBusqueda = !busqueda ||
@@ -219,68 +176,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 o.empresa.toLowerCase().includes(busqueda) ||
                 o.especialidad.toLowerCase().includes(busqueda);
 
-            const coincideEstado       = !estado       || o.estado === estado;
-            const coincideEspecialidad = !especialidad || o.especialidad === especialidad;
-            const coincideEvento       = !eventoId     || o.eventoId === eventoId;
+            const coincideEstado = !estado || o.estado === estado;
+            const coincideFecha = !fecha || o.fechaRegistro === fecha;
 
-            return coincideBusqueda && coincideEstado && coincideEspecialidad && coincideEvento;
+            return coincideBusqueda && coincideEstado && coincideFecha;
         });
     }
 
-    function nombreEvento(eventoId) {
-        const ev = window.db.eventos.find(e => e.id === eventoId);
-        return ev ? ev.nombre : '—';
-    }
-
     function renderTabla() {
-        actualizarFiltroEspecialidad();
-        actualizarFiltroEventos();
-
         const oradores = obtenerOradorFiltrados();
         tbody.innerHTML = '';
 
         if (oradores.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:2rem;color:#6b7280;">No se encontraron presentadores.</td></tr>`;
-            selectAll.checked = false;
+            tbody.innerHTML = `<tr><td colspan="8" class="tabla-vacia">No se encontraron presentadores.</td></tr>`;
             return;
         }
 
         oradores.forEach(o => {
             const badgeClass = o.estado === 'activo' ? 'badge-active' : 'badge-inactive';
             const badgeTexto = o.estado === 'activo' ? 'Activo' : 'Inactivo';
-            const fotoSrc    = o.foto || '../img/img-placeholder.png';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="checkbox" class="orador-check" data-id="${o.id}"></td>
+                <td><input type="checkbox" class="row-check" data-id="${o.id}"></td>
                 <td>${o.fechaRegistro}</td>
                 <td>${o.nombre}</td>
                 <td>${o.correo}</td>
                 <td>${o.telefono}</td>
                 <td>${o.especialidad}</td>
                 <td>${o.empresa}</td>
-                <td>${o.biografia}</td>
-                <td><img src="${fotoSrc}" alt="Foto ${o.nombre}" class="orador-foto"></td>
-                <td>${nombreEvento(o.eventoId)}</td>
-                <td><span class="badge ${badgeClass}">${badgeTexto}</span></td>
                 <td>
-                    <button class="eventsAdminBtnSecondary btn-editar-orador" data-id="${o.id}">Editar</button>
-                    <button class="eventsAdminBtnSecondary btnDelete btn-eliminar-orador" data-id="${o.id}">Eliminar</button>
+                    <select class="tableSelectStatus" data-id="${o.id}">
+                        <option value="activo" ${o.estado === 'activo' ? 'selected' : ''}>Activo</option>
+                        <option value="inactivo" ${o.estado === 'inactivo' ? 'selected' : ''}>Inactivo</option>
+                    </select>
                 </td>
             `;
             tbody.appendChild(tr);
         });
 
-        // Eventos por fila
-        tbody.querySelectorAll('.btn-editar-orador').forEach(btn => {
-            btn.addEventListener('click', () => abrirModalEditar(btn.dataset.id));
-        });
-        tbody.querySelectorAll('.btn-eliminar-orador').forEach(btn => {
-            btn.addEventListener('click', () => eliminarOrador(btn.dataset.id));
-        });
+        // Reset select all
+        document.getElementById('selectAll').checked = false;
 
-        // Sync checkbox "seleccionar todos"
-        selectAll.checked = false;
+        // Estado change listener
+        tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const id = e.target.dataset.id;
+                const orador = window.db.oradores.find(o => o.id === id);
+                if (orador) orador.estado = e.target.value;
+            });
+        });
     }
 
     // ── Crear / Guardar orador ──────────────────────────────────────────────
@@ -327,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!orador) return;
 
         editandoId = id;
-        actualizarSelectEventosModal();
 
         modalTitulo.textContent = 'Editar Presentador';
         btnGuardar.textContent  = 'Guardar Cambios';
@@ -335,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputNombre.value       = orador.nombre;
         inputCorreo.value       = orador.correo;
         inputTelefono.value     = orador.telefono;
+        if (inputTelefono2) inputTelefono2.value = '';
         inputEspecialidad.value = orador.especialidad;
         inputEmpresa.value      = orador.empresa;
         inputBiografia.value    = orador.biografia;
@@ -363,11 +308,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // Abrir modal para crear
     btnCrearOrador.addEventListener('click', () => {
         editandoId = null;
-        actualizarSelectEventosModal();
         modalTitulo.textContent = 'Registrar Presentador';
         btnGuardar.textContent  = 'Registrar';
         limpiarModal();
         abrirModal();
+    });
+
+    // Editar desde toolbar (solo 1 seleccionado)
+    document.getElementById('btnEditarOrador').addEventListener('click', () => {
+        const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            alert('Seleccione un presentador para editar.');
+            return;
+        }
+        if (seleccionados.length > 1) {
+            alert('Solo puede editar un presentador a la vez.');
+            return;
+        }
+        abrirModalEditar(seleccionados[0]);
+    });
+
+    // Eliminar desde toolbar (1 o mas seleccionados)
+    document.getElementById('btnEliminarOrador').addEventListener('click', () => {
+        const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            alert('Seleccione al menos un presentador para eliminar.');
+            return;
+        }
+        const confirmar = confirm(`¿Eliminar ${seleccionados.length} presentador(es)? Esta accion no se puede deshacer.`);
+        if (!confirmar) return;
+        window.db.oradores = window.db.oradores.filter(o => !seleccionados.includes(o.id));
+        renderTabla();
+    });
+
+    // Select all checkbox
+    document.getElementById('selectAll').addEventListener('change', (e) => {
+        tbody.querySelectorAll('.row-check').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
     });
 
     // Cerrar modal
@@ -402,32 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(archivo);
     });
 
-    // Eliminar seleccionados (botón del toolbar)
-    btnEliminarBulk.addEventListener('click', () => {
-        const seleccionados = [...tbody.querySelectorAll('.orador-check:checked')].map(cb => cb.dataset.id);
-        if (seleccionados.length === 0) {
-            alert('Seleccioná al menos un presentador para eliminar.');
-            return;
-        }
-        const confirmar = confirm(`¿Eliminar ${seleccionados.length} presentador(es) seleccionado(s)? Esta acción no se puede deshacer.`);
-        if (!confirmar) return;
-        window.db.oradores = window.db.oradores.filter(o => !seleccionados.includes(o.id));
-        selectAll.checked = false;
-        renderTabla();
-    });
-
-    // Checkbox "seleccionar todos"
-    selectAll.addEventListener('change', () => {
-        tbody.querySelectorAll('.orador-check').forEach(cb => {
-            cb.checked = selectAll.checked;
-        });
-    });
-
-    // Filtros y búsqueda en tiempo real
+    // Filtros y busqueda en tiempo real
     searchInput.addEventListener('input', renderTabla);
     filterEstado.addEventListener('change', renderTabla);
-    filterEspecialidad.addEventListener('change', renderTabla);
-    filterEvento.addEventListener('change', renderTabla);
+    filterFecha.addEventListener('change', renderTabla);
 
     // ── Render inicial ──────────────────────────────────────────────────────
     renderTabla();

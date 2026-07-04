@@ -27,23 +27,40 @@ const renderizarTablaActividades = (datosAFiltrar) => {
 
         const fila = document.createElement('tr');
         fila.innerHTML = `
-            <td class="txt-bold">${actividad.id}</td>
-            <td class="txt-highlight">${actividad.nombre}</td>
-            <td><span class="badge-tag">${actividad.categoria}</span></td>
-            <td>${actividad.fecha}<br><small class="txt-muted">${actividad.horaInicio} - ${actividad.horaFin}</small></td>
+            <td><input type="checkbox" class="row-check" data-id="${actividad.id}"></td>
+            <td>${actividad.id}</td>
+            <td>${actividad.nombre}</td>
+            <td>${actividad.categoria}</td>
+            <td>${actividad.fecha}<br><small>${actividad.horaInicio} - ${actividad.horaFin}</small></td>
             <td>${actividad.lugar}</td>
             <td>${cupoTexto}</td>
-            <td class="txt-highlight">${obtenerNombreResponsable(actividad.responsableId)}</td>
+            <td>${obtenerNombreResponsable(actividad.responsableId)}</td>
             <td>
-                <button class="action-link-btn edit-link">Editar</button>
-                <button class="action-link-btn delete-link">Eliminar</button>
+                <select class="tableSelectStatus" data-id="${actividad.id}">
+                    <option value="Disponible" ${(actividad.estado || 'Disponible') === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                    <option value="Llena" ${actividad.estado === 'Llena' ? 'selected' : ''}>Llena</option>
+                    <option value="Cancelada" ${actividad.estado === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+                    <option value="Finalizada" ${actividad.estado === 'Finalizada' ? 'selected' : ''}>Finalizada</option>
+                </select>
             </td>
+            <td>${actividad.visibilidad || '-'}</td>
+            <td>${actividad.entradaLibre ? 'Libre' : 'Limitada'}</td>
         `;
 
-        fila.querySelector('.delete-link').addEventListener('click', () => controladorEliminarActividad(actividad.id));
-        fila.querySelector('.edit-link').addEventListener('click', () => controladorEditarActividad(actividad.id));
-
         tablaBody.appendChild(fila);
+    });
+
+    // Reset select all
+    const selectAllCb = document.getElementById('selectAll');
+    if (selectAllCb) selectAllCb.checked = false;
+
+    // Estado change listener
+    tablaBody.querySelectorAll('.tableSelectStatus').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const id = e.target.dataset.id;
+            const actividad = window.db.actividades.find(a => a.id === id);
+            if (actividad) actividad.estado = e.target.value;
+        });
     });
 };
 
@@ -210,24 +227,34 @@ const poblarSelectResponsables = () => {
 
 // ── BUSCADOR ────────────────────────────────────────────────────────────
 
-const inicializarBuscadorActividades = () => {
-    const inputBuscar = document.getElementById('buscar-actividad');
-    if (!inputBuscar) return;
+const aplicarFiltrosActividades = () => {
+    const termino = document.getElementById('buscar-actividad').value.toLowerCase().trim();
+    const categoria = document.getElementById('filterCategoriaActividad').value;
+    const estado = document.getElementById('filterEstadoActividad').value;
+    const fecha = document.getElementById('filterFechaActividad').value;
 
-    inputBuscar.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase().trim();
-        if (termino.length === 0) {
-            renderizarTablaActividades();
-            return;
-        }
-        const filtrados = window.db.actividades.filter(act =>
+    const filtrados = window.db.actividades.filter(act => {
+        const coincideTexto = !termino ||
             act.nombre.toLowerCase().includes(termino) ||
             act.id.toLowerCase().includes(termino) ||
             act.lugar.toLowerCase().includes(termino) ||
-            act.categoria.toLowerCase().includes(termino)
-        );
-        renderizarTablaActividades(filtrados);
+            act.categoria.toLowerCase().includes(termino);
+
+        const coincideCategoria = !categoria || act.categoria === categoria;
+        const coincideEstado = !estado || act.estado === estado;
+        const coincideFecha = !fecha || act.fecha === fecha;
+
+        return coincideTexto && coincideCategoria && coincideEstado && coincideFecha;
     });
+
+    renderizarTablaActividades(filtrados);
+};
+
+const inicializarBuscadorActividades = () => {
+    document.getElementById('buscar-actividad')?.addEventListener('input', aplicarFiltrosActividades);
+    document.getElementById('filterCategoriaActividad')?.addEventListener('change', aplicarFiltrosActividades);
+    document.getElementById('filterEstadoActividad')?.addEventListener('change', aplicarFiltrosActividades);
+    document.getElementById('filterFechaActividad')?.addEventListener('change', aplicarFiltrosActividades);
 };
 
 // ── TOOLBAR ─────────────────────────────────────────────────────────────
@@ -237,6 +264,9 @@ const inicializarToolbarActividades = () => {
     const btnAbrirCrear = document.getElementById('btn-abrir-crear');
     const btnCerrarX = document.getElementById('btn-cerrar-modal');
     const btnCancelar = document.getElementById('btn-cancelar-modal');
+    const btnEditar = document.getElementById('btn-editar-actividad');
+    const btnEliminar = document.getElementById('btn-eliminar-actividad');
+    const selectAllCb = document.getElementById('selectAll');
 
     if (btnExportar) {
         btnExportar.addEventListener('click', () => alert('Descargando PDF de la agenda...'));
@@ -249,6 +279,46 @@ const inicializarToolbarActividades = () => {
             poblarSelectEventos();
             poblarSelectResponsables();
             abrirModal();
+        });
+    }
+
+    // Editar desde toolbar (solo 1 seleccionado)
+    if (btnEditar) {
+        btnEditar.addEventListener('click', () => {
+            const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+            if (seleccionados.length === 0) {
+                alert('Seleccione una actividad para editar.');
+                return;
+            }
+            if (seleccionados.length > 1) {
+                alert('Solo puede editar una actividad a la vez.');
+                return;
+            }
+            controladorEditarActividad(seleccionados[0]);
+        });
+    }
+
+    // Eliminar desde toolbar (1 o mas seleccionados)
+    if (btnEliminar) {
+        btnEliminar.addEventListener('click', () => {
+            const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+            if (seleccionados.length === 0) {
+                alert('Seleccione al menos una actividad para eliminar.');
+                return;
+            }
+            const confirmar = confirm(`¿Eliminar ${seleccionados.length} actividad(es)? Esta accion no se puede deshacer.`);
+            if (!confirmar) return;
+            window.db.actividades = window.db.actividades.filter(a => !seleccionados.includes(a.id));
+            renderizarTablaActividades();
+        });
+    }
+
+    // Select all checkbox
+    if (selectAllCb) {
+        selectAllCb.addEventListener('change', (e) => {
+            document.querySelectorAll('.row-check').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
         });
     }
 

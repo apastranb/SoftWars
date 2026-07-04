@@ -58,29 +58,30 @@
             </div>
         </header>
 
-        <main class="admin-content">
-            <section class="usuarios-toolbar">
-                <div class="usuarios-filters">
-                    <select id="filtro-rol">
+        <main class="admin-page-content">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filtro-rol">
                         <option value="todos" selected>Todos los roles</option>
                     </select>
-
-                    <select id="filtro-estado">
+                    <select class="filter-select" id="filtro-estado">
                         <option value="todos" selected>Todos los estados</option>
                         <option value="Activo">Activo</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
-
-                <button type="button" class="eventsAdminBtnPrimary" id="btnNuevoUsuario">
-                    <i class="bi bi-person-plus"></i> Nuevo Administrador
-                </button>
+                <div class="admin-toolbar__actions">
+                    <button type="button" class="eventsAdminBtnSecondary" id="btnEditarUsuario">Editar</button>
+                    <button type="button" class="eventsAdminBtnPrimary" id="btnNuevoUsuario">
+                        <i class="bi bi-plus-lg"></i> Crear Administrador
+                    </button>
+                </div>
             </section>
 
-            <section class="table-container">
-                <table id="tabla-usuarios">
+            <section class="admin-table-wrapper">
+                <table class="admin-table" id="tabla-usuarios">
                     <thead id="thead-usuarios">
-                        <!-- Encabezados renderizados por JS según la vista seleccionada -->
+                        <!-- Encabezados renderizados por JS -->
                     </thead>
                     <tbody id="tbody-usuarios">
                         <!-- Los datos se inyectan mediante JS -->

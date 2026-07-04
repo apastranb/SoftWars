@@ -37,26 +37,7 @@
 }
 
 /* MAIN & WORKSPACE CONFIGURATION */
-main {
-  margin: 3vh auto;
-  width: 100%;
-  max-width: 1500px;
-}
-
-/* Contenedor principal interno */
-main.actividades-workspace {
-  padding: 1.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Botones superiores */
-.actividades-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
+/* (main padding handled by .admin-page-content in admin-layout.css) */
 
 /* NEW EVENT FORM */
 .form-card {
@@ -161,38 +142,12 @@ main.actividades-workspace {
 
 
 /* Especificidad limpia apuntando desde el contenedor principal derecho */
-.admin-main-content .table-container {
-  background-color: var(--white);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--gray-300);
-}
-
-.admin-main-content .table-container table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.admin-main-content .table-container th {
-  background-color: #e6f0fa; 
-  color: var(--blue-800);
-  font-weight: bold;
-  padding: 14px 16px;
-  text-align: left;
-}
-
-.admin-main-content .table-container td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
-}
-
 .admin-main-content .widgets-layout-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   width: 100%;
+  margin-top: 1.5rem;
 }
 
 /* Tarjetas de abajo */

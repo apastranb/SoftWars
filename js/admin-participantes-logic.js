@@ -15,16 +15,19 @@ const renderizarTablaParticipantes = () => {
     const tablaVacia  = document.getElementById('tabla-vacia');
     const textoBusqueda     = document.getElementById('searchInput').value.trim().toLowerCase();
     const filtroEstado      = document.getElementById('filtro-estado').value;
+    const filtroFecha       = document.getElementById('filtro-fecha').value;
 
     const participantes = window.db.participantes.filter(p => {
         const coincideTexto = !textoBusqueda ||
             p.nombreCompleto.toLowerCase().includes(textoBusqueda) ||
             p.correo.toLowerCase().includes(textoBusqueda) ||
-            p.idDocumento.includes(textoBusqueda);
+            p.idDocumento.includes(textoBusqueda) ||
+            p.carrera.toLowerCase().includes(textoBusqueda);
 
         const coincideEstado = !filtroEstado || p.estado === filtroEstado;
+        const coincideFecha = !filtroFecha || p.fechaInscripcion === filtroFecha;
 
-        return coincideTexto && coincideEstado;
+        return coincideTexto && coincideEstado && coincideFecha;
     });
 
     tbody.innerHTML = '';
@@ -46,6 +49,7 @@ const renderizarTablaParticipantes = () => {
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
             <td>${p.id}</td>
             <td>${p.nombreCompleto}</td>
             <td>${p.idDocumento}</td>
@@ -54,10 +58,28 @@ const renderizarTablaParticipantes = () => {
             <td>${p.edad}</td>
             <td>${p.carrera}</td>
             <td>${nombresActividades || '-'}</td>
-            <td><span class="badge ${p.estado === 'Activo' ? 'badge-active' : 'badge-inactive'}">${p.estado}</span></td>
+            <td>
+                <select class="tableSelectStatus" data-id="${p.id}">
+                    <option value="Activo" ${p.estado === 'Activo' ? 'selected' : ''}>Activo</option>
+                    <option value="Cancelado" ${p.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                </select>
+            </td>
             <td>${p.fechaInscripcion || '-'}</td>
         `;
         tbody.appendChild(tr);
+    });
+
+    // Select all reset
+    const selectAllCb = document.getElementById('selectAll');
+    if (selectAllCb) selectAllCb.checked = false;
+
+    // Estado change listener
+    tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const id = e.target.dataset.id;
+            const participante = window.db.participantes.find(p => p.id === id);
+            if (participante) participante.estado = e.target.value;
+        });
     });
 };
 
@@ -87,8 +109,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderizarTablaParticipantes();
 
+    // Select all checkbox
+    document.getElementById('selectAll').addEventListener('change', (e) => {
+        document.querySelectorAll('.row-check').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
+    });
+
+    // Toolbar: Editar (placeholder — participantes are read-only for now)
+    document.getElementById('btnEditarParticipante')?.addEventListener('click', () => {
+        const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            alert('Seleccione un participante para editar.');
+            return;
+        }
+        if (seleccionados.length > 1) {
+            alert('Solo puede editar un participante a la vez.');
+            return;
+        }
+        alert('Funcionalidad de edicion de participante pendiente (Fase 2).');
+    });
+
+    // Toolbar: Eliminar
+    document.getElementById('btnEliminarParticipante')?.addEventListener('click', () => {
+        const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            alert('Seleccione al menos un participante para eliminar.');
+            return;
+        }
+        const confirmar = confirm(`¿Eliminar ${seleccionados.length} participante(s)? Esta accion no se puede deshacer.`);
+        if (!confirmar) return;
+        window.db.participantes = window.db.participantes.filter(p => !seleccionados.includes(p.id));
+        renderizarTablaParticipantes();
+    });
+
     // Filtros en tiempo real
     document.getElementById('searchInput').addEventListener('input', renderizarTablaParticipantes);
-    document.getElementById('buscar-participante').addEventListener('click', renderizarTablaParticipantes);
+    document.getElementById('buscar-participante')?.addEventListener('click', renderizarTablaParticipantes);
     document.getElementById('filtro-estado').addEventListener('change', renderizarTablaParticipantes);
+    document.getElementById('filtro-fecha').addEventListener('change', renderizarTablaParticipantes);
 });

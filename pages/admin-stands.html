@@ -63,57 +63,48 @@
             </div>
         </header>
 
-        <!-- Tabla de Stands -->
-        <main class="stands-container">
+        <main class="admin-page-content">
 
-            <!-- Toolbar -->
-            <div class="stands-toolbar">
-                <div class="stands-filters">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
                     <select class="filter-select" id="filterEstadoStand">
                         <option value="">Estado</option>
                         <option value="aprobado">Aprobado</option>
                         <option value="cerrado">Cerrado</option>
                     </select>
-
                     <select class="filter-select" id="filterCategoriaStand">
                         <option value="">Categoría</option>
                         <option value="empresa">Empresa</option>
                         <option value="personal">Personal</option>
                     </select>
-
-                    <select class="filter-select" id="filterEmpresaStand">
-                        <option value="">Empresa</option>
-                    </select>
                 </div>
-                <div class="stands-actions">
-                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarStands">Eliminar Stands</button>
-                    <button class="eventsAdminBtnPrimary" id="btnCrearStand">Crear Stand</button>
+                <div class="admin-toolbar__actions">
+                    <button class="eventsAdminBtnSecondary" id="btnEditarStand">Editar</button>
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarStand">Eliminar</button>
+                    <button class="eventsAdminBtnPrimary" id="btnCrearStand"><i class="bi bi-plus-lg"></i> Crear Stand</button>
                 </div>
-            </div>
+            </section>
 
-            <!-- Tabla -->
-            <div class="stands-table-wrapper">
-                <table class="stands-table">
+            <section class="admin-table-wrapper">
+                <table class="admin-table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="selectAllStands" title="Seleccionar todos"></th>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
                             <th>ID</th>
-                            <th>Nombre Stand</th>
+                            <th>Nombre</th>
                             <th>Categoría</th>
-                            <th>Descripción</th>
-                            <th>Nombre Encargado</th>
-                            <th>Empresa</th>
+                            <th>Encargado</th>
+                            <th>Empresa / Personal</th>
                             <th>Correo</th>
                             <th>Teléfono</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="standsTableBody">
                         <!-- Renderizado dinámicamente por JS -->
                     </tbody>
                 </table>
-            </div>
+            </section>
 
         </main>
     </div>
