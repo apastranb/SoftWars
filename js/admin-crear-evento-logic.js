@@ -173,15 +173,14 @@ const cargarDatosEdicion = () => {
 };
 
 
-// ALMACENAMIENTO SIMPLE EN sessionStorage
+// ALMACENAMIENTO (usa window.db.eventos como fuente unica)
 
 const obtenerEventos = () => {
-    const datos = sessionStorage.getItem('eventos');
-    return datos ? JSON.parse(datos) : [];
+    return window.db.eventos;
 };
 
 const guardarEventos = (eventos) => {
-    sessionStorage.setItem('eventos', JSON.stringify(eventos));
+    window.db.eventos = eventos;
 };
 
 

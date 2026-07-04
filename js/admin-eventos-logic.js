@@ -1,16 +1,15 @@
 ﻿// ==========================================================================
 // MODULO: GESTION DE EVENTOS
-// Usa sessionStorage para persistir eventos en Fase 1.
+// Usa window.db.eventos como fuente unica de datos.
 // ==========================================================================
 
-// UTILIDADES DE ALMACENAMIENTO
+// UTILIDADES DE ALMACENAMIENTO (usa window.db.eventos como fuente unica)
 const obtenerEventos = () => {
-    const datos = sessionStorage.getItem('eventos');
-    return datos ? JSON.parse(datos) : [];
+    return window.db.eventos;
 };
 
 const guardarEventos = (eventos) => {
-    sessionStorage.setItem('eventos', JSON.stringify(eventos));
+    window.db.eventos = eventos;
 };
 
 // RENDERIZAR TABLA
