@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../css/admin-layout.css">
     <link rel="stylesheet" href="../css/admin-oradores.css">
     <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <!-- MENU LATERAL -->
@@ -128,26 +127,37 @@
                 <div class="modal-field">
                     <label for="inputNombreOrador">Nombre Completo</label>
                     <input type="text" id="inputNombreOrador" placeholder="Nombre del presentador">
+                    <span class="form__error-message" id="error-inputNombreOrador"></span>
                 </div>
                 <div class="modal-field">
-                    <label for="inputCorreoOrador">Correo Electrónico <span style="color:#9ca3af;font-size:0.8rem;">(opcional)</span></label>
+                    <label for="inputCorreoOrador">Correo Electrónico</label>
                     <input type="email" id="inputCorreoOrador" placeholder="correo@ejemplo.com">
+                    <span class="form__error-message" id="error-inputCorreoOrador"></span>
                 </div>
                 <div class="modal-field">
-                    <label for="inputTelefonoOrador">Teléfono <span style="color:#9ca3af;font-size:0.8rem;">(opcional)</span></label>
-                    <input type="text" id="inputTelefonoOrador" placeholder="0000-0000">
+                    <label for="inputTelefonoOrador">Teléfono Principal</label>
+                    <input type="text" id="inputTelefonoOrador" placeholder="8888-8888">
+                    <span class="form__error-message" id="error-inputTelefonoOrador"></span>
                 </div>
                 <div class="modal-field">
-                    <label for="inputEspecialidadOrador">Profesión / Especialidad</label>
+                    <label for="inputTelefono2Orador">Teléfono Secundario <span class="field-hint">(opcional)</span></label>
+                    <input type="text" id="inputTelefono2Orador" placeholder="7777-7777">
+                    <span class="form__error-message" id="error-inputTelefono2Orador"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="inputEspecialidadOrador">Área / Especialidad</label>
                     <input type="text" id="inputEspecialidadOrador" placeholder="Ej. Ingeniería de Software">
+                    <span class="form__error-message" id="error-inputEspecialidadOrador"></span>
                 </div>
                 <div class="modal-field">
-                    <label for="inputEmpresaOrador">Empresa <span style="color:#9ca3af;font-size:0.8rem;">(opcional)</span></label>
-                    <input type="text" id="inputEmpresaOrador" placeholder="Nombre de la empresa">
+                    <label for="inputEmpresaOrador">Institución u Organización</label>
+                    <input type="text" id="inputEmpresaOrador" placeholder="Nombre de la institución o empresa">
+                    <span class="form__error-message" id="error-inputEmpresaOrador"></span>
                 </div>
                 <div class="modal-field">
-                    <label for="inputBiografiaOrador">Biografía <span style="color:#9ca3af;font-size:0.8rem;">(opcional)</span></label>
-                    <input type="text" id="inputBiografiaOrador" placeholder="Breve descripción del presentador">
+                    <label for="inputBiografiaOrador">Biografía</label>
+                    <textarea id="inputBiografiaOrador" rows="3" placeholder="Breve descripción del presentador (máx. 200 caracteres)"></textarea>
+                    <span class="form__error-message" id="error-inputBiografiaOrador"></span>
                 </div>
                 <div class="modal-field">
                     <label>Fotografía</label>
@@ -156,14 +166,16 @@
                         <label for="inputFotoOrador" class="btn-upload-foto">
                             <i class="bi bi-upload"></i> Subir foto desde PC
                         </label>
-                        <input type="file" id="inputFotoOrador" accept="image/*" style="display:none">
+                        <input type="file" id="inputFotoOrador" accept="image/*" class="file-input-hidden">
                     </div>
+                    <span class="form__error-message" id="error-inputFotoOrador"></span>
                 </div>
                 <div class="modal-field">
                     <label for="inputEventoOrador">Evento / Actividad</label>
-                    <select id="inputEventoOrador" class="filter-select" style="border-radius:50px;width:100%;padding:0.65rem 1.2rem;">
+                    <select id="inputEventoOrador" class="filter-select modal-select-full">
                         <option value="">Seleccionar evento...</option>
                     </select>
+                    <span class="form__error-message" id="error-inputEventoOrador"></span>
                 </div>
             </div>
             <div class="modal-footer">

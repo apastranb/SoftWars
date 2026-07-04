@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Postularse como Participante</title>
+    <title>Postularse como Presentador</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/postular-participante.css" />
     <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
@@ -32,90 +32,79 @@
     <div class="public-container">
         <main class="form-container">
 
-            <div class="postulacion-tabs">
-                <button type="button" class="postulacion-tab active" id="tab-inscribirse">Inscribirme</button>
-                <button type="button" class="postulacion-tab" id="tab-cancelar">Cancelar Inscripción</button>
-            </div>
-
-            <!-- ===================== INSCRIPCIÓN ===================== -->
-            <section id="panel-inscribirse">
-                <h2>Postúlate como Participante</h2>
-                <p>Completa tus datos y elige las actividades a las que deseas asistir. Algunas actividades son de entrada libre y no requieren inscripción.</p>
+            <section id="panel-postulacion">
+                <h2>Postularse como Presentador / Orador</h2>
+                <p>Completa tus datos para solicitar participar como responsable de una actividad (charla, taller, conferencia, etc.). Un administrador revisará tu solicitud.</p>
 
                 <span class="form__error-message" id="error-general"></span>
-                <span class="form__result-message" id="resultado-inscripcion"></span>
+                <span class="form__result-message" id="resultado-postulacion"></span>
 
                 <form id="form-postulacion" novalidate>
                     <div class="form-group">
                         <label for="nombre">Nombre Completo</label>
-                        <input type="text" id="nombre" placeholder="Juan Pérez" required>
+                        <input type="text" id="nombre" placeholder="Juan Pérez">
                         <span class="form__error-message" id="error-nombre"></span>
                     </div>
 
                     <div class="form-group-row">
                         <div class="form-group">
-                            <label for="idDocumento">Cédula o ID</label>
-                            <input type="text" id="idDocumento" placeholder="101230456" required>
-                            <span class="form__error-message" id="error-idDocumento"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="edad">Edad</label>
-                            <input type="number" id="edad" placeholder="Ej. 22" required>
-                            <span class="form__error-message" id="error-edad"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group-row">
-                        <div class="form-group">
                             <label for="correo">Correo Electrónico</label>
-                            <input type="email" id="correo" placeholder="correo@dominio.com" required>
+                            <input type="email" id="correo" placeholder="correo@dominio.com">
                             <span class="form__error-message" id="error-correo"></span>
                         </div>
                         <div class="form-group">
-                            <label for="telefono">Teléfono</label>
-                            <input type="text" id="telefono" placeholder="8888-8888" required>
+                            <label for="telefono">Teléfono Principal</label>
+                            <input type="text" id="telefono" placeholder="8888-8888">
                             <span class="form__error-message" id="error-telefono"></span>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="carrera">Carrera / Profesión</label>
-                        <input type="text" id="carrera" placeholder="Ej. Ingeniería de Software" required>
-                        <span class="form__error-message" id="error-carrera"></span>
+                        <label for="telefono2">Teléfono Secundario <span class="field-hint">(opcional)</span></label>
+                        <input type="text" id="telefono2" placeholder="7777-7777">
+                        <span class="form__error-message" id="error-telefono2"></span>
                     </div>
 
-                    <h3>Actividades disponibles</h3>
-                    <span class="form__error-message" id="error-actividades"></span>
-                    <span class="form__warning-message" id="warning-horario"></span>
-                    <div id="lista-actividades" class="lista-actividades">
-                        <!-- Actividades renderizadas por JS desde window.db.actividades -->
+                    <div class="form-group">
+                        <label for="especialidad">Área / Especialidad</label>
+                        <input type="text" id="especialidad" placeholder="Ej. Inteligencia Artificial">
+                        <span class="form__error-message" id="error-especialidad"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organizacion">Institución u Organización</label>
+                        <input type="text" id="organizacion" placeholder="Ej. Universidad CENFOTEC">
+                        <span class="form__error-message" id="error-organizacion"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="biografia">Biografía</label>
+                        <textarea id="biografia" rows="3" placeholder="Breve descripción de tu experiencia y trayectoria (máx. 200 caracteres)"></textarea>
+                        <span class="form__error-message" id="error-biografia"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foto">Fotografía</label>
+                        <div class="foto-upload-area" id="fotoUploadArea">
+                            <img id="fotoPreview" src="../img/img-placeholder.png" alt="Vista previa" class="orador-foto-preview">
+                            <label for="foto" class="btn-upload-foto">
+                                <i class="bi bi-upload"></i> Subir foto desde PC
+                            </label>
+                            <input type="file" id="foto" accept="image/*" class="file-input-hidden">
+                        </div>
+                        <span class="form__error-message" id="error-foto"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="actividad">Actividad a la que aplica</label>
+                        <select id="actividad">
+                            <option value="">Seleccionar actividad...</option>
+                        </select>
+                        <span class="form__error-message" id="error-actividad"></span>
                     </div>
 
                     <button type="submit" class="btn-primary">Enviar Postulación</button>
                 </form>
-            </section>
-
-            <!-- ===================== CANCELAR INSCRIPCIÓN ===================== -->
-            <section id="panel-cancelar" class="oculto">
-                <h2>Cancelar Inscripción</h2>
-                <p>Ingresa el correo y la cédula/ID con los que te inscribiste para ver y cancelar tus actividades.</p>
-
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label for="buscar-correo">Correo Electrónico</label>
-                        <input type="email" id="buscar-correo" placeholder="correo@dominio.com">
-                        <span class="form__error-message" id="error-buscar-correo"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="buscar-id">Cédula o ID</label>
-                        <input type="text" id="buscar-id" placeholder="101230456">
-                        <span class="form__error-message" id="error-buscar-id"></span>
-                    </div>
-                </div>
-
-                <button type="button" class="btn-primary" id="btnBuscarInscripcion">Buscar mi Inscripción</button>
-
-                <div id="resultado-busqueda" class="resultado-busqueda"></div>
             </section>
 
         </main>

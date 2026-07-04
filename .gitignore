@@ -1,0 +1,5 @@
+# Kiro IDE configuration (local steering docs)
+.kiro/
+
+# VS Code local settings
+.vscode/

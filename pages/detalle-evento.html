@@ -213,7 +213,7 @@
         <h2>Inscripción</h2>
         <p>Completa el formulario para asegurar tu lugar.</p>
 
-        <form id="inscribirVisitante" action="submit">
+        <form id="inscribirVisitante" novalidate>
           
           <div class="input-group">
             <label for="nombreVisitante">Nombre Completo</label>
@@ -252,7 +252,7 @@
           </div>
 
           <h3>Actividades a las que quiere estar inscrito</h3>
-          <span class="form__error-message" id="error-actividades" style="margin-bottom: 10px;"></span>
+          <span class="form__error-message" id="error-actividades"></span>
 
           <label class="checkboxActivity">
             <input type="checkbox" name="actividades_seleccionadas" value="act-1" data-hora="14:00" />

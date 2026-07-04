@@ -226,3 +226,53 @@ header {
   color: var(--white);
   border-color: #dc3545;
 }
+
+
+/* UTILITY CLASSES */
+.oculto {
+  display: none;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+/* MODAL BASE STYLES */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.modal-active {
+  display: flex;
+}
+
+/* FORM GRID (replaces inline grid styles) */
+.form-grid.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* FILE INPUT HIDDEN (replaces inline display:none) */
+.file-input-hidden {
+  display: none;
+}
+
+/* MODAL SELECT FULL WIDTH (replaces inline styles on selects) */
+.modal-select-full {
+  border-radius: 8px;
+  width: 100%;
+  padding: 0.65rem 1.2rem;
+}
+
+/* FIELD HINT (replaces inline color/font-size styles) */
+.field-hint {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}

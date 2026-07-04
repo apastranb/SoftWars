@@ -88,19 +88,7 @@
                         </tr>
                     </thead>
                     <tbody id="tabla-actividades-body">
-                        <tr>
-                            <td class="txt-bold">ACT-01</td>
-                            <td class="txt-highlight">Conferencia de Inteligencia Artificial</td>
-                            <td><span class="badge-tag">Tecnología</span></td>
-                            <td>2026-07-10<br><small class="txt-muted">09:00 AM</small></td>
-                            <td>Auditorio Bloque A</td>
-                            <td>80 / 100</td>
-                            <td class="txt-highlight">Dr. Carlos Mendoza</td>
-                            <td>
-                                <button class="action-link-btn edit-link">Editar</button>
-                                <button class="action-link-btn delete-link">Eliminar</button>
-                            </td>
-                        </tr>
+                        <!-- Renderizado dinámicamente por JS -->
                     </tbody>
                 </table>
             </div>
@@ -139,55 +127,115 @@
             </div>
 
         </main>
-        <div id="modal-actividad" class="modal-overlay" style="display: none;">
+        <div id="modal-actividad" class="modal-overlay modal-hidden">
     <div class="modal-content-card">
         <div class="modal-card-header">
             <h2 id="modal-titulo-accion">Registrar Actividad</h2>
             <button id="btn-cerrar-modal" class="modal-close-x">&times;</button>
         </div>
         
-        <form id="form-actividad-modal">
+        <form id="form-actividad-modal" novalidate>
             <div class="modal-form-body">
                 <div class="input-group">
-                    <label>Nombre de la Actividad</label>
-                    <input type="text" id="modal-nombre" placeholder="Ej. Conferencia de IA" required>
-                </div>
-
-                <div class="input-group">
-                    <label>Categoría</label>
-                    <select id="modal-categoria" required>
-                        <option value="">Seleccione una categoría</option>
-                        <option value="Tecnología">Tecnología</option>
-                        <option value="Diseño">Diseño</option>
-                        <option value="Negocios">Negocios</option>
+                    <label for="modal-evento">Evento Padre</label>
+                    <select id="modal-evento">
+                        <option value="">Seleccione un evento</option>
                     </select>
+                    <span class="form__error-message" id="error-modal-evento"></span>
                 </div>
 
-                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                    <label for="modal-nombre">Nombre de la Actividad</label>
+                    <input type="text" id="modal-nombre" placeholder="Ej. Conferencia de IA">
+                    <span class="form__error-message" id="error-modal-nombre"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="modal-categoria">Categoría</label>
+                    <select id="modal-categoria">
+                        <option value="">Seleccione una categoría</option>
+                        <option value="Culturales">Culturales</option>
+                        <option value="Deportivas">Deportivas</option>
+                        <option value="Tecnológicas">Tecnológicas</option>
+                        <option value="Artísticas">Artísticas</option>
+                        <option value="Voluntariado">Voluntariado</option>
+                        <option value="Recreación">Recreación</option>
+                    </select>
+                    <span class="form__error-message" id="error-modal-categoria"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="modal-descripcion">Descripción</label>
+                    <textarea id="modal-descripcion" rows="3" placeholder="Descripción de la actividad (máx. 200 caracteres)"></textarea>
+                    <span class="form__error-message" id="error-modal-descripcion"></span>
+                </div>
+
+                <div class="form-grid two-columns">
                     <div class="input-group">
-                        <label>Fecha</label>
-                        <input type="date" id="modal-fecha" required>
+                        <label for="modal-fecha">Fecha</label>
+                        <input type="date" id="modal-fecha">
+                        <span class="form__error-message" id="error-modal-fecha"></span>
                     </div>
                     <div class="input-group">
-                        <label>Hora</label>
-                        <input type="time" id="modal-hora" required>
+                        <label for="modal-lugar">Lugar / Sala</label>
+                        <input type="text" id="modal-lugar" placeholder="Ej. Auditorio Bloque A">
+                        <span class="form__error-message" id="error-modal-lugar"></span>
                     </div>
                 </div>
 
-                <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-grid two-columns">
                     <div class="input-group">
-                        <label>Lugar</label>
-                        <input type="text" id="modal-lugar" placeholder="Ej. Auditorio Bloque A" required>
+                        <label for="modal-hora-inicio">Hora de Inicio</label>
+                        <input type="time" id="modal-hora-inicio">
+                        <span class="form__error-message" id="error-modal-hora-inicio"></span>
                     </div>
                     <div class="input-group">
-                        <label>Cupo Máximo</label>
-                        <input type="number" id="modal-cupo" placeholder="Ej. 100" min="1" required>
+                        <label for="modal-hora-fin">Hora de Finalización</label>
+                        <input type="time" id="modal-hora-fin">
+                        <span class="form__error-message" id="error-modal-hora-fin"></span>
+                    </div>
+                </div>
+
+                <div class="form-grid two-columns">
+                    <div class="input-group">
+                        <label for="modal-cupo">Cupo Máximo</label>
+                        <input type="number" id="modal-cupo" placeholder="Ej. 100" min="1">
+                        <span class="form__error-message" id="error-modal-cupo"></span>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-responsable">Responsable</label>
+                        <select id="modal-responsable">
+                            <option value="">Seleccione un responsable</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-responsable"></span>
+                    </div>
+                </div>
+
+                <div class="form-grid two-columns">
+                    <div class="input-group">
+                        <label for="modal-visibilidad">Visibilidad</label>
+                        <select id="modal-visibilidad">
+                            <option value="">Seleccione visibilidad</option>
+                            <option value="publica">Pública</option>
+                            <option value="privada">Privada</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-visibilidad"></span>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-entrada-libre">Tipo de Entrada</label>
+                        <select id="modal-entrada-libre">
+                            <option value="false">Con cupo limitado</option>
+                            <option value="true">Entrada libre</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-entrada-libre"></span>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Nombre del Responsable</label>
-                    <input type="text" id="modal-responsable" placeholder="Ej. Dr. Carlos Mendoza" required>
+                    <label>
+                        <input type="checkbox" id="modal-refrigerio">
+                        Incluye refrigerio
+                    </label>
                 </div>
             </div>
 

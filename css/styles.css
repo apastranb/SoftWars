@@ -238,6 +238,20 @@ tbody tr:hover {
   display: block;
 }
 
+/* UTILITY CLASSES */
+.oculto {
+  display: none;
+}
+
+.field-hint {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
 /* FOOTER */
 footer {
   display: flex;
