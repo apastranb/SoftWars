@@ -97,16 +97,8 @@ const inicializarAsistenteIA = () => {
             mostrarError('descEvento', 'Escribe algo primero para que la IA lo mejore.');
             return;
         }
-        const textoOriginal = btnMejorarDesc.innerHTML;
-        btnMejorarDesc.innerHTML = '<i class="bi bi-hourglass-split"></i> Procesando...';
-        btnMejorarDesc.disabled = true;
-
-        setTimeout(() => {
-            descEvento.value = `[Texto mejorado mockup]: ${descEvento.value} ¡Únete y amplía tus horizontes!`;
-            btnMejorarDesc.innerHTML = textoOriginal;
-            btnMejorarDesc.disabled = false;
-            limpiarErrores();
-        }, 1500);
+        // Integracion real con API Gemini pendiente para Fase 2
+        alert('Funcionalidad de IA pendiente de integracion con API Gemini (Fase 2).');
     });
 };
 
