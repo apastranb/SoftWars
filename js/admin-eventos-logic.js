@@ -48,7 +48,8 @@ const renderizarTabla = (lista) => {
             <td>${evento.lugar}</td>
             <td>${evento.fechaInicio || '-'}</td>
             <td>${evento.fechaFin || '-'}</td>
-            <td>${evento.horaInicio || '-'} - ${evento.horaFin || '-'}</td>
+            <td>${evento.horaInicio || '-'}</td>
+            <td>${evento.horaFin || '-'}</td>
             <td>${cupoTexto}</td>
             <td>${capitalizarTexto(evento.tipoEntrada || '-')}</td>
             <td>${capitalizarTexto(evento.visibilidad || '-')}</td>

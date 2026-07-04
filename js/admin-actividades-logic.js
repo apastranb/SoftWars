@@ -16,9 +16,14 @@ const renderizarTablaActividades = (datosAFiltrar) => {
     tablaBody.innerHTML = '';
 
     if (datos.length === 0) {
-        tablaBody.innerHTML = `<tr><td colspan="8" class="tabla-vacia-msg">No se encontraron actividades registradas.</td></tr>`;
+        tablaBody.innerHTML = '';
+        const tablaVacia = document.getElementById('tabla-vacia');
+        if (tablaVacia) tablaVacia.classList.remove('oculto');
         return;
     }
+
+    const tablaVaciaEl = document.getElementById('tabla-vacia');
+    if (tablaVaciaEl) tablaVaciaEl.classList.add('oculto');
 
     datos.forEach(actividad => {
         const cupoTexto = actividad.entradaLibre
@@ -31,7 +36,9 @@ const renderizarTablaActividades = (datosAFiltrar) => {
             <td>${actividad.id}</td>
             <td>${actividad.nombre}</td>
             <td>${actividad.categoria}</td>
-            <td>${actividad.fecha}<br><small>${actividad.horaInicio} - ${actividad.horaFin}</small></td>
+            <td>${actividad.fecha}</td>
+            <td>${actividad.horaInicio}</td>
+            <td>${actividad.horaFin}</td>
             <td>${actividad.lugar}</td>
             <td>${cupoTexto}</td>
             <td>${obtenerNombreResponsable(actividad.responsableId)}</td>
@@ -100,20 +107,18 @@ const validarFormularioActividad = () => {
     // Campos requeridos simples
     const camposRequeridos = [
         { id: 'modal-evento', mensaje: 'Debe seleccionar un evento padre.' },
-        { id: 'modal-nombre', mensaje: 'El nombre de la actividad es obligatorio (mínimo 3 caracteres).' },
-        { id: 'modal-categoria', mensaje: 'Debe seleccionar una categoría.' },
+        { id: 'modal-nombre', mensaje: 'El nombre de la actividad es obligatorio.' },
+        { id: 'modal-categoria', mensaje: 'Debe seleccionar una categoria.' },
         { id: 'modal-fecha', mensaje: 'La fecha es obligatoria.' },
         { id: 'modal-hora-inicio', mensaje: 'La hora de inicio es obligatoria.' },
-        { id: 'modal-hora-fin', mensaje: 'La hora de finalización es obligatoria.' },
+        { id: 'modal-hora-fin', mensaje: 'La hora de finalizacion es obligatoria.' },
         { id: 'modal-lugar', mensaje: 'El lugar es obligatorio.' },
         { id: 'modal-responsable', mensaje: 'Debe seleccionar un responsable.' },
         { id: 'modal-visibilidad', mensaje: 'Debe seleccionar la visibilidad.' }
     ];
 
     camposRequeridos.forEach(campo => {
-        const elemento = document.getElementById(campo.id);
-        if (elemento && elemento.value.trim() === '') {
-            validaciones.mostrarError(campo.id, campo.mensaje);
+        if (!validaciones.validarCampo(campo.id, validaciones.validarRequerido, campo.mensaje)) {
             esValido = false;
         }
     });
@@ -136,11 +141,11 @@ const validarFormularioActividad = () => {
     const entradaLibre = document.getElementById('modal-entrada-libre').value === 'true';
     const cupoInput = document.getElementById('modal-cupo');
     if (!entradaLibre) {
-        if (cupoInput.value.trim() === '') {
-            validaciones.mostrarError('modal-cupo', 'El cupo máximo es obligatorio.');
+        if (!validaciones.validarRequerido(cupoInput.value)) {
+            validaciones.mostrarError('modal-cupo', 'El cupo maximo es obligatorio.');
             esValido = false;
         } else if (!validaciones.validarCupo(cupoInput.value)) {
-            validaciones.mostrarError('modal-cupo', 'Ingrese un cupo válido (número entero positivo).');
+            validaciones.mostrarError('modal-cupo', 'Ingrese un cupo valido (numero entero positivo).');
             esValido = false;
         }
     }

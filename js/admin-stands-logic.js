@@ -83,49 +83,49 @@ document.addEventListener('DOMContentLoaded', () => {
         validaciones.limpiarErrores();
     }
 
-    /** Valida los campos del modal. Retorna true si todo es válido */
+    /** Valida los campos del modal. Retorna true si todo es valido */
     function validarFormulario() {
         limpiarErrores();
         let valido = true;
 
-        if (!inputNombre.value.trim()) {
+        if (!validaciones.validarRequerido(inputNombre.value)) {
             mostrarError('inputNombreStand', 'El nombre del stand es requerido.');
             valido = false;
         } else if (!validaciones.validarNombre(inputNombre.value)) {
             mostrarError('inputNombreStand', 'El nombre debe tener al menos 3 caracteres.');
             valido = false;
         }
-        if (!inputCategoria.value) {
-            mostrarError('inputCategoriaStand', 'La categoría es requerida.');
+        if (!validaciones.validarRequerido(inputCategoria.value)) {
+            mostrarError('inputCategoriaStand', 'La categoria es requerida.');
             valido = false;
         }
-        if (!inputDesc.value.trim()) {
-            mostrarError('inputDescStand', 'La descripción es requerida.');
+        if (!validaciones.validarRequerido(inputDesc.value)) {
+            mostrarError('inputDescStand', 'La descripcion es requerida.');
             valido = false;
         } else if (!validaciones.validarDescripcion(inputDesc.value, true)) {
-            mostrarError('inputDescStand', 'La descripción no puede superar los 200 caracteres.');
+            mostrarError('inputDescStand', 'La descripcion no puede superar los 200 caracteres.');
             valido = false;
         }
-        if (!inputEncargado.value.trim()) {
+        if (!validaciones.validarRequerido(inputEncargado.value)) {
             mostrarError('inputEncargadoStand', 'El nombre del encargado es requerido.');
             valido = false;
         }
-        if (!inputEmpresa.value.trim()) {
+        if (!validaciones.validarRequerido(inputEmpresa.value)) {
             mostrarError('inputEmpresaStand', 'El nombre de empresa/personal es requerido.');
             valido = false;
         }
-        if (!inputCorreo.value.trim()) {
+        if (!validaciones.validarRequerido(inputCorreo.value)) {
             mostrarError('inputCorreoStand', 'El correo es requerido.');
             valido = false;
         } else if (!validaciones.validarCorreo(inputCorreo.value)) {
-            mostrarError('inputCorreoStand', 'Ingrese un correo válido (ej. usuario@empresa.com).');
+            mostrarError('inputCorreoStand', 'Ingrese un correo valido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (!inputTelefono.value.trim()) {
-            mostrarError('inputTelefonoStand', 'El teléfono es requerido.');
+        if (!validaciones.validarRequerido(inputTelefono.value)) {
+            mostrarError('inputTelefonoStand', 'El telefono es requerido.');
             valido = false;
         } else if (!validaciones.validarTelefono(inputTelefono.value)) {
-            mostrarError('inputTelefonoStand', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
+            mostrarError('inputTelefonoStand', 'El telefono debe tener 8 digitos (ej. 8888-8888).');
             valido = false;
         }
 
@@ -161,9 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '';
 
         if (stands.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="tabla-vacia">No se encontraron stands.</td></tr>`;
+            tbody.innerHTML = '';
+            document.getElementById('tabla-vacia').classList.remove('oculto');
             return;
         }
+        document.getElementById('tabla-vacia').classList.add('oculto');
 
         stands.forEach(stand => {
             const tr = document.createElement('tr');

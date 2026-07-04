@@ -181,28 +181,40 @@ const validarFormularioEvento = (e) => {
     limpiarErrores();
     let esValido = true;
 
-    // 1. Campos obligatorios
+    // 1. Campos obligatorios (texto no vacio)
     const camposRequeridos = [
         { id: 'nombreEvento',      mensaje: 'El nombre del evento es obligatorio.' },
-        { id: 'categoriaEvento',   mensaje: 'Debe seleccionar una categoría.' },
-        { id: 'descEvento',        mensaje: 'La descripción es obligatoria.' },
+        { id: 'categoriaEvento',   mensaje: 'Debe seleccionar una categoria.' },
+        { id: 'descEvento',        mensaje: 'La descripcion es obligatoria.' },
         { id: 'fechaInicioEvento', mensaje: 'Debe seleccionar una fecha de inicio.' },
-        { id: 'fechaFinEvento',    mensaje: 'Debe seleccionar una fecha de finalización.' },
+        { id: 'fechaFinEvento',    mensaje: 'Debe seleccionar una fecha de finalizacion.' },
         { id: 'lugarEvento',       mensaje: 'El lugar es obligatorio.' },
         { id: 'horaInicio',        mensaje: 'Establezca una hora de inicio.' },
-        { id: 'horaFin',           mensaje: 'Establezca una hora de finalización.' },
+        { id: 'horaFin',           mensaje: 'Establezca una hora de finalizacion.' },
         { id: 'responsableEvento', mensaje: 'El nombre del responsable es obligatorio.' }
     ];
 
     camposRequeridos.forEach(campo => {
-        const elemento = document.getElementById(campo.id);
-        if (elemento && elemento.value.trim() === '') {
-            mostrarError(campo.id, campo.mensaje);
+        if (!validaciones.validarCampo(campo.id, validaciones.validarRequerido, campo.mensaje)) {
             esValido = false;
         }
     });
 
-    // 2. Radio buttons
+    // 2. Nombre minimo 3 caracteres
+    const nombreVal = document.getElementById('nombreEvento').value;
+    if (nombreVal.trim() !== '' && !validaciones.validarNombre(nombreVal)) {
+        mostrarError('nombreEvento', 'El nombre debe tener al menos 3 caracteres.');
+        esValido = false;
+    }
+
+    // 3. Descripcion max 200 caracteres
+    const descVal = document.getElementById('descEvento').value;
+    if (descVal.trim() !== '' && !validaciones.validarDescripcion(descVal, false)) {
+        mostrarError('descEvento', 'La descripcion no puede superar los 200 caracteres.');
+        esValido = false;
+    }
+
+    // 4. Radio buttons
     const tipoEntrada = document.querySelector('input[name="tipoEntrada"]:checked');
     if (!tipoEntrada) {
         mostrarError('tipoEntrada', 'Debe seleccionar el tipo de entrada.');
@@ -215,52 +227,35 @@ const validarFormularioEvento = (e) => {
         esValido = false;
     }
 
-    // 3. Cupo
+    // 5. Cupo (numero entero positivo)
     const cupoEvento = document.getElementById('cupoEvento');
-    if (cupoEvento) {
-        if (cupoEvento.value.trim() === '') {
-            mostrarError('cupoEvento', 'El cupo es obligatorio.');
-            esValido = false;
-        } else if (parseInt(cupoEvento.value) < 1) {
+    if (cupoEvento && validaciones.validarRequerido(cupoEvento.value)) {
+        if (!validaciones.validarCupo(cupoEvento.value)) {
             mostrarError('cupoEvento', 'El cupo debe ser al menos de 1 persona.');
             esValido = false;
         }
+    } else if (cupoEvento && !validaciones.validarRequerido(cupoEvento.value)) {
+        mostrarError('cupoEvento', 'El cupo es obligatorio.');
+        esValido = false;
     }
 
-    // 4. Lógica de horas
-    const horaInicio = document.getElementById('horaInicio');
-    const horaFin = document.getElementById('horaFin');
-    if (horaInicio && horaFin && horaInicio.value.trim() !== '' && horaFin.value.trim() !== '') {
-        if (horaInicio.value >= horaFin.value) {
-            mostrarError('horaFin', 'La hora de finalización debe ser posterior a la de inicio.');
-            esValido = false;
-        }
+    // 6. Hora fin posterior a hora inicio
+    const horaInicio = document.getElementById('horaInicio').value;
+    const horaFin = document.getElementById('horaFin').value;
+    if (horaInicio && horaFin && !validaciones.validarHorasOrden(horaInicio, horaFin)) {
+        mostrarError('horaFin', 'La hora de finalizacion debe ser posterior a la de inicio.');
+        esValido = false;
     }
 
-    // 5. Lógica de fechas
-    const fechaInicio = document.getElementById('fechaInicioEvento');
-    const fechaFin = document.getElementById('fechaFinEvento');
-    if (fechaInicio && fechaFin && fechaInicio.value.trim() !== '' && fechaFin.value.trim() !== '') {
-        const dateInicio = new Date(fechaInicio.value + 'T00:00:00');
-        const dateFin = new Date(fechaFin.value + 'T00:00:00');
-
-        if (dateFin < dateInicio) {
-            mostrarError('fechaFinEvento', 'La fecha final no puede ser anterior a la de inicio.');
-            esValido = false;
-        }
-
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
-        if (dateFin < hoy && esValido) {
-            const confirmacion = confirm('La fecha de finalización ya pasó. Este evento se registrará como histórico (Finalizado). ¿Desea continuar?');
-            if (!confirmacion) {
-                mostrarError('fechaFinEvento', 'Cambie la fecha para publicar el evento de forma activa.');
-                esValido = false;
-            }
-        }
+    // 7. Fecha fin no anterior a fecha inicio
+    const fechaInicio = document.getElementById('fechaInicioEvento').value;
+    const fechaFin = document.getElementById('fechaFinEvento').value;
+    if (fechaInicio && fechaFin && !validaciones.validarFechasOrden(fechaInicio, fechaFin)) {
+        mostrarError('fechaFinEvento', 'La fecha final no puede ser anterior a la de inicio.');
+        esValido = false;
     }
 
-    // 6. Si todo es válido, guardar y redirigir
+    // 8. Si todo es valido, guardar y redirigir
     if (esValido) {
         const form = document.getElementById('formCrearEvento');
         const cupoMax = parseInt(document.getElementById('cupoEvento').value);

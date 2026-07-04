@@ -57,80 +57,76 @@ const inicializarFiltrosEntrada = () => {
     if (telefonoInput) telefonoInput.addEventListener('input', bloquearLetras);
 };
 
-// VALIDACIÓN DEL FORMULARIO
+// VALIDACION DEL FORMULARIO
 const validarInscripcion = (e) => {
     e.preventDefault();
     limpiarErrores();
     let esValido = true;
 
-    // 1. Validar campos de texto requeridos
+    // 1. Campos de texto requeridos
     const camposRequeridos = [
         { id: 'nombreVisitante', mensaje: 'El nombre completo es requerido.' },
-        { id: 'carreraVisitante', mensaje: 'La carrera o profesión es requerida.' }
+        { id: 'carreraVisitante', mensaje: 'La carrera o profesion es requerida.' }
     ];
 
     camposRequeridos.forEach(campo => {
-        const elemento = document.getElementById(campo.id);
-        if (elemento && elemento.value.trim() === '') {
-            mostrarError(campo.id, campo.mensaje);
+        if (!validaciones.validarCampo(campo.id, validaciones.validarRequerido, campo.mensaje)) {
             esValido = false;
         }
     });
 
-    // 1b. Validar nombre mínimo 3 caracteres
+    // 1b. Nombre minimo 3 caracteres
     const nombreInput = document.getElementById('nombreVisitante');
-    if (nombreInput && nombreInput.value.trim() !== '' && !validaciones.validarNombre(nombreInput.value)) {
+    if (nombreInput && validaciones.validarRequerido(nombreInput.value) && !validaciones.validarNombre(nombreInput.value)) {
         mostrarError('nombreVisitante', 'El nombre debe tener al menos 3 caracteres.');
         esValido = false;
     }
 
-    // 1c. Validar cédula formato (8-12 dígitos)
+    // 1c. Cedula formato (8-12 digitos)
     const cedulaInput = document.getElementById('cedulaVisitante');
     if (cedulaInput) {
-        if (cedulaInput.value.trim() === '') {
-            mostrarError('cedulaVisitante', 'La cédula es requerida.');
+        if (!validaciones.validarRequerido(cedulaInput.value)) {
+            mostrarError('cedulaVisitante', 'La cedula es requerida.');
             esValido = false;
         } else if (!validaciones.validarCedula(cedulaInput.value)) {
-            mostrarError('cedulaVisitante', 'Ingrese una cédula válida (8-12 dígitos).');
+            mostrarError('cedulaVisitante', 'Ingrese una cedula valida (8-12 digitos).');
             esValido = false;
         }
     }
 
-    // 1d. Validar teléfono formato (8 dígitos)
+    // 1d. Telefono formato (8 digitos)
     const telefonoInput = document.getElementById('telefonoVisitante');
     if (telefonoInput) {
-        if (telefonoInput.value.trim() === '') {
-            mostrarError('telefonoVisitante', 'El teléfono es requerido.');
+        if (!validaciones.validarRequerido(telefonoInput.value)) {
+            mostrarError('telefonoVisitante', 'El telefono es requerido.');
             esValido = false;
         } else if (!validaciones.validarTelefono(telefonoInput.value)) {
-            mostrarError('telefonoVisitante', 'Ingrese un teléfono válido (8 dígitos).');
+            mostrarError('telefonoVisitante', 'Ingrese un telefono valido (8 digitos).');
             esValido = false;
         }
     }
 
-    // 2. Validación RegEx para el Correo Electrónico
+    // 2. Correo electronico
     const emailInput = document.getElementById('emailVisitante');
     if (emailInput) {
-        if (emailInput.value.trim() === '') {
+        if (!validaciones.validarRequerido(emailInput.value)) {
             mostrarError('emailVisitante', 'El correo es requerido.');
             esValido = false;
-        } else if (!validaciones.validarCorreo(emailInput.value.trim())) {
-            mostrarError('emailVisitante', 'Ingrese un correo válido (ej: usuario@dominio.com).');
+        } else if (!validaciones.validarCorreo(emailInput.value)) {
+            mostrarError('emailVisitante', 'Ingrese un correo valido (ej: usuario@dominio.com).');
             esValido = false;
         }
     }
 
-    // 3. Validación de Edad (15-120 años)
+    // 3. Edad (15-120)
     const edadInput = document.getElementById('edadVisitante');
     if (edadInput) {
-        if (edadInput.value.trim() === '') {
+        if (!validaciones.validarRequerido(edadInput.value)) {
             mostrarError('edadVisitante', 'La edad es requerida.');
             esValido = false;
-        } else {
-            if (!validaciones.validarEdad(edadInput.value)) {
-                mostrarError('edadVisitante', 'Ingrese una edad válida (15-120).');
-                esValido = false;
-            }
+        } else if (!validaciones.validarEdad(edadInput.value)) {
+            mostrarError('edadVisitante', 'Ingrese una edad valida (15-120).');
+            esValido = false;
         }
     }
 

@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const validarCrearNombre = () => {
-        if (!crearNombreInput.value.trim()) {
+        if (!validaciones.validarRequerido(crearNombreInput.value)) {
             mostrarError('crear-nombre', 'El nombre completo es obligatorio.');
             return false;
         }
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCrearEmail = () => {
         const email = crearEmailInput.value.trim();
-        if (!email) {
+        if (!validaciones.validarRequerido(email)) {
             mostrarError('crear-email', 'El correo es obligatorio.');
             return false;
         }
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validarCrearPassword = () => {
-        if (!crearPasswordInput.value) {
+        if (!validaciones.validarRequerido(crearPasswordInput.value)) {
             mostrarError('crear-password', 'La contrasena temporal es obligatoria.');
             return false;
         }
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validarCrearRol = () => {
-        if (!crearRolSelect.value) {
+        if (!validaciones.validarRequerido(crearRolSelect.value)) {
             mostrarError('crear-rol', 'Selecciona un rol.');
             return false;
         }

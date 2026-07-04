@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
         let valido = true;
 
-        // Nombre: obligatorio, mínimo 3 caracteres
-        if (!inputNombre.value.trim()) {
+        // Nombre: obligatorio, minimo 3 caracteres
+        if (!validaciones.validarRequerido(inputNombre.value)) {
             mostrarError('inputNombreOrador', 'El nombre es requerido.');
             valido = false;
         } else if (!validaciones.validarNombre(inputNombre.value)) {
@@ -111,51 +111,51 @@ document.addEventListener('DOMContentLoaded', () => {
             valido = false;
         }
 
-        // Correo: obligatorio, formato válido
-        if (!inputCorreo.value.trim()) {
-            mostrarError('inputCorreoOrador', 'El correo electrónico es requerido.');
+        // Correo: obligatorio, formato valido
+        if (!validaciones.validarRequerido(inputCorreo.value)) {
+            mostrarError('inputCorreoOrador', 'El correo electronico es requerido.');
             valido = false;
         } else if (!validaciones.validarCorreo(inputCorreo.value)) {
-            mostrarError('inputCorreoOrador', 'Ingrese un correo válido (ej. usuario@empresa.com).');
+            mostrarError('inputCorreoOrador', 'Ingrese un correo valido (ej. usuario@empresa.com).');
             valido = false;
         }
 
-        // Teléfono principal: obligatorio, formato 8 dígitos
-        if (!inputTelefono.value.trim()) {
-            mostrarError('inputTelefonoOrador', 'El teléfono principal es requerido.');
+        // Telefono principal: obligatorio, formato 8 digitos
+        if (!validaciones.validarRequerido(inputTelefono.value)) {
+            mostrarError('inputTelefonoOrador', 'El telefono principal es requerido.');
             valido = false;
         } else if (!validaciones.validarTelefono(inputTelefono.value)) {
-            mostrarError('inputTelefonoOrador', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
+            mostrarError('inputTelefonoOrador', 'El telefono debe tener 8 digitos (ej. 8888-8888).');
             valido = false;
         }
 
-        // Teléfono secundario: opcional, pero si tiene algo validar formato
-        const inputTelefono2 = document.getElementById('inputTelefono2Orador');
-        if (inputTelefono2 && inputTelefono2.value.trim()) {
-            if (!validaciones.validarTelefono(inputTelefono2.value)) {
-                mostrarError('inputTelefono2Orador', 'El teléfono secundario debe tener 8 dígitos.');
+        // Telefono secundario: opcional, pero si tiene algo validar formato
+        const inputTel2 = document.getElementById('inputTelefono2Orador');
+        if (inputTel2 && validaciones.validarRequerido(inputTel2.value)) {
+            if (!validaciones.validarTelefono(inputTel2.value)) {
+                mostrarError('inputTelefono2Orador', 'El telefono secundario debe tener 8 digitos.');
                 valido = false;
             }
         }
 
         // Especialidad: obligatoria
-        if (!inputEspecialidad.value.trim()) {
+        if (!validaciones.validarRequerido(inputEspecialidad.value)) {
             mostrarError('inputEspecialidadOrador', 'La especialidad es requerida.');
             valido = false;
         }
 
-        // Institución/Organización: obligatoria
-        if (!inputEmpresa.value.trim()) {
-            mostrarError('inputEmpresaOrador', 'La institución u organización es requerida.');
+        // Institucion/Organizacion: obligatoria
+        if (!validaciones.validarRequerido(inputEmpresa.value)) {
+            mostrarError('inputEmpresaOrador', 'La institucion u organizacion es requerida.');
             valido = false;
         }
 
-        // Biografía: obligatoria, max 200 chars
-        if (!inputBiografia.value.trim()) {
-            mostrarError('inputBiografiaOrador', 'La biografía es requerida.');
+        // Biografia: obligatoria, max 200 caracteres
+        if (!validaciones.validarRequerido(inputBiografia.value)) {
+            mostrarError('inputBiografiaOrador', 'La biografia es requerida.');
             valido = false;
         } else if (!validaciones.validarDescripcion(inputBiografia.value, true)) {
-            mostrarError('inputBiografiaOrador', 'La biografía no puede superar los 200 caracteres.');
+            mostrarError('inputBiografiaOrador', 'La biografia no puede superar los 200 caracteres.');
             valido = false;
         }
 
@@ -188,9 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '';
 
         if (oradores.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="tabla-vacia">No se encontraron presentadores.</td></tr>`;
+            tbody.innerHTML = '';
+            document.getElementById('tabla-vacia').classList.remove('oculto');
             return;
         }
+        document.getElementById('tabla-vacia').classList.add('oculto');
 
         oradores.forEach(o => {
             const badgeClass = o.estado === 'activo' ? 'badge-active' : 'badge-inactive';

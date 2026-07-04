@@ -553,13 +553,6 @@ header {
   font-size: 0.8rem;
 }
 
-/* TABLA VACIA MSG */
-.tabla-vacia-msg {
-  text-align: center;
-  padding: 2rem;
-  color: var(--gray-600);
-}
-
 /* Checkbox inline label (e.g. "Incluye refrigerio") */
 .input-group label:has(input[type="checkbox"]) {
   display: flex;
