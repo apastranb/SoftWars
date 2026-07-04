@@ -24,10 +24,18 @@
   --blue-800: #164a98; /* Azul oscuro */
 
   /* Grises */
+  --gray-100: #f0f0f0; /* Fondo de pagina */
+  --gray-200: #e5e7eb; /* Bordes suaves */
   --gray-300: #d2d2d2; /* Gris claro */
   --gray-600: #7c7b75; /* Gris oscuro */
-  --white: #ffffff; /* Blanco */
-  --black: #000; /* Negro */
+  --gray-700: #333333; /* Texto oscuro */
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Azules UI (tablas, inputs, cards) */
+  --blue-50: #f8fafc;  /* Fondo sutil (inputs, cards) */
+  --blue-100: #e7f2ff; /* Fondo thead, highlight suave */
+  --blue-150: #dbeafe; /* Hover filas */
 
   /* Amarillos */
   --yellow-400: #fff200; /* Amarillo */
@@ -35,8 +43,14 @@
 
   /* Acciones */
   --success: #10b981;
+  --success-bg: #d1fae5;
+  --success-text: #065f46;
   --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --warning-text: #9a6300;
   --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --danger-text: #991b1b;
   --info: #0ea5e9;
 }
 
@@ -50,7 +64,7 @@
 body {
   font-family: "Circular-Std-Book", sans-serif;
   min-height: 100vh;
-  background-color: #f0f0f0;
+  background-color: var(--gray-100);
 }
 
 input,
@@ -241,7 +255,7 @@ table {
   border-radius: 8px;
   font-size: 0.95rem;
   color: var(--blue-800);
-  background-color: #f8fafc;
+  background-color: var(--blue-50);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   resize: vertical;
@@ -334,7 +348,8 @@ table {
 /* Photo upload area */
 .foto-upload-area {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 1rem;
 }
 

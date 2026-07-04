@@ -1,147 +1,7 @@
+/* ADMIN ACTIVIDADES - page-specific styles */
+/* Toolbar, table, modal, form, badge, filter-select styles are in admin-layout.css + styles.css */
 
-
-/* BREADCRUMBS */
-.breadcrumb {
-  background-color: transparent;
-  display: flex;
-  border: none;
-  box-shadow: none;
-  flex-direction: row;
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0 0;
-  font-size: 0.9rem;
-}
-
-.breadcrumb-item a {
-  color: var(--blue-500);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.breadcrumb-item a:hover {
-  color: var(--blue-800);
-  text-decoration: underline;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-  content: "/";
-  color: var(--gray-600);
-  padding: 0 0.5rem;
-}
-
-.breadcrumb-item.active {
-  color: var(--gray-600);
-  font-weight: normal;
-  pointer-events: none;
-}
-
-/* MAIN & WORKSPACE CONFIGURATION */
-/* (main padding handled by .admin-page-content in admin-layout.css) */
-
-/* NEW EVENT FORM */
-.form-card {
-  background-color: var(--white);
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid var(--gray-300);
-}
-
-.form-card h2 {
-  color: var(--blue-800);
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--blue-200);
-  padding-bottom: 0.5rem;
-}
-
-.section-subtitle {
-  color: var(--gray-600);
-  margin-top: -1rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
-
-/* FORM GRID */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.input-group.full-width {
-  grid-column: 1 / -1;
-}
-
-/* UPLOAD IMG */
-.upload-area {
-  border: 1px dashed var(--blue-500);
-  border-radius: 12px;
-  padding: 3rem;
-  text-align: center;
-  background-color: rgba(0, 106, 234, 0.05);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.upload-area:hover {
-  background-color: rgba(0, 106, 234, 0.1);
-  border-color: var(--blue-800);
-}
-
-.upload-area i {
-  font-size: 3rem;
-  color: var(--blue-800);
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.upload-area p {
-  color: var(--blue-800);
-  margin: 0;
-}
-
-/* RADIO BTN GROUP */
-.radio-groups-container {
-  display: flex;
-  gap: 3rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--gray-300);
-}
-
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.radio-title {
-  font-weight: bold;
-  color: var(--blue-800);
-  font-size: 0.9rem;
-}
-
-.radio-options {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.radio-options label {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--gray-600);
-}
-
-
-/* Especificidad limpia apuntando desde el contenedor principal derecho */
+/* Widgets grid below the table */
 .admin-main-content .widgets-layout-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -150,7 +10,7 @@
   margin-top: 1.5rem;
 }
 
-/* Tarjetas de abajo */
+/* Widget cards */
 .admin-main-content .group-style-card {
   background-color: var(--white);
   border-radius: 12px;
@@ -162,7 +22,6 @@
   gap: 1.2rem;
 }
 
-/* Cabeceras internas */
 .group-style-card .card-header-title {
   display: flex;
   align-items: center;
@@ -178,23 +37,19 @@
   color: var(--blue-800);
 }
 
-/* Bloques de agenda internos */
+/* Timeline blocks inside agenda widget */
 .group-style-card .timeline-block {
   padding: 1rem;
   border-radius: 8px;
-  background-color: #f8fafc;
+  background-color: var(--blue-50);
   border-left: 4px solid var(--gray-300);
 }
 
-.group-style-card .block-blue { 
-  border-left-color: var(--blue-500); 
+.group-style-card .block-blue {
+  border-left-color: var(--blue-500);
 }
 
-.group-style-card .block-blue { 
-  border-left-color: var(--blue-500); 
-}
-
-/* Bloque de Participantes */
+/* Participant row inside widget */
 .group-style-card .participant-row-item {
   display: flex;
   align-items: center;
@@ -221,32 +76,7 @@
   color: var(--gray-600);
 }
 
-/* TEXTOS AUXILIARES */
-.txt-bold { font-weight: bold; color: var(--blue-800); }
-.txt-highlight { color: var(--blue-800); font-weight: 500; }
-.txt-muted { color: var(--gray-600); font-size: 0.85rem; }
-
-.badge-tag {
-  display: inline-block;
-  background-color: rgba(0, 106, 234, 0.08);
-  color: var(--blue-500);
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.action-link-btn {
-  background: transparent;
-  border: none;
-  font-weight: bold;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-right: 0.75rem;
-}
-
-
-/* Modal visibility (uses .modal-hidden initially, .active to show) */
+/* Modal visibility for actividades (uses .modal-hidden initially, .active to show) */
 .modal-overlay.modal-hidden {
   display: none;
 }
@@ -254,6 +84,3 @@
 .modal-overlay.active {
   display: flex;
 }
-
-.edit-link { color: var(--blue-500); }
-.delete-link { color: var(--danger); }

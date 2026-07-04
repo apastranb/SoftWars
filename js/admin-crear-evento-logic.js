@@ -97,8 +97,6 @@ const inicializarAsistenteIA = () => {
             mostrarError('descEvento', 'Escribe algo primero para que la IA lo mejore.');
             return;
         }
-        // Integracion real con API Gemini pendiente para Fase 2
-        alert('Funcionalidad de IA pendiente de integracion con API Gemini (Fase 2).');
     });
 };
 

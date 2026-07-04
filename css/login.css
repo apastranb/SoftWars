@@ -192,7 +192,7 @@
 }
 
 .modal-btn-cancelar:hover {
-    background-color: #f0f0f0;
+    background-color: var(--gray-100);
 }
 
 .modal-btn-registrar {
@@ -209,10 +209,4 @@
 
 .modal-btn-registrar:hover {
     background-color: var(--blue-500);
-}
-
-@media (max-width: 480px) {
-    .login-box {
-        padding: 2rem 1.5rem;
-    }
 }

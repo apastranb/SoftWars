@@ -9,9 +9,3 @@
     object-fit: cover;
     border: 2px solid var(--blue-200);
 }
-
-/* Upload de foto en modal (page-specific layout) */
-.foto-upload-area {
-    flex-direction: column;
-    align-items: flex-start;
-}

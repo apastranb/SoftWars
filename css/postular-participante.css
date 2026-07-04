@@ -1,10 +1,10 @@
-/* POSTULARSE COMO PARTICIPANTE - Inscripción a Actividades */
+/* POSTULARSE COMO PRESENTADOR / ORADOR */
 
 .public-container {
     display: flex;
     justify-content: center;
     padding: 3rem 1.5rem;
-    background-color: #f0f0f0;
+    background-color: var(--gray-100);
     min-height: calc(100vh - 160px);
 }
 
@@ -36,255 +36,32 @@
     font-size: 1.1rem;
 }
 
-/* ===== TABS (Inscribirme / Cancelar Inscripción) ===== */
-.postulacion-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid var(--gray-300);
-}
-
-.postulacion-tab {
-    flex: 1;
-    padding: 0.8rem;
-    border: none;
-    background: none;
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: var(--gray-600);
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s ease;
-}
-
-.postulacion-tab:hover {
-    color: var(--blue-500);
-}
-
-.postulacion-tab.active {
-    color: var(--blue-800);
-    border-bottom-color: var(--blue-500);
-}
-
-.oculto {
-    display: none;
-}
-
 /* ===== FORM GROUPS ===== */
 .form-group {
-  flex: 1;
+    flex: 1;
 }
 
 .form-group-row {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
-/* Select styling for this page */
+/* Select styling */
 .form-group select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23164a98' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23164a98' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
 }
 
-/* Textarea styling for this page */
+/* Textarea styling */
 .form-group textarea {
-  min-height: 80px;
-}
-
-/* ===== ACTIVIDADES (checkboxes con estilo personalizado) ===== */
-.lista-actividades {
-    margin-bottom: 1rem;
-}
-
-.checkboxActivity {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--gray-300);
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: var(--white);
-    transition: all 0.2s ease;
-    margin-bottom: 0.8rem;
-}
-
-.checkboxActivity input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.box-visual {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--gray-300);
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-    background-color: var(--white);
-}
-
-.info-actividad {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    flex: 1;
-}
-
-.actividad-titulo {
-    color: var(--blue-800);
-    font-size: 0.95rem;
-    font-weight: bold;
-}
-
-.actividad-meta {
-    color: var(--gray-600);
-    font-size: 0.85rem;
-}
-
-.actividad-cupo {
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
-.actividad-cupo.disponible { color: #0a7a57; }
-.actividad-cupo.lleno { color: var(--danger); }
-
-.checkboxActivity:hover {
-    border-color: var(--blue-200);
-}
-
-.checkboxActivity:hover .box-visual {
-    border-color: var(--blue-500);
-}
-
-.checkboxActivity input[type="checkbox"]:checked + .box-visual {
-    background-color: var(--blue-500);
-    border-color: var(--blue-500);
-}
-
-.checkboxActivity input[type="checkbox"]:checked + .box-visual::after {
-    content: "";
-    width: 6px;
-    height: 12px;
-    border: solid var(--white);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    margin-bottom: 2px;
-}
-
-.checkboxActivity:has(input[type="checkbox"]:checked) {
-    border-color: var(--blue-500);
-    background-color: rgba(0, 106, 234, 0.05);
-}
-
-.checkboxActivity.actividad-deshabilitada {
-    opacity: 0.55;
-    cursor: not-allowed;
-}
-
-.actividad-libre {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px dashed var(--gray-300);
-    border-radius: 8px;
-    margin-bottom: 0.8rem;
-    background-color: #f8fafc;
-}
-
-.actividad-libre .info-actividad {
-    flex: 1;
-}
-
-.tag-entrada-libre {
-    background-color: rgba(14, 165, 233, 0.12);
-    color: var(--info);
-    font-size: 0.78rem;
-    font-weight: bold;
-    padding: 0.3rem 0.7rem;
-    border-radius: 20px;
-    white-space: nowrap;
+    min-height: 80px;
 }
 
 /* ===== MENSAJES ===== */
-#error-general,
-#error-actividades {
+#error-general {
     display: block;
     text-align: center;
     margin-bottom: 0.5rem;
-}
-
-/* ===== CANCELAR INSCRIPCIÓN ===== */
-.resultado-busqueda {
-    margin-top: 1.5rem;
-}
-
-.participante-card {
-    border: 1px solid var(--gray-300);
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.participante-card h4 {
-    color: var(--blue-800);
-    margin-bottom: 0.3rem;
-    font-size: 1.05rem;
-}
-
-.participante-card p {
-    color: var(--gray-600);
-    font-size: 0.85rem;
-    margin-bottom: 0.8rem;
-}
-
-.actividad-cancelar-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.7rem 0;
-    border-top: 1px solid var(--gray-300);
-}
-
-.actividad-cancelar-row:first-of-type {
-    border-top: none;
-}
-
-.btn-cancelar-actividad {
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-    border: 1.5px solid var(--danger);
-    background-color: var(--white);
-    color: var(--danger);
-    font-size: 0.82rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-cancelar-actividad:hover {
-    background-color: var(--danger);
-    color: var(--white);
-}
-
-@media (max-width: 600px) {
-    .form-container {
-        padding: 2rem 1.5rem;
-    }
-
-    .form-group-row {
-        flex-direction: column;
-        gap: 0;
-    }
 }

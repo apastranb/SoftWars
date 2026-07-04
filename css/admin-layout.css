@@ -1,7 +1,7 @@
 /* ADMIN LAYOUT */
 
 .admin-main-content {
-  background-color: #f0f0f0;
+  background-color: var(--gray-100);
   margin-left: 290px; /* mismo que navSideMenu */
   min-height: 100vh;
   display: flex;
@@ -213,7 +213,7 @@ header {
 
 .eventsAdminBtnSecondary:hover {
   background-color: var(--blue-800);
-  color: var(--white, #ffffff);
+  color: var(--white);
 }
 
 .btnDelete {
@@ -300,8 +300,8 @@ header {
 
 .admin-table td {
   padding: 12px 14px;
-  color: #333;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--gray-700);
+  border-bottom: 1px solid var(--gray-200);
   vertical-align: middle;
 }
 
@@ -310,7 +310,7 @@ header {
 }
 
 .admin-table tbody tr:hover {
-  background-color: #dbeafe;
+  background-color: var(--blue-150);
   transition: background 0.2s;
 }
 
@@ -467,7 +467,7 @@ header {
 }
 
 .modal-btn-cancelar:hover {
-  background-color: #f0f0f0;
+  background-color: var(--gray-100);
 }
 
 .modal-btn-registrar {
@@ -514,18 +514,18 @@ header {
 }
 
 .badge-active, .badge.activo, .badge.aprobado {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
 .badge-inactive, .badge.inactivo, .badge.cerrado {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 .badge.pendiente {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #9a6300;
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 /* FORM GRID (replaces inline grid styles) */

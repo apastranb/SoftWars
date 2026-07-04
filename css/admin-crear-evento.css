@@ -203,7 +203,7 @@ main {
   border-radius: 8px;
   padding: 0.5rem 1rem;
   margin-bottom: 1.5rem;
-  background-color: #f8fafc;
+  background-color: var(--blue-50);
 }
 
 .search-assign-bar i {
@@ -269,7 +269,7 @@ main {
 /* CLASS ICON X: <i class="bi bi-x"></i> */
 
 .activity-block {
-  background-color: #f8fafc;
+  background-color: var(--blue-50);
   border: 1px solid var(--gray-300);
   border-radius: 8px;
   padding: 1.5rem;

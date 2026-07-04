@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Solo puede editar un participante a la vez.');
             return;
         }
-        alert('Funcionalidad de edicion de participante pendiente (Fase 2).');
     });
 
     // Toolbar: Eliminar
