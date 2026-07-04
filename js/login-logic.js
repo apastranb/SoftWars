@@ -97,66 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================================
-    // HU-03: Verificar Cuenta
-    // ==========================================================
-    const modalVerificar = document.querySelector('#modalVerificarCuenta');
-    const linkVerify = document.querySelector('#link-verify');
-
-    const abrirModalVerificar = (e) => {
-        e.preventDefault();
-        document.querySelector('#verify-email').value = '';
-        limpiarErrores('verify-email');
-        document.querySelector('#resultado-verificar').className = 'form__result-message';
-        document.querySelector('#resultado-verificar').textContent = '';
-        modalVerificar.classList.add('active');
-    };
-
-    const cerrarModalVerificar = () => modalVerificar.classList.remove('active');
-
-    linkVerify.addEventListener('click', abrirModalVerificar);
-    document.querySelector('#btnCerrarVerificar').addEventListener('click', cerrarModalVerificar);
-    document.querySelector('#btnCancelarVerificar').addEventListener('click', cerrarModalVerificar);
-    modalVerificar.addEventListener('click', (e) => {
-        if (e.target === modalVerificar) cerrarModalVerificar();
-    });
-
-    const verifyEmailInput = document.querySelector('#verify-email');
-    const validarVerifyEmail = () => {
-        const email = verifyEmailInput.value.trim();
-        if (!email) {
-            mostrarError('verify-email', 'Ingresa un correo para verificar.');
-            return false;
-        }
-        if (!validaciones.validarCorreo(email)) {
-            mostrarError('verify-email', 'Ingresa un correo valido.');
-            return false;
-        }
-        limpiarErrores('verify-email');
-        return true;
-    };
-    verifyEmailInput.addEventListener('blur', validarVerifyEmail);
-
-    document.querySelector('#btnVerificar').addEventListener('click', () => {
-        if (!validarVerifyEmail()) return;
-        const email = verifyEmailInput.value.trim();
-
-        const usuario = window.db.usuarios.find(
-            u => u.email.toLowerCase() === email.toLowerCase()
-        );
-
-        if (!usuario) {
-            mostrarResultado('resultado-verificar', 'No existe ninguna cuenta registrada con ese correo.', 'error');
-            return;
-        }
-
-        if (usuario.estado === 'Activo') {
-            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} esta activa y lista para usarse.`, 'success');
-        } else {
-            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} existe pero esta inactiva. Contacta a un administrador.`, 'error');
-        }
-    });
-
-    // ==========================================================
     // HU-04: Modificar Contrasena
     // ==========================================================
     const modalCambiarPass = document.querySelector('#modalCambiarPass');

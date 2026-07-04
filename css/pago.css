@@ -140,6 +140,27 @@
     transform: translateY(-1px);
 }
 
+/* Boton cancelar / volver */
+.pago-btn-cancelar {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    text-align: center;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-600);
+    background-color: transparent;
+    color: var(--gray-600);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.pago-btn-cancelar:hover {
+    background-color: #f0f0f0;
+    color: var(--blue-800);
+}
+
 /* Mensajes de error */
 .pago-error {
     color: var(--danger);
