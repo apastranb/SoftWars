@@ -1,17 +1,10 @@
 // FUNCIONES DE UTILIDAD
 const mostrarError = (idCampo, mensaje) => {
-    const spanError = document.getElementById(`error-${idCampo}`);
-    if (spanError) {
-        spanError.textContent = mensaje;
-        spanError.classList.add('form__error-message--active');
-    }
+    validaciones.mostrarError(idCampo, mensaje);
 };
 
 const limpiarErrores = () => {
-    document.querySelectorAll('.form__error-message').forEach(span => {
-        span.classList.remove('form__error-message--active');
-        span.textContent = '';
-    });
+    validaciones.limpiarErrores();
 };
 
 

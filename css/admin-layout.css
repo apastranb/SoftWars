@@ -233,25 +233,6 @@ header {
   display: none;
 }
 
-.modal-hidden {
-  display: none;
-}
-
-/* MODAL BASE STYLES */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-overlay.modal-active {
-  display: flex;
-}
-
 /* FORM GRID (replaces inline grid styles) */
 .form-grid.two-columns {
   display: grid;
@@ -275,4 +256,11 @@ header {
 .field-hint {
   color: #9ca3af;
   font-size: 0.8rem;
+}
+
+/* TABLA VACIA MSG */
+.tabla-vacia-msg {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-600);
 }

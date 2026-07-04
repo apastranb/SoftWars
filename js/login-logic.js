@@ -1,37 +1,14 @@
-// Expresión para validar formato de correo (misma convención usada en el resto del sitio)
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// --- FUNCIONES DE UTILIDAD PARA ERRORES ---
+﻿// --- FUNCIONES DE UTILIDAD PARA ERRORES ---
 const mostrarError = (idCampo, mensaje) => {
-    const spanError = document.getElementById(`error-${idCampo}`);
-    if (spanError) {
-        spanError.textContent = mensaje;
-        spanError.classList.add('form__error-message--active');
-    }
+    validaciones.mostrarError(idCampo, mensaje);
 };
 
 const limpiarErrores = (...ids) => {
-    if (ids.length) {
-        ids.forEach(id => {
-            const span = document.getElementById(`error-${id}`);
-            if (span) {
-                span.textContent = '';
-                span.classList.remove('form__error-message--active');
-            }
-        });
-        return;
-    }
-    document.querySelectorAll('.form__error-message').forEach(span => {
-        span.classList.remove('form__error-message--active');
-        span.textContent = '';
-    });
+    validaciones.limpiarErrores(...ids);
 };
 
 const mostrarResultado = (id, mensaje, tipo) => {
-    const span = document.getElementById(id);
-    if (!span) return;
-    span.textContent = mensaje;
-    span.className = 'form__result-message form__result-message--' + tipo;
+    validaciones.mostrarResultado(id, mensaje, tipo);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,15 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.querySelector('#email');
     const passwordInput = document.querySelector('#password');
 
-    // RF-32: Validación en tiempo real por campo (se reutiliza en blur y en submit)
+    // RF-32: Validacion en tiempo real por campo (se reutiliza en blur y en submit)
     const validarCampoEmail = () => {
         const email = emailInput.value.trim();
         if (!email) {
             mostrarError('email', 'El correo es obligatorio.');
             return false;
         }
-        if (!emailRegex.test(email)) {
-            mostrarError('email', 'Ingrese un correo válido (ej: usuario@dominio.com).');
+        if (!validaciones.validarCorreo(email)) {
+            mostrarError('email', 'Ingrese un correo valido (ej: usuario@dominio.com).');
             return false;
         }
         limpiarErrores('email');
@@ -56,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCampoPassword = () => {
         if (!passwordInput.value) {
-            mostrarError('password', 'La contraseña es obligatoria.');
+            mostrarError('password', 'La contrasena es obligatoria.');
             return false;
         }
         limpiarErrores('password');
@@ -67,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('blur', validarCampoPassword);
 
     // ==========================================================
-    // HU-01: Iniciar Sesión
+    // HU-01: Iniciar Sesion
     // ==========================================================
     formLogin.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -82,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!esValido) return;
 
-        // Validación contra la base de datos compartida (window.db.usuarios)
+        // Validacion contra la base de datos compartida (window.db.usuarios)
         const usuario = window.db.usuarios.find(
             u => u.email.toLowerCase() === email.toLowerCase()
         );
 
         if (!usuario || usuario.password !== password) {
-            mostrarError('login', 'Correo o contraseña incorrectos.');
+            mostrarError('login', 'Correo o contrasena incorrectos.');
             return;
         }
 
@@ -97,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Sesión guardada para que las páginas de administración puedan
-        // reconocer al usuario (data-store.js se reinicia en cada página
-        // porque el proyecto todavía no tiene backend/persistencia real).
+        // Sesion guardada para que las paginas de administracion puedan
+        // reconocer al usuario (data-store.js se reinicia en cada pagina
+        // porque el proyecto todavia no tiene backend/persistencia real).
         localStorage.setItem('sesionActiva', 'true');
         localStorage.setItem('sesionEmail', usuario.email);
         localStorage.setItem('sesionNombre', usuario.nombre);
@@ -109,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================================
-    // HU-02: Cerrar Sesión (invocado desde el layout de admin)
+    // HU-02: Cerrar Sesion (invocado desde el layout de admin)
     // ==========================================================
     window.cerrarSesion = function () {
         localStorage.removeItem('sesionActiva');
@@ -150,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('verify-email', 'Ingresa un correo para verificar.');
             return false;
         }
-        if (!emailRegex.test(email)) {
-            mostrarError('verify-email', 'Ingresa un correo válido.');
+        if (!validaciones.validarCorreo(email)) {
+            mostrarError('verify-email', 'Ingresa un correo valido.');
             return false;
         }
         limpiarErrores('verify-email');
@@ -173,14 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (usuario.estado === 'Activo') {
-            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} está activa y lista para usarse.`, 'success');
+            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} esta activa y lista para usarse.`, 'success');
         } else {
-            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} existe pero está inactiva. Contacta a un administrador.`, 'error');
+            mostrarResultado('resultado-verificar', `La cuenta de ${usuario.nombre} existe pero esta inactiva. Contacta a un administrador.`, 'error');
         }
     });
 
     // ==========================================================
-    // HU-04: Modificar Contraseña
+    // HU-04: Modificar Contrasena
     // ==========================================================
     const modalCambiarPass = document.querySelector('#modalCambiarPass');
     const linkForgotPass = document.querySelector('#link-forgot-pass');
@@ -216,8 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('cp-email', 'El correo es obligatorio.');
             return false;
         }
-        if (!emailRegex.test(email)) {
-            mostrarError('cp-email', 'Ingresa un correo válido.');
+        if (!validaciones.validarCorreo(email)) {
+            mostrarError('cp-email', 'Ingresa un correo valido.');
             return false;
         }
         limpiarErrores('cp-email');
@@ -226,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpActual = () => {
         if (!cpActualInput.value) {
-            mostrarError('cp-actual', 'Ingresa tu contraseña actual.');
+            mostrarError('cp-actual', 'Ingresa tu contrasena actual.');
             return false;
         }
         limpiarErrores('cp-actual');
@@ -235,11 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpNueva = () => {
         if (!cpNuevaInput.value) {
-            mostrarError('cp-nueva', 'Ingresa una nueva contraseña.');
+            mostrarError('cp-nueva', 'Ingresa una nueva contrasena.');
             return false;
         }
         if (!validaciones.validarContrasena(cpNuevaInput.value)) {
-            mostrarError('cp-nueva', 'La contraseña no cumple con los requisitos de seguridad.');
+            mostrarError('cp-nueva', 'La contrasena no cumple con los requisitos de seguridad.');
             return false;
         }
         limpiarErrores('cp-nueva');
@@ -248,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpConfirmar = () => {
         if (cpNuevaInput.value && cpConfirmarInput.value && cpNuevaInput.value !== cpConfirmarInput.value) {
-            mostrarError('cp-confirmar', 'Las contraseñas no coinciden.');
+            mostrarError('cp-confirmar', 'Las contrasenas no coinciden.');
             return false;
         }
         limpiarErrores('cp-confirmar');
@@ -278,13 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (usuario.password !== actual) {
-            mostrarError('cp-actual', 'La contraseña actual es incorrecta.');
+            mostrarError('cp-actual', 'La contrasena actual es incorrecta.');
             return;
         }
 
-        // Actualiza la contraseña en la base de datos simulada
+        // Actualiza la contrasena en la base de datos simulada
         usuario.password = nueva;
 
-        mostrarResultado('resultado-cambiar-pass', 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.', 'success');
+        mostrarResultado('resultado-cambiar-pass', 'Contrasena actualizada correctamente. Ya puedes iniciar sesion.', 'success');
     });
 });

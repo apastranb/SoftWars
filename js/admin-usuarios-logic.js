@@ -1,32 +1,18 @@
-// Expresión para validar formato de correo (misma convención usada en el resto del sitio)
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 // --- FUNCIONES DE UTILIDAD ---
 const mostrarError = (idCampo, mensaje) => {
-    const spanError = document.getElementById(`error-${idCampo}`);
-    if (spanError) {
-        spanError.textContent = mensaje;
-        spanError.classList.add('form__error-message--active');
-    }
+    validaciones.mostrarError(idCampo, mensaje);
 };
 
 const limpiarErrores = () => {
-    document.querySelectorAll('.form__error-message').forEach(span => {
-        span.classList.remove('form__error-message--active');
-        span.textContent = '';
-    });
+    validaciones.limpiarErrores();
 };
 
-// Limpia el error de un solo campo (usado en validación en tiempo real - RF-32)
+// Limpia el error de un solo campo (usado en validacion en tiempo real - RF-32)
 const limpiarError = (idCampo) => {
-    const spanError = document.getElementById(`error-${idCampo}`);
-    if (spanError) {
-        spanError.textContent = '';
-        spanError.classList.remove('form__error-message--active');
-    }
+    validaciones.limpiarError(idCampo);
 };
 
-// HU-02: Cerrar Sesión (disponible desde el layout de admin)
+// HU-02: Cerrar Sesion (disponible desde el layout de admin)
 window.cerrarSesion = function () {
     localStorage.removeItem('sesionActiva');
     localStorage.removeItem('sesionEmail');
@@ -49,8 +35,8 @@ const mostrarToast = (mensaje, tipo = 'success') => {
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================================
-    // GUARDA DE SESIÓN: solo usuarios con sesión activa (HU-01/HU-02)
-    // pueden ver esta página de administración.
+    // GUARDA DE SESION: solo usuarios con Sesion activa (HU-01/HU-02)
+    // pueden ver esta pagina de administracion.
     // ==========================================================
     if (localStorage.getItem('sesionActiva') !== 'true') {
         window.location.href = 'login.html';
@@ -60,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#headerUserName').textContent = localStorage.getItem('sesionNombre') || 'Administrador';
     document.querySelector('#headerUserRol').textContent = localStorage.getItem('sesionRol') || '';
 
-    // Cerrar sesión
+    // Cerrar Sesion
     document.getElementById('btnLogOut').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('sesionActiva');
@@ -78,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtroEstado = document.querySelector('#filtro-estado');
     const searchInput = document.querySelector('#searchInput');
 
-    // Cargar catálogo de roles en el filtro y en el modal de asignación (HU-08)
+    // Cargar catalogo de roles en el filtro y en el modal de asignacion (HU-08)
     const selectRolModal = document.querySelector('#select-rol');
     window.db.roles.forEach(rol => {
         const optFiltro = document.createElement('option');
@@ -104,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Estado</th>
-                <th>Fecha Creación</th>
+                <th>Fecha Creacion</th>
                 <th>Acciones</th>
             </tr>
         `;
@@ -221,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================================
-    // RF-03: Creación de Cuentas de Administrador
+    // RF-03: Creacion de Cuentas de Administrador
     // ==========================================================
     const modalCrear = document.querySelector('#modalCrearUsuario');
     const crearNombreInput = document.querySelector('#crear-nombre');
@@ -270,8 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('crear-email', 'El correo es obligatorio.');
             return false;
         }
-        if (!emailRegex.test(email)) {
-            mostrarError('crear-email', 'Ingresa un correo válido.');
+        if (!validaciones.validarCorreo(email)) {
+            mostrarError('crear-email', 'Ingresa un correo valido.');
             return false;
         }
         const yaExiste = window.db.usuarios.some(u => u.email.toLowerCase() === email.toLowerCase());
@@ -285,11 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCrearPassword = () => {
         if (!crearPasswordInput.value) {
-            mostrarError('crear-password', 'La contraseña temporal es obligatoria.');
+            mostrarError('crear-password', 'La contrasena temporal es obligatoria.');
             return false;
         }
         if (!validaciones.validarContrasena(crearPasswordInput.value)) {
-            mostrarError('crear-password', 'La contraseña no cumple con los requisitos de seguridad.');
+            mostrarError('crear-password', 'La contrasena no cumple con los requisitos de seguridad.');
             return false;
         }
         limpiarError('crear-password');

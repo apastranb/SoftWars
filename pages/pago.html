@@ -20,12 +20,10 @@
 
             <h2 class="pago-titulo">Datos de Pago</h2>
 
-            <!-- Actividad -->
+            <!-- Info del evento (se llena dinámicamente desde la página anterior) -->
             <div class="pago-field">
-                <label for="pagoActividad">Actividad:</label>
-                <select id="pagoActividad">
-                    <option value="">Seleccionar actividad...</option>
-                </select>
+                <label>Actividad:</label>
+                <p id="pagoActividadNombre" class="pago-info-text">—</p>
             </div>
 
             <!-- Número de tarjeta -->
@@ -87,6 +85,7 @@
     </div>
 
     <script src="../js/data-store.js"></script>
+    <script src="../js/validaciones.js"></script>
     <script src="../js/pago-logic.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ── Referencias al DOM ──────────────────────────────────────────────────
-    const selectActividad = document.getElementById('pagoActividad');
+    const actividadNombre = document.getElementById('pagoActividadNombre');
     const inputTarjeta    = document.getElementById('pagoNumTarjeta');
     const inputNombre     = document.getElementById('pagoNombre');
     const selectMes       = document.getElementById('pagoMes');
@@ -10,24 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmar    = document.getElementById('btnConfirmarPago');
 
     // Spans de error
-    const errActividad    = document.getElementById('errorNumTarjeta'); // reutilizamos slot
     const errTarjeta      = document.getElementById('errorNumTarjeta');
     const errNombre       = document.getElementById('errorNombre');
     const errVencimiento  = document.getElementById('errorVencimiento');
     const errCVV          = document.getElementById('errorCVV');
 
-    // ── Cargar actividades desde data-store ─────────────────────────────────
-    function cargarActividades() {
-        selectActividad.innerHTML = '<option value="">Seleccionar actividad...</option>';
-        if (window.db && window.db.actividades) {
-            window.db.actividades.forEach(act => {
-                const opt = document.createElement('option');
-                opt.value = act.id;
-                opt.textContent = act.nombre;
-                selectActividad.appendChild(opt);
-            });
+    // ── Cargar info de actividad desde URL params ────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const actividadId = params.get('actividad');
+    let nombreActividad = 'Actividad no especificada';
+
+    if (actividadId && window.db && window.db.actividades) {
+        const actividad = window.db.actividades.find(a => a.id === actividadId);
+        if (actividad) {
+            nombreActividad = actividad.nombre;
         }
     }
+    actividadNombre.textContent = nombreActividad;
 
     // ── Filtro en tiempo real: solo dígitos, máx 16, con espacios cada 4 ───
     inputTarjeta.addEventListener('input', () => {
@@ -89,15 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarTodosLosErrores();
         let valido = true;
 
-        // Actividad
-        if (!selectActividad.value) {
-            // Mostramos el error encima del campo de tarjeta aprovechando el span disponible
-            // Usamos un span dedicado si existe, si no alertamos
-            mostrarError(errTarjeta, inputTarjeta, 'Seleccioná una actividad antes de continuar.');
-            valido = false;
-            return valido; // corte temprano, tiene que elegir actividad primero
-        }
-
         // Número de tarjeta: 16 dígitos sin espacios
         const digitosTarjeta = inputTarjeta.value.replace(/\s/g, '');
         if (digitosTarjeta.length !== 16) {
@@ -129,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Limpiar formulario ──────────────────────────────────────────────────
     function limpiarFormulario() {
-        selectActividad.value = '';
         inputTarjeta.value    = '';
         inputNombre.value     = '';
         selectMes.value       = '10';
@@ -142,11 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.addEventListener('click', () => {
         if (!validarFormulario()) return;
 
-        // Pago aprobado
-        const actividad = window.db.actividades.find(a => a.id === selectActividad.value);
-        const nombreAct = actividad ? actividad.nombre : selectActividad.value;
-
-        alert(`✅ Pago aprobado\n\nActividad: ${nombreAct}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
+        alert(`✅ Pago aprobado\n\nActividad: ${nombreActividad}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
         limpiarFormulario();
     });
 
@@ -156,7 +141,4 @@ document.addEventListener('DOMContentLoaded', () => {
     inputCVV.addEventListener('input',     () => limpiarError(errCVV,     inputCVV));
     selectMes.addEventListener('change',   () => limpiarError(errVencimiento, null));
     selectAnio.addEventListener('change',  () => limpiarError(errVencimiento, null));
-
-    // ── Init ────────────────────────────────────────────────────────────────
-    cargarActividades();
 });

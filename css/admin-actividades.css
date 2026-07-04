@@ -326,7 +326,11 @@ main.actividades-workspace {
 
 
 /* Contenedor oscuro de fondo */
-.modal-overlay {
+.modal-overlay.modal-hidden {
+  display: none;
+}
+
+.modal-overlay.modal-active {
   position: fixed;
   top: 0;
   left: 0;

@@ -77,64 +77,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** Muestra mensaje de error bajo un input */
-    function mostrarError(input, mensaje) {
-        input.style.borderColor = '#ef4444';
-        let span = input.nextElementSibling;
-        if (!span || !span.classList.contains('input-error')) {
-            span = document.createElement('span');
-            span.classList.add('input-error');
-            span.style.cssText = 'color:#ef4444;font-size:0.8rem;margin-top:2px;';
-            input.after(span);
-        }
-        span.textContent = mensaje;
+    function mostrarError(idCampo, mensaje) {
+        validaciones.mostrarError(idCampo, mensaje);
     }
 
     /** Limpia todos los errores del modal */
     function limpiarErrores() {
-        [inputNombre, inputDesc, inputEncargado, inputEmpresa, inputCorreo, inputTelefono].forEach(inp => {
-            inp.style.borderColor = '';
-            const span = inp.nextElementSibling;
-            if (span && span.classList.contains('input-error')) span.remove();
-        });
-        // Limpiar error del select categoría
-        inputCategoria.style.borderColor = '';
-        const spanCat = inputCategoria.nextElementSibling;
-        if (spanCat && spanCat.classList.contains('input-error')) spanCat.remove();
+        validaciones.limpiarErrores();
     }
 
     /** Valida los campos del modal. Retorna true si todo es válido */
     function validarFormulario() {
         limpiarErrores();
         let valido = true;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telRegex   = /^\d{4}-?\d{4}$/;
 
         if (!inputNombre.value.trim()) {
-            mostrarError(inputNombre, 'El nombre del stand es requerido.');
+            mostrarError('inputNombreStand', 'El nombre del stand es requerido.');
+            valido = false;
+        } else if (!validaciones.validarNombre(inputNombre.value)) {
+            mostrarError('inputNombreStand', 'El nombre debe tener al menos 3 caracteres.');
             valido = false;
         }
         if (!inputCategoria.value) {
-            mostrarError(inputCategoria, 'La categoría es requerida.');
+            mostrarError('inputCategoriaStand', 'La categoría es requerida.');
             valido = false;
         }
         if (!inputDesc.value.trim()) {
-            mostrarError(inputDesc, 'La descripción es requerida.');
+            mostrarError('inputDescStand', 'La descripción es requerida.');
+            valido = false;
+        } else if (!validaciones.validarDescripcion(inputDesc.value, true)) {
+            mostrarError('inputDescStand', 'La descripción no puede superar los 200 caracteres.');
             valido = false;
         }
         if (!inputEncargado.value.trim()) {
-            mostrarError(inputEncargado, 'El nombre del encargado es requerido.');
+            mostrarError('inputEncargadoStand', 'El nombre del encargado es requerido.');
             valido = false;
         }
         if (!inputEmpresa.value.trim()) {
-            mostrarError(inputEmpresa, 'La empresa es requerida.');
+            mostrarError('inputEmpresaStand', 'El nombre de empresa/personal es requerido.');
             valido = false;
         }
-        if (!emailRegex.test(inputCorreo.value.trim())) {
-            mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
+        if (!inputCorreo.value.trim()) {
+            mostrarError('inputCorreoStand', 'El correo es requerido.');
+            valido = false;
+        } else if (!validaciones.validarCorreo(inputCorreo.value)) {
+            mostrarError('inputCorreoStand', 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (!telRegex.test(inputTelefono.value.trim())) {
-            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
+        if (!inputTelefono.value.trim()) {
+            mostrarError('inputTelefonoStand', 'El teléfono es requerido.');
+            valido = false;
+        } else if (!validaciones.validarTelefono(inputTelefono.value)) {
+            mostrarError('inputTelefonoStand', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
             valido = false;
         }
 

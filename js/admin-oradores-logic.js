@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputNombre       = document.getElementById('inputNombreOrador');
     const inputCorreo       = document.getElementById('inputCorreoOrador');
     const inputTelefono     = document.getElementById('inputTelefonoOrador');
+    const inputTelefono2    = document.getElementById('inputTelefono2Orador');
     const inputEspecialidad = document.getElementById('inputEspecialidadOrador');
     const inputEmpresa      = document.getElementById('inputEmpresaOrador');
     const inputBiografia    = document.getElementById('inputBiografiaOrador');
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputNombre.value       = '';
         inputCorreo.value       = '';
         inputTelefono.value     = '';
+        if (inputTelefono2) inputTelefono2.value = '';
         inputEspecialidad.value = '';
         inputEmpresa.value      = '';
         inputBiografia.value    = '';
@@ -91,49 +93,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Errores de validación ───────────────────────────────────────────────
 
-    function mostrarError(input, mensaje) {
-        input.style.borderColor = '#ef4444';
-        let span = input.nextElementSibling;
-        if (!span || !span.classList.contains('input-error')) {
-            span = document.createElement('span');
-            span.classList.add('input-error');
-            span.style.cssText = 'color:#ef4444;font-size:0.8rem;margin-top:2px;display:block;';
-            input.after(span);
-        }
-        span.textContent = mensaje;
+    function mostrarError(idCampo, mensaje) {
+        validaciones.mostrarError(idCampo, mensaje);
     }
 
     function limpiarErrores() {
-        [inputNombre, inputCorreo, inputTelefono, inputEspecialidad, inputEmpresa, inputBiografia].forEach(inp => {
-            inp.style.borderColor = '';
-            const span = inp.nextElementSibling;
-            if (span && span.classList.contains('input-error')) span.remove();
-        });
+        validaciones.limpiarErrores();
     }
 
     function validarFormulario() {
         limpiarErrores();
         let valido = true;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telRegex   = /^\d{4}-?\d{4}$/;
 
-        // Obligatorios: nombre y especialidad
+        // Nombre: obligatorio, mínimo 3 caracteres
         if (!inputNombre.value.trim()) {
-            mostrarError(inputNombre, 'El nombre es requerido.');
+            mostrarError('inputNombreOrador', 'El nombre es requerido.');
             valido = false;
-        }
-        if (!inputEspecialidad.value.trim()) {
-            mostrarError(inputEspecialidad, 'La profesión / especialidad es requerida.');
+        } else if (!validaciones.validarNombre(inputNombre.value)) {
+            mostrarError('inputNombreOrador', 'El nombre debe tener al menos 3 caracteres.');
             valido = false;
         }
 
-        // Opcionales con formato: solo valida si el usuario ingresó algo
-        if (inputCorreo.value.trim() && !emailRegex.test(inputCorreo.value.trim())) {
-            mostrarError(inputCorreo, 'Ingrese un correo válido (ej. usuario@empresa.com).');
+        // Correo: obligatorio, formato válido
+        if (!inputCorreo.value.trim()) {
+            mostrarError('inputCorreoOrador', 'El correo electrónico es requerido.');
+            valido = false;
+        } else if (!validaciones.validarCorreo(inputCorreo.value)) {
+            mostrarError('inputCorreoOrador', 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
-        if (inputTelefono.value.trim() && !telRegex.test(inputTelefono.value.trim())) {
-            mostrarError(inputTelefono, 'El teléfono debe tener el formato 0000-0000.');
+
+        // Teléfono principal: obligatorio, formato 8 dígitos
+        if (!inputTelefono.value.trim()) {
+            mostrarError('inputTelefonoOrador', 'El teléfono principal es requerido.');
+            valido = false;
+        } else if (!validaciones.validarTelefono(inputTelefono.value)) {
+            mostrarError('inputTelefonoOrador', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
+            valido = false;
+        }
+
+        // Teléfono secundario: opcional, pero si tiene algo validar formato
+        const inputTelefono2 = document.getElementById('inputTelefono2Orador');
+        if (inputTelefono2 && inputTelefono2.value.trim()) {
+            if (!validaciones.validarTelefono(inputTelefono2.value)) {
+                mostrarError('inputTelefono2Orador', 'El teléfono secundario debe tener 8 dígitos.');
+                valido = false;
+            }
+        }
+
+        // Especialidad: obligatoria
+        if (!inputEspecialidad.value.trim()) {
+            mostrarError('inputEspecialidadOrador', 'La especialidad es requerida.');
+            valido = false;
+        }
+
+        // Institución/Organización: obligatoria
+        if (!inputEmpresa.value.trim()) {
+            mostrarError('inputEmpresaOrador', 'La institución u organización es requerida.');
+            valido = false;
+        }
+
+        // Biografía: obligatoria, max 200 chars
+        if (!inputBiografia.value.trim()) {
+            mostrarError('inputBiografiaOrador', 'La biografía es requerida.');
+            valido = false;
+        } else if (!validaciones.validarDescripcion(inputBiografia.value, true)) {
+            mostrarError('inputBiografiaOrador', 'La biografía no puede superar los 200 caracteres.');
             valido = false;
         }
 
