@@ -110,6 +110,11 @@
                     <span class="form__error-message" id="error-edit-email"></span>
                 </div>
                 <p class="modal-hint">El correo electrónico no se puede modificar; es el identificador único de la cuenta.</p>
+                <div class="modal-field">
+                    <label for="edit-rol">Rol</label>
+                    <select id="edit-rol"></select>
+                    <span class="form__error-message" id="error-edit-rol"></span>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn-cancelar" id="btnCancelarEditar" type="button">Cancelar</button>
@@ -151,28 +156,6 @@
             <div class="modal-footer">
                 <button class="modal-btn-cancelar" id="btnCancelarCrear" type="button">Cancelar</button>
                 <button class="modal-btn-registrar" id="btnGuardarCrear" type="button">Crear Administrador</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- HU-08: Modal Asignar Rol -->
-    <div class="modal-overlay" id="modalAsignarRol">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Asignar Rol</h2>
-                <button class="modal-close" id="btnCerrarRol" type="button">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="modal-desc" id="rol-usuario-nombre"></p>
-                <div class="modal-field">
-                    <label for="select-rol">Rol</label>
-                    <select id="select-rol"></select>
-                    <span class="form__error-message" id="error-select-rol"></span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn-cancelar" id="btnCancelarRol" type="button">Cancelar</button>
-                <button class="modal-btn-registrar" id="btnGuardarRol" type="button">Asignar</button>
             </div>
         </div>
     </div>

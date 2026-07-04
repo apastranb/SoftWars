@@ -64,18 +64,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtroEstado = document.querySelector('#filtro-estado');
     const searchInput = document.querySelector('#searchInput');
 
-    // Cargar catalogo de roles en el filtro y en el modal de asignacion (HU-08)
-    const selectRolModal = document.querySelector('#select-rol');
+    // Cargar catalogo de roles en el filtro y en el modal de edicion
+    const editRolSelect = document.querySelector('#edit-rol');
     window.db.roles.forEach(rol => {
         const optFiltro = document.createElement('option');
         optFiltro.value = rol;
         optFiltro.textContent = rol;
         filtroRol.appendChild(optFiltro);
 
-        const optModal = document.createElement('option');
-        optModal.value = rol;
-        optModal.textContent = rol;
-        selectRolModal.appendChild(optModal);
+        const optEdit = document.createElement('option');
+        optEdit.value = rol;
+        optEdit.textContent = rol;
+        editRolSelect.appendChild(optEdit);
     });
 
     // ==========================================================
@@ -118,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${user.fechaCreacion || '-'}</td>
                 <td class="acciones-cell">
                     <button class="btn-edit" data-email="${user.email}">Editar</button>
-                    <button class="btn-role" data-email="${user.email}">Rol</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -167,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
         document.querySelector('#edit-nombre').value = usuario.nombre;
         document.querySelector('#edit-email').value = usuario.email;
+        document.querySelector('#edit-rol').value = usuario.rol;
         modalEditar.classList.add('active');
     });
 
@@ -197,9 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // RF-04: el correo es inmutable, solo se actualiza el nombre.
+        // RF-04: el correo es inmutable, se actualiza nombre y rol.
         const usuario = window.db.usuarios.find(u => u.email === emailUsuarioEditando);
         usuario.nombre = nombre;
+        usuario.rol = document.querySelector('#edit-rol').value;
 
         cerrarModalEditar();
         renderTabla();
@@ -320,51 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cerrarModalCrear();
         renderTabla();
         mostrarToast('Administrador creado correctamente.');
-    });
-
-    // ==========================================================
-    // HU-08: Asignar Roles
-    // ==========================================================
-    const modalRol = document.querySelector('#modalAsignarRol');
-    let emailUsuarioRol = null;
-
-    const cerrarModalRol = () => modalRol.classList.remove('active');
-
-    tbody.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('btn-role')) return;
-
-        const email = e.target.dataset.email;
-        const usuario = window.db.usuarios.find(u => u.email === email);
-        if (!usuario) return;
-
-        emailUsuarioRol = email;
-        limpiarErrores();
-        document.querySelector('#rol-usuario-nombre').textContent = `Usuario: ${usuario.nombre}`;
-        document.querySelector('#select-rol').value = usuario.rol;
-        modalRol.classList.add('active');
-    });
-
-    document.querySelector('#btnCerrarRol').addEventListener('click', cerrarModalRol);
-    document.querySelector('#btnCancelarRol').addEventListener('click', cerrarModalRol);
-    modalRol.addEventListener('click', (e) => {
-        if (e.target === modalRol) cerrarModalRol();
-    });
-
-    document.querySelector('#btnGuardarRol').addEventListener('click', () => {
-        limpiarErrores();
-
-        const nuevoRol = document.querySelector('#select-rol').value;
-        if (!nuevoRol) {
-            mostrarError('select-rol', 'Selecciona un rol.');
-            return;
-        }
-
-        const usuario = window.db.usuarios.find(u => u.email === emailUsuarioRol);
-        usuario.rol = nuevoRol;
-
-        cerrarModalRol();
-        renderTabla();
-        mostrarToast(`Rol de ${usuario.nombre} actualizado a "${nuevoRol}".`);
     });
 
     // Primer render

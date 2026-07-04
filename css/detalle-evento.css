@@ -277,33 +277,11 @@ aside p {
   gap: 1rem;
 }
 
-#inscribirVisitante label {
-  color: var(--blue-800);
-  font-size: 0.9rem;
+#inscribirVisitante .input-group {
   margin-bottom: 0;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-#inscribirVisitante input {
-  padding: 0.8rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-#inscribirVisitante input:focus {
-  outline: none;
-  border-color: var(--blue-500);
-  box-shadow: 0 0 0 3px rgba(0, 106, 234, 0.15);
-}
-
-#inscribirVisitante button {
+#inscribirVisitante button[type="submit"] {
   margin-top: 1rem;
   padding: 1rem;
   background-color: var(--blue-800);
@@ -319,7 +297,7 @@ aside p {
   transition: background-color 0.3s ease;
 }
 
-#inscribirVisitante button:hover {
+#inscribirVisitante button[type="submit"]:hover {
   background-color: var(--blue-500);
 }
 

@@ -127,128 +127,128 @@
             </div>
 
         </main>
-        <div id="modal-actividad" class="modal-overlay modal-hidden">
-    <div class="modal-content-card">
-        <div class="modal-card-header">
-            <h2 id="modal-titulo-accion">Registrar Actividad</h2>
-            <button id="btn-cerrar-modal" class="modal-close-x">&times;</button>
+    </div>
+
+    <!-- MODAL REGISTRAR / EDITAR ACTIVIDAD -->
+    <div id="modal-actividad" class="modal-overlay modal-hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-titulo-accion">Registrar Actividad</h2>
+                <button id="btn-cerrar-modal" class="modal-close" type="button">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="form-actividad-modal" novalidate>
+                    <div class="input-group">
+                        <label for="modal-evento">Evento Padre</label>
+                        <select id="modal-evento">
+                            <option value="">Seleccione un evento</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-evento"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-nombre">Nombre de la Actividad</label>
+                        <input type="text" id="modal-nombre" placeholder="Ej. Conferencia de IA">
+                        <span class="form__error-message" id="error-modal-nombre"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-categoria">Categoría</label>
+                        <select id="modal-categoria">
+                            <option value="">Seleccione una categoría</option>
+                            <option value="Culturales">Culturales</option>
+                            <option value="Deportivas">Deportivas</option>
+                            <option value="Tecnológicas">Tecnológicas</option>
+                            <option value="Artísticas">Artísticas</option>
+                            <option value="Voluntariado">Voluntariado</option>
+                            <option value="Recreación">Recreación</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-categoria"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-descripcion">Descripción</label>
+                        <textarea id="modal-descripcion" rows="3" placeholder="Descripción de la actividad (máx. 200 caracteres)"></textarea>
+                        <span class="form__error-message" id="error-modal-descripcion"></span>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-fecha">Fecha</label>
+                            <input type="date" id="modal-fecha">
+                            <span class="form__error-message" id="error-modal-fecha"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-lugar">Lugar / Sala</label>
+                            <input type="text" id="modal-lugar" placeholder="Ej. Auditorio Bloque A">
+                            <span class="form__error-message" id="error-modal-lugar"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-hora-inicio">Hora de Inicio</label>
+                            <input type="time" id="modal-hora-inicio">
+                            <span class="form__error-message" id="error-modal-hora-inicio"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-hora-fin">Hora de Finalización</label>
+                            <input type="time" id="modal-hora-fin">
+                            <span class="form__error-message" id="error-modal-hora-fin"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-cupo">Cupo Máximo</label>
+                            <input type="number" id="modal-cupo" placeholder="Ej. 100" min="1">
+                            <span class="form__error-message" id="error-modal-cupo"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-responsable">Responsable</label>
+                            <select id="modal-responsable">
+                                <option value="">Seleccione un responsable</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-responsable"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-visibilidad">Visibilidad</label>
+                            <select id="modal-visibilidad">
+                                <option value="">Seleccione visibilidad</option>
+                                <option value="publica">Pública</option>
+                                <option value="privada">Privada</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-visibilidad"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-entrada-libre">Tipo de Entrada</label>
+                            <select id="modal-entrada-libre">
+                                <option value="false">Con cupo limitado</option>
+                                <option value="true">Entrada libre</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-entrada-libre"></span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="modal-refrigerio">
+                            Incluye refrigerio
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btn-cancelar-modal" class="modal-btn-cancelar">Cancelar</button>
+                <button type="submit" id="btn-guardar-modal" form="form-actividad-modal" class="modal-btn-registrar">Registrar</button>
+            </div>
         </div>
-        
-        <form id="form-actividad-modal" novalidate>
-            <div class="modal-form-body">
-                <div class="input-group">
-                    <label for="modal-evento">Evento Padre</label>
-                    <select id="modal-evento">
-                        <option value="">Seleccione un evento</option>
-                    </select>
-                    <span class="form__error-message" id="error-modal-evento"></span>
-                </div>
-
-                <div class="input-group">
-                    <label for="modal-nombre">Nombre de la Actividad</label>
-                    <input type="text" id="modal-nombre" placeholder="Ej. Conferencia de IA">
-                    <span class="form__error-message" id="error-modal-nombre"></span>
-                </div>
-
-                <div class="input-group">
-                    <label for="modal-categoria">Categoría</label>
-                    <select id="modal-categoria">
-                        <option value="">Seleccione una categoría</option>
-                        <option value="Culturales">Culturales</option>
-                        <option value="Deportivas">Deportivas</option>
-                        <option value="Tecnológicas">Tecnológicas</option>
-                        <option value="Artísticas">Artísticas</option>
-                        <option value="Voluntariado">Voluntariado</option>
-                        <option value="Recreación">Recreación</option>
-                    </select>
-                    <span class="form__error-message" id="error-modal-categoria"></span>
-                </div>
-
-                <div class="input-group">
-                    <label for="modal-descripcion">Descripción</label>
-                    <textarea id="modal-descripcion" rows="3" placeholder="Descripción de la actividad (máx. 200 caracteres)"></textarea>
-                    <span class="form__error-message" id="error-modal-descripcion"></span>
-                </div>
-
-                <div class="form-grid two-columns">
-                    <div class="input-group">
-                        <label for="modal-fecha">Fecha</label>
-                        <input type="date" id="modal-fecha">
-                        <span class="form__error-message" id="error-modal-fecha"></span>
-                    </div>
-                    <div class="input-group">
-                        <label for="modal-lugar">Lugar / Sala</label>
-                        <input type="text" id="modal-lugar" placeholder="Ej. Auditorio Bloque A">
-                        <span class="form__error-message" id="error-modal-lugar"></span>
-                    </div>
-                </div>
-
-                <div class="form-grid two-columns">
-                    <div class="input-group">
-                        <label for="modal-hora-inicio">Hora de Inicio</label>
-                        <input type="time" id="modal-hora-inicio">
-                        <span class="form__error-message" id="error-modal-hora-inicio"></span>
-                    </div>
-                    <div class="input-group">
-                        <label for="modal-hora-fin">Hora de Finalización</label>
-                        <input type="time" id="modal-hora-fin">
-                        <span class="form__error-message" id="error-modal-hora-fin"></span>
-                    </div>
-                </div>
-
-                <div class="form-grid two-columns">
-                    <div class="input-group">
-                        <label for="modal-cupo">Cupo Máximo</label>
-                        <input type="number" id="modal-cupo" placeholder="Ej. 100" min="1">
-                        <span class="form__error-message" id="error-modal-cupo"></span>
-                    </div>
-                    <div class="input-group">
-                        <label for="modal-responsable">Responsable</label>
-                        <select id="modal-responsable">
-                            <option value="">Seleccione un responsable</option>
-                        </select>
-                        <span class="form__error-message" id="error-modal-responsable"></span>
-                    </div>
-                </div>
-
-                <div class="form-grid two-columns">
-                    <div class="input-group">
-                        <label for="modal-visibilidad">Visibilidad</label>
-                        <select id="modal-visibilidad">
-                            <option value="">Seleccione visibilidad</option>
-                            <option value="publica">Pública</option>
-                            <option value="privada">Privada</option>
-                        </select>
-                        <span class="form__error-message" id="error-modal-visibilidad"></span>
-                    </div>
-                    <div class="input-group">
-                        <label for="modal-entrada-libre">Tipo de Entrada</label>
-                        <select id="modal-entrada-libre">
-                            <option value="false">Con cupo limitado</option>
-                            <option value="true">Entrada libre</option>
-                        </select>
-                        <span class="form__error-message" id="error-modal-entrada-libre"></span>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>
-                        <input type="checkbox" id="modal-refrigerio">
-                        Incluye refrigerio
-                    </label>
-                </div>
-            </div>
-
-            <div class="modal-card-footer">
-                <button type="button" id="btn-cancelar-modal" class="eventsAdminBtnSecondary">Cancelar</button>
-                <button type="submit" id="btn-guardar-modal" class="eventsAdminBtnPrimary">Registrar</button>
-            </div>
-        </form>
-    </div>
-</div>
-    </div>
-
-    <script src="../js/data-store.js"></script>
+    </div>    <script src="../js/data-store.js"></script>
     <script src="../js/validaciones.js"></script>
     <script src="../js/admin-actividades-logic.js"></script>
 </body>
