@@ -66,7 +66,7 @@ const validarInscripcion = (e) => {
     // 1. Campos de texto requeridos
     const camposRequeridos = [
         { id: 'nombreVisitante', mensaje: 'El nombre completo es requerido.' },
-        { id: 'carreraVisitante', mensaje: 'La carrera o profesion es requerida.' }
+        { id: 'carreraVisitante', mensaje: 'La carrera o profesión es requerida.' }
     ];
 
     camposRequeridos.forEach(campo => {
@@ -89,7 +89,7 @@ const validarInscripcion = (e) => {
             mostrarError('cedulaVisitante', 'La cedula es requerida.');
             esValido = false;
         } else if (!validaciones.validarCedula(cedulaInput.value)) {
-            mostrarError('cedulaVisitante', 'Ingrese una cedula valida (8-12 digitos).');
+            mostrarError('cedulaVisitante', 'Ingrese una cédula válida (8-12 dígitos).');
             esValido = false;
         }
     }
@@ -98,10 +98,10 @@ const validarInscripcion = (e) => {
     const telefonoInput = document.getElementById('telefonoVisitante');
     if (telefonoInput) {
         if (!validaciones.validarRequerido(telefonoInput.value)) {
-            mostrarError('telefonoVisitante', 'El telefono es requerido.');
+            mostrarError('telefonoVisitante', 'El teléfono es requerido.');
             esValido = false;
         } else if (!validaciones.validarTelefono(telefonoInput.value)) {
-            mostrarError('telefonoVisitante', 'Ingrese un telefono valido (8 digitos).');
+            mostrarError('telefonoVisitante', 'Ingrese un teléfono valido (8 dígitos).');
             esValido = false;
         }
     }
@@ -125,7 +125,7 @@ const validarInscripcion = (e) => {
             mostrarError('edadVisitante', 'La edad es requerida.');
             esValido = false;
         } else if (!validaciones.validarEdad(edadInput.value)) {
-            mostrarError('edadVisitante', 'Ingrese una edad valida (15-120).');
+            mostrarError('edadVisitante', 'Ingrese una edad valida (15+).');
             esValido = false;
         }
     }

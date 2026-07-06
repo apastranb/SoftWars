@@ -108,10 +108,10 @@ const validarFormularioActividad = () => {
     const camposRequeridos = [
         { id: 'modal-evento', mensaje: 'Debe seleccionar un evento padre.' },
         { id: 'modal-nombre', mensaje: 'El nombre de la actividad es obligatorio.' },
-        { id: 'modal-categoria', mensaje: 'Debe seleccionar una categoria.' },
+        { id: 'modal-categoria', mensaje: 'Debe seleccionar una categoría.' },
         { id: 'modal-fecha', mensaje: 'La fecha es obligatoria.' },
         { id: 'modal-hora-inicio', mensaje: 'La hora de inicio es obligatoria.' },
-        { id: 'modal-hora-fin', mensaje: 'La hora de finalizacion es obligatoria.' },
+        { id: 'modal-hora-fin', mensaje: 'La hora de finalización es obligatoria.' },
         { id: 'modal-lugar', mensaje: 'El lugar es obligatorio.' },
         { id: 'modal-responsable', mensaje: 'Debe seleccionar un responsable.' },
         { id: 'modal-visibilidad', mensaje: 'Debe seleccionar la visibilidad.' }
@@ -142,10 +142,10 @@ const validarFormularioActividad = () => {
     const cupoInput = document.getElementById('modal-cupo');
     if (!entradaLibre) {
         if (!validaciones.validarRequerido(cupoInput.value)) {
-            validaciones.mostrarError('modal-cupo', 'El cupo maximo es obligatorio.');
+            validaciones.mostrarError('modal-cupo', 'El cupo máximo es obligatorio.');
             esValido = false;
         } else if (!validaciones.validarCupo(cupoInput.value)) {
-            validaciones.mostrarError('modal-cupo', 'Ingrese un cupo valido (numero entero positivo).');
+            validaciones.mostrarError('modal-cupo', 'Ingrese un cupo válido (número entero positivo).');
             esValido = false;
         }
     }
@@ -311,7 +311,7 @@ const inicializarToolbarActividades = () => {
                 alert('Seleccione al menos una actividad para eliminar.');
                 return;
             }
-            const confirmar = confirm(`¿Eliminar ${seleccionados.length} actividad(es)? Esta accion no se puede deshacer.`);
+            const confirmar = confirm(`¿Eliminar ${seleccionados.length} actividad(es)? Esta acción no se puede deshacer.`);
             if (!confirmar) return;
             window.db.actividades = window.db.actividades.filter(a => !seleccionados.includes(a.id));
             renderizarTablaActividades();

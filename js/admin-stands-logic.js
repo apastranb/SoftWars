@@ -96,14 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
             valido = false;
         }
         if (!validaciones.validarRequerido(inputCategoria.value)) {
-            mostrarError('inputCategoriaStand', 'La categoria es requerida.');
+            mostrarError('inputCategoriaStand', 'La categoría es requerida.');
             valido = false;
         }
         if (!validaciones.validarRequerido(inputDesc.value)) {
-            mostrarError('inputDescStand', 'La descripcion es requerida.');
+            mostrarError('inputDescStand', 'La descripción es requerida.');
             valido = false;
         } else if (!validaciones.validarDescripcion(inputDesc.value, true)) {
-            mostrarError('inputDescStand', 'La descripcion no puede superar los 200 caracteres.');
+            mostrarError('inputDescStand', 'La descripción no puede superar los 200 caracteres.');
             valido = false;
         }
         if (!validaciones.validarRequerido(inputEncargado.value)) {
@@ -118,14 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('inputCorreoStand', 'El correo es requerido.');
             valido = false;
         } else if (!validaciones.validarCorreo(inputCorreo.value)) {
-            mostrarError('inputCorreoStand', 'Ingrese un correo valido (ej. usuario@empresa.com).');
+            mostrarError('inputCorreoStand', 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
         if (!validaciones.validarRequerido(inputTelefono.value)) {
-            mostrarError('inputTelefonoStand', 'El telefono es requerido.');
+            mostrarError('inputTelefonoStand', 'El teléfono es requerido.');
             valido = false;
         } else if (!validaciones.validarTelefono(inputTelefono.value)) {
-            mostrarError('inputTelefonoStand', 'El telefono debe tener 8 digitos (ej. 8888-8888).');
+            mostrarError('inputTelefonoStand', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
             valido = false;
         }
 
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Seleccione al menos un stand para eliminar.');
             return;
         }
-        const confirmar = confirm(`¿Eliminar ${seleccionados.length} stand(s)? Esta accion no se puede deshacer.`);
+        const confirmar = confirm(`¿Eliminar ${seleccionados.length} stand(s)? Esta acción no se puede deshacer.`);
         if (!confirmar) return;
         window.db.stands = window.db.stands.filter(s => !seleccionados.includes(s.id));
         renderTabla();

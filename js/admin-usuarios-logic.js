@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         if (!validaciones.validarCorreo(email)) {
-            mostrarError('crear-email', 'Ingresa un correo valido.');
+            mostrarError('crear-email', 'Ingrese un correo válido.');
             return false;
         }
         const yaExiste = window.db.usuarios.some(u => u.email.toLowerCase() === email.toLowerCase());
@@ -286,11 +286,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCrearPassword = () => {
         if (!validaciones.validarRequerido(crearPasswordInput.value)) {
-            mostrarError('crear-password', 'La contrasena temporal es obligatoria.');
+            mostrarError('crear-password', 'La contraseña temporal es obligatoria.');
             return false;
         }
         if (!validaciones.validarContrasena(crearPasswordInput.value)) {
-            mostrarError('crear-password', 'La contrasena no cumple con los requisitos de seguridad.');
+            mostrarError('crear-password', 'La contraseña no cumple con los requisitos de seguridad.');
             return false;
         }
         limpiarError('crear-password');
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCrearRol = () => {
         if (!validaciones.validarRequerido(crearRolSelect.value)) {
-            mostrarError('crear-rol', 'Selecciona un rol.');
+            mostrarError('crear-rol', 'Seleccione un rol.');
             return false;
         }
         limpiarError('crear-rol');

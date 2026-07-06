@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCampoPassword = () => {
         if (!passwordInput.value) {
-            mostrarError('password', 'La contrasena es obligatoria.');
+            mostrarError('password', 'La contraseña es obligatoria.');
             return false;
         }
         limpiarErrores('password');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         if (!usuario || usuario.password !== password) {
-            mostrarError('login', 'Correo o contrasena incorrectos.');
+            mostrarError('login', 'Correo o contraseña incorrectos.');
             return;
         }
 
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpActual = () => {
         if (!cpActualInput.value) {
-            mostrarError('cp-actual', 'Ingresa tu contrasena actual.');
+            mostrarError('cp-actual', 'Ingresa tu contraseña actual.');
             return false;
         }
         limpiarErrores('cp-actual');
@@ -152,11 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpNueva = () => {
         if (!cpNuevaInput.value) {
-            mostrarError('cp-nueva', 'Ingresa una nueva contrasena.');
+            mostrarError('cp-nueva', 'Ingresa una nueva contraseña.');
             return false;
         }
         if (!validaciones.validarContrasena(cpNuevaInput.value)) {
-            mostrarError('cp-nueva', 'La contrasena no cumple con los requisitos de seguridad.');
+            mostrarError('cp-nueva', 'La contraseña no cumple con los requisitos de seguridad.');
             return false;
         }
         limpiarErrores('cp-nueva');
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarCpConfirmar = () => {
         if (cpNuevaInput.value && cpConfirmarInput.value && cpNuevaInput.value !== cpConfirmarInput.value) {
-            mostrarError('cp-confirmar', 'Las contrasenas no coinciden.');
+            mostrarError('cp-confirmar', 'Las contraseñas no coinciden.');
             return false;
         }
         limpiarErrores('cp-confirmar');
@@ -195,13 +195,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (usuario.password !== actual) {
-            mostrarError('cp-actual', 'La contrasena actual es incorrecta.');
+            mostrarError('cp-actual', 'La contraseña actual es incorrecta.');
             return;
         }
 
         // Actualiza la contrasena en la base de datos simulada
         usuario.password = nueva;
 
-        mostrarResultado('resultado-cambiar-pass', 'Contrasena actualizada correctamente. Ya puedes iniciar sesion.', 'success');
+        mostrarResultado('resultado-cambiar-pass', 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.', 'success');
     });
 });

@@ -113,19 +113,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Correo: obligatorio, formato valido
         if (!validaciones.validarRequerido(inputCorreo.value)) {
-            mostrarError('inputCorreoOrador', 'El correo electronico es requerido.');
+            mostrarError('inputCorreoOrador', 'El correo es requerido.');
             valido = false;
         } else if (!validaciones.validarCorreo(inputCorreo.value)) {
-            mostrarError('inputCorreoOrador', 'Ingrese un correo valido (ej. usuario@empresa.com).');
+            mostrarError('inputCorreoOrador', 'Ingrese un correo válido (ej. usuario@empresa.com).');
             valido = false;
         }
 
         // Telefono principal: obligatorio, formato 8 digitos
         if (!validaciones.validarRequerido(inputTelefono.value)) {
-            mostrarError('inputTelefonoOrador', 'El telefono principal es requerido.');
+            mostrarError('inputTelefonoOrador', 'El teléfono principal es requerido.');
             valido = false;
         } else if (!validaciones.validarTelefono(inputTelefono.value)) {
-            mostrarError('inputTelefonoOrador', 'El telefono debe tener 8 digitos (ej. 8888-8888).');
+            mostrarError('inputTelefonoOrador', 'El teléfono debe tener 8 dígitos (ej. 8888-8888).');
             valido = false;
         }
 
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputTel2 = document.getElementById('inputTelefono2Orador');
         if (inputTel2 && validaciones.validarRequerido(inputTel2.value)) {
             if (!validaciones.validarTelefono(inputTel2.value)) {
-                mostrarError('inputTelefono2Orador', 'El telefono secundario debe tener 8 digitos.');
+                mostrarError('inputTelefono2Orador', 'El teléfono secundario debe tener 8 dígitos.');
                 valido = false;
             }
         }
@@ -146,16 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Institucion/Organizacion: obligatoria
         if (!validaciones.validarRequerido(inputEmpresa.value)) {
-            mostrarError('inputEmpresaOrador', 'La institucion u organizacion es requerida.');
+            mostrarError('inputEmpresaOrador', 'La institución u organización es requerida.');
             valido = false;
         }
 
         // Biografia: obligatoria, max 200 caracteres
         if (!validaciones.validarRequerido(inputBiografia.value)) {
-            mostrarError('inputBiografiaOrador', 'La biografia es requerida.');
+            mostrarError('inputBiografiaOrador', 'La biografía es requerida.');
             valido = false;
         } else if (!validaciones.validarDescripcion(inputBiografia.value, true)) {
-            mostrarError('inputBiografiaOrador', 'La biografia no puede superar los 200 caracteres.');
+            mostrarError('inputBiografiaOrador', 'La biografía no puede superar los 200 caracteres.');
             valido = false;
         }
 
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Seleccione al menos un presentador para eliminar.');
             return;
         }
-        const confirmar = confirm(`¿Eliminar ${seleccionados.length} presentador(es)? Esta accion no se puede deshacer.`);
+        const confirmar = confirm(`¿Eliminar ${seleccionados.length} presentador(es)? Esta acción no se puede deshacer.`);
         if (!confirmar) return;
         window.db.oradores = window.db.oradores.filter(o => !seleccionados.includes(o.id));
         renderTabla();
