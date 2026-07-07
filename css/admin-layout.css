@@ -401,7 +401,7 @@ header {
   border-radius: 16px;
   padding: 2rem;
   width: 100%;
-  max-width: 520px;
+  max-width: 1000px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
