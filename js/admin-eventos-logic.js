@@ -34,7 +34,7 @@ const renderizarTabla = (lista) => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td><input type="checkbox" class="row-check" data-indice="${indiceReal}"></td>
-            <td>${evento.id || `EV-${String(indiceReal + 1).padStart(3, '0')}`}</td>
+            <td><a href="detalle-evento.html?id=${evento.id}" class="link-evento-id" target="_blank">${evento.id || `EV-${String(indiceReal + 1).padStart(3, '0')}`}</a></td>
             <td>${evento.nombre}</td>
             <td>${capitalizarTexto(evento.categoria)}</td>
             <td>
@@ -157,6 +157,83 @@ const eliminarEventosSeleccionados = () => {
     aplicarFiltros();
 };
 
+// PANEL DE DETALLE (agenda, presentadores, stands del evento seleccionado)
+const actualizarPanelDetalle = () => {
+    const panel = document.getElementById('evento-detalle-panels');
+    const agendaDiv = document.getElementById('agenda-contenido');
+    const presentadoresDiv = document.getElementById('presentadores-contenido');
+    const standsDiv = document.getElementById('stands-evento-contenido');
+    const seleccionados = obtenerIndicesSeleccionados();
+
+    // 0 seleccionados: ocultar panel
+    if (seleccionados.length === 0) {
+        panel.classList.add('oculto');
+        return;
+    }
+
+    panel.classList.remove('oculto');
+
+    // 2+ seleccionados: mostrar mensaje
+    if (seleccionados.length > 1) {
+        const msg = '<p class="detalle-placeholder">Seleccione un solo evento para ver detalles.</p>';
+        agendaDiv.innerHTML = msg;
+        presentadoresDiv.innerHTML = msg;
+        standsDiv.innerHTML = msg;
+        return;
+    }
+
+    // Exactamente 1 seleccionado: mostrar detalle
+    const eventos = obtenerEventos();
+    const evento = eventos[seleccionados[0]];
+    if (!evento) return;
+
+    // Agenda: actividades del evento ordenadas por fecha/hora
+    const actividades = window.db.actividades.filter(a => a.eventoId === evento.id);
+    if (actividades.length === 0) {
+        agendaDiv.innerHTML = '<p class="detalle-placeholder">No hay actividades registradas para este evento.</p>';
+    } else {
+        agendaDiv.innerHTML = actividades.map(a =>
+            `<div class="timeline-block">
+                <strong>${a.horaInicio} - ${a.horaFin} | ${a.nombre}</strong>
+                <p>${a.lugar} ${a.incluyeRefrigerio ? '· <i class="bi bi-cup-hot"></i> Refrigerio' : ''}</p>
+            </div>`
+        ).join('');
+    }
+
+    // Presentadores: oradores vinculados al evento o a sus actividades
+    const responsableIds = actividades.map(a => a.responsableId).filter(Boolean);
+    const oradores = window.db.oradores.filter(o => responsableIds.includes(o.id));
+    if (oradores.length === 0) {
+        presentadoresDiv.innerHTML = '<p class="detalle-placeholder">No hay presentadores asignados.</p>';
+    } else {
+        presentadoresDiv.innerHTML = oradores.map(o =>
+            `<div class="participant-row-item">
+                <div class="user-avatar-circle"></div>
+                <div class="user-metadata">
+                    <strong>${o.nombre}</strong>
+                    <p>${o.especialidad} · ${o.empresa}</p>
+                </div>
+            </div>`
+        ).join('');
+    }
+
+    // Stands del evento
+    const stands = window.db.stands.filter(s => s.eventoId === evento.id);
+    if (stands.length === 0) {
+        standsDiv.innerHTML = '<p class="detalle-placeholder">No hay stands asignados a este evento.</p>';
+    } else {
+        standsDiv.innerHTML = stands.map(s =>
+            `<div class="participant-row-item">
+                <div class="user-avatar-circle"></div>
+                <div class="user-metadata">
+                    <strong>${s.nombre}</strong>
+                    <p>${s.encargado} · ${s.empresa}</p>
+                </div>
+            </div>`
+        ).join('');
+    }
+};
+
 // INICIALIZADOR PRINCIPAL
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar sesion activa
@@ -187,6 +264,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.row-check').forEach(cb => {
             cb.checked = e.target.checked;
         });
+        actualizarPanelDetalle();
+    });
+
+    // Detectar cambios en checkboxes individuales
+    document.getElementById('adminEventsTableBody').addEventListener('change', (e) => {
+        if (e.target.classList.contains('row-check') || e.target.type === 'checkbox') {
+            actualizarPanelDetalle();
+        }
     });
 
     // Toolbar buttons

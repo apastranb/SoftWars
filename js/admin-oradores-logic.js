@@ -88,6 +88,19 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores();
     }
 
+    /** Puebla el dropdown de eventos */
+    function poblarSelectEventos() {
+        const actual = inputEvento.value;
+        inputEvento.innerHTML = '<option value="">Seleccionar evento...</option>';
+        window.db.eventos.forEach(ev => {
+            const opt = document.createElement('option');
+            opt.value = ev.id;
+            opt.textContent = ev.nombre;
+            if (ev.id === actual) opt.selected = true;
+            inputEvento.appendChild(opt);
+        });
+    }
+
     // ── Errores de validación ───────────────────────────────────────────────
 
     function mostrarError(idCampo, mensaje) {
@@ -274,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!orador) return;
 
         editandoId = id;
+        poblarSelectEventos();
 
         modalTitulo.textContent = 'Editar Presentador';
         btnGuardar.textContent  = 'Guardar Cambios';
@@ -310,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Abrir modal para crear
     btnCrearOrador.addEventListener('click', () => {
         editandoId = null;
+        poblarSelectEventos();
         modalTitulo.textContent = 'Registrar Presentador';
         btnGuardar.textContent  = 'Registrar';
         limpiarModal();

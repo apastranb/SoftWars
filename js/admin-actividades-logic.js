@@ -51,7 +51,7 @@ const renderizarTablaActividades = (datosAFiltrar) => {
                 </select>
             </td>
             <td>${actividad.visibilidad || '-'}</td>
-            <td>${actividad.entradaLibre ? 'Libre' : 'Limitada'}</td>
+            <td>${actividad.entradaLibre ? 'Libre' : 'De Pago'}</td>
         `;
 
         tablaBody.appendChild(fila);
@@ -138,9 +138,9 @@ const validarFormularioActividad = () => {
     }
 
     // Cupo (requerido solo si no es entrada libre)
-    const entradaLibre = document.getElementById('modal-entrada-libre').value === 'true';
+    const esEntradaLibre = document.getElementById('modal-entrada-libre').value === 'libre';
     const cupoInput = document.getElementById('modal-cupo');
-    if (!entradaLibre) {
+    if (!esEntradaLibre) {
         if (!validaciones.validarRequerido(cupoInput.value)) {
             validaciones.mostrarError('modal-cupo', 'El cupo máximo es obligatorio.');
             esValido = false;
@@ -190,7 +190,7 @@ const controladorEditarActividad = (id) => {
     document.getElementById('modal-cupo').value = actividad.cupoMaximo || '';
     document.getElementById('modal-responsable').value = actividad.responsableId || '';
     document.getElementById('modal-visibilidad').value = actividad.visibilidad || '';
-    document.getElementById('modal-entrada-libre').value = actividad.entradaLibre ? 'true' : 'false';
+    document.getElementById('modal-entrada-libre').value = actividad.entradaLibre ? 'libre' : 'pago';
     document.getElementById('modal-refrigerio').checked = actividad.incluyeRefrigerio || false;
 
     abrirModal();
@@ -230,6 +230,53 @@ const poblarSelectResponsables = () => {
     });
 };
 
+// ── PANEL DE DETALLE (encargado de la actividad seleccionada) ────────────
+
+const actualizarPanelEncargado = () => {
+    const panel = document.getElementById('actividad-detalle-panels');
+    const contenido = document.getElementById('encargado-contenido');
+    const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
+
+    // 0 seleccionados: ocultar panel
+    if (seleccionados.length === 0) {
+        panel.classList.add('oculto');
+        return;
+    }
+
+    panel.classList.remove('oculto');
+
+    // 2+ seleccionados: mostrar mensaje
+    if (seleccionados.length > 1) {
+        contenido.innerHTML = '<p class="detalle-placeholder">Seleccione una sola actividad para ver detalles.</p>';
+        return;
+    }
+
+    // Exactamente 1 seleccionado: mostrar encargado
+    const actividad = window.db.actividades.find(a => a.id === seleccionados[0]);
+
+    if (!actividad || !actividad.responsableId) {
+        contenido.innerHTML = '<p class="detalle-placeholder">Esta actividad no tiene un encargado asignado.</p>';
+        return;
+    }
+
+    const orador = window.db.oradores.find(o => o.id === actividad.responsableId);
+    if (!orador) {
+        contenido.innerHTML = '<p class="detalle-placeholder">Encargado no encontrado.</p>';
+        return;
+    }
+
+    contenido.innerHTML = `
+        <div class="participant-row-item">
+            <div class="user-avatar-circle"></div>
+            <div class="user-metadata">
+                <strong>${orador.nombre}</strong>
+                <p>${orador.especialidad} · ${orador.empresa}</p>
+                <p>${orador.correo} · ${orador.telefono}</p>
+            </div>
+        </div>
+    `;
+};
+
 // ── BUSCADOR ────────────────────────────────────────────────────────────
 
 const aplicarFiltrosActividades = () => {
@@ -265,17 +312,12 @@ const inicializarBuscadorActividades = () => {
 // ── TOOLBAR ─────────────────────────────────────────────────────────────
 
 const inicializarToolbarActividades = () => {
-    const btnExportar = document.getElementById('btn-exportar-pdf');
     const btnAbrirCrear = document.getElementById('btn-abrir-crear');
     const btnCerrarX = document.getElementById('btn-cerrar-modal');
     const btnCancelar = document.getElementById('btn-cancelar-modal');
     const btnEditar = document.getElementById('btn-editar-actividad');
     const btnEliminar = document.getElementById('btn-eliminar-actividad');
     const selectAllCb = document.getElementById('selectAll');
-
-    if (btnExportar) {
-        btnExportar.addEventListener('click', () => alert('Descargando PDF de la agenda...'));
-    }
 
     if (btnAbrirCrear) {
         btnAbrirCrear.addEventListener('click', () => {
@@ -324,8 +366,16 @@ const inicializarToolbarActividades = () => {
             document.querySelectorAll('.row-check').forEach(cb => {
                 cb.checked = e.target.checked;
             });
+            actualizarPanelEncargado();
         });
     }
+
+    // Detectar cambios en checkboxes individuales
+    document.getElementById('tabla-actividades-body')?.addEventListener('change', (e) => {
+        if (e.target.classList.contains('row-check')) {
+            actualizarPanelEncargado();
+        }
+    });
 
     btnCerrarX?.addEventListener('click', cerrarModal);
     btnCancelar?.addEventListener('click', cerrarModal);
@@ -369,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!validarFormularioActividad()) return;
 
-        const entradaLibre = document.getElementById('modal-entrada-libre').value === 'true';
+        const entradaLibre = document.getElementById('modal-entrada-libre').value === 'libre';
 
         if (actividadEditandoId) {
             const index = window.db.actividades.findIndex(act => act.id === actividadEditandoId);

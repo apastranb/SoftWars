@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterCategoria  = document.getElementById('filterCategoriaStand');
 
     // Inputs del modal
+    const inputEvento    = document.getElementById('inputEventoStand');
     const inputNombre    = document.getElementById('inputNombreStand');
     const inputCategoria = document.getElementById('inputCategoriaStand');
     const inputDesc      = document.getElementById('inputDescStand');
@@ -63,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Limpia los campos del modal */
     function limpiarModal() {
+        inputEvento.value    = '';
         inputNombre.value    = '';
         inputCategoria.value = '';
         inputDesc.value      = '';
@@ -71,6 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
         inputCorreo.value    = '';
         inputTelefono.value  = '';
         limpiarErrores();
+    }
+
+    /** Puebla el dropdown de eventos */
+    function poblarSelectEventos() {
+        const actual = inputEvento.value;
+        inputEvento.innerHTML = '<option value="">Seleccionar evento...</option>';
+        window.db.eventos.forEach(ev => {
+            const opt = document.createElement('option');
+            opt.value = ev.id;
+            opt.textContent = ev.nombre;
+            if (ev.id === actual) opt.selected = true;
+            inputEvento.appendChild(opt);
+        });
     }
 
     /** Muestra mensaje de error bajo un input */
@@ -209,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (editandoId) {
             const stand = window.db.stands.find(s => s.id === editandoId);
             if (stand) {
+                stand.eventoId    = inputEvento.value;
                 stand.nombre      = inputNombre.value.trim();
                 stand.categoria   = inputCategoria.value;
                 stand.descripcion = inputDesc.value.trim();
@@ -220,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const nuevoStand = {
                 id:          generarId(),
+                eventoId:    inputEvento.value,
                 nombre:      inputNombre.value.trim(),
                 categoria:   inputCategoria.value,
                 descripcion: inputDesc.value.trim(),
@@ -227,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 empresa:     inputEmpresa.value.trim(),
                 correo:      inputCorreo.value.trim(),
                 telefono:    inputTelefono.value.trim(),
-                estado:      'activo'
+                estado:      'aprobado'
             };
             window.db.stands.push(nuevoStand);
         }
@@ -243,9 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!stand) return;
 
         editandoId = id;
+        poblarSelectEventos();
         modalTitulo.textContent  = 'Editar Stand';
         btnGuardar.textContent   = 'Guardar Cambios';
 
+        inputEvento.value    = stand.eventoId || '';
         inputNombre.value    = stand.nombre;
         inputCategoria.value = stand.categoria || '';
         inputDesc.value      = stand.descripcion;
@@ -274,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnCrearStand.addEventListener('click', () => {
         editandoId = null;
+        poblarSelectEventos();
         modalTitulo.textContent = 'Registrar Stand';
         btnGuardar.textContent  = 'Registrar';
         limpiarModal();

@@ -5,6 +5,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Inicializar navbar search dropdown
+    validaciones.inicializarNavbarSearch('');
+
     // ── Referencias al DOM ──────────────────────────────────────────────────
     const form = document.getElementById('form-postulacion');
     const campoNombre = document.getElementById('nombre');

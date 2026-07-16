@@ -1,6 +1,6 @@
 // ==========================================================================
 // BASE DE DATOS SIMULADA EN MEMORIA
-// Fuente unica de datos mock para Fase 1. Sera reemplazada por MongoDB en Fase 2.
+// Fuente única de datos mock para Fase 1. Será reemplazada por MongoDB en Fase 2.
 // ==========================================================================
 
 window.db = window.db || {
@@ -10,10 +10,10 @@ window.db = window.db || {
         { id: "U-001", nombre: "Carlos Carballo", email: "ccarballov@ucenfotec.ac.cr", password: "Crbl#2026x", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
         { id: "U-002", nombre: "Kenner Gamboa",   email: "kgamboas@ucenfotec.ac.cr",   password: "Knnr$2026z", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
         { id: "U-003", nombre: "Adonis Pastrana", email: "apastranb@ucenfotec.ac.cr",  password: "Dnsp%2026w", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" },
-        { id: "U-004", nombre: "Josue Arroyo",   email: "jarroyor@ucenfotec.ac.cr",   password: "Jsrr&2026v", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" }
+        { id: "U-004", nombre: "Josué Arroyo",   email: "jarroyor@ucenfotec.ac.cr",   password: "Jsrr&2026v", rol: "Administrador", estado: "Activo", fechaCreacion: "2026-07-02" }
     ],
 
-    // Catalogo de roles disponibles
+    // Catálogo de roles disponibles
     roles: ["Administrador", "Super Administrador", "Editor", "Moderador"],
 
     // ── EVENTOS ─────────────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ window.db = window.db || {
             id: "EV-001",
             nombre: "Seminario de Inteligencia Artificial",
             categoria: "tecnologica",
-            descripcion: "Evento academico sobre las ultimas tendencias en IA, modelos fundacionales y etica tecnologica.",
+            descripcion: "Evento académico sobre las últimas tendencias en IA, modelos fundacionales y ética tecnológica.",
             fechaInicio: "2026-11-15",
             fechaFin: "2026-11-16",
             lugar: "Auditorio Principal",
@@ -30,7 +30,7 @@ window.db = window.db || {
             horaFin: "17:00",
             cupoMax: 150,
             cupoActual: 62,
-            responsable: "Maria Gomez",
+            responsable: "María Gómez",
             tipoEntrada: "libre",
             visibilidad: "publico",
             estado: "disponible"
@@ -39,7 +39,7 @@ window.db = window.db || {
             id: "EV-002",
             nombre: "Torneo Deportivo Interuniversitario",
             categoria: "deportiva",
-            descripcion: "Competencia deportiva entre universidades con disciplinas de futbol, basquetbol y atletismo.",
+            descripcion: "Competencia deportiva entre universidades con disciplinas de fútbol, básquetbol y atletismo.",
             fechaInicio: "2026-11-20",
             fechaFin: "2026-11-22",
             lugar: "Cancha Principal",
@@ -47,7 +47,7 @@ window.db = window.db || {
             horaFin: "18:00",
             cupoMax: 300,
             cupoActual: 120,
-            responsable: "Juan Perez",
+            responsable: "Juan Pérez",
             tipoEntrada: "libre",
             visibilidad: "publico",
             estado: "disponible"
@@ -56,7 +56,7 @@ window.db = window.db || {
             id: "EV-003",
             nombre: "Expo CENFOTEC 2026",
             categoria: "tecnologica",
-            descripcion: "Feria de proyectos estudiantiles con demostraciones de software, hardware y diseno.",
+            descripcion: "Feria de proyectos estudiantiles con demostraciones de software, hardware y diseño.",
             fechaInicio: "2026-12-05",
             fechaFin: "2026-12-06",
             lugar: "Campus CENFOTEC",
@@ -64,7 +64,7 @@ window.db = window.db || {
             horaFin: "16:00",
             cupoMax: 500,
             cupoActual: 0,
-            responsable: "Ana Rodriguez",
+            responsable: "Ana Rodríguez",
             tipoEntrada: "libre",
             visibilidad: "publico",
             estado: "disponible"
@@ -90,7 +90,7 @@ window.db = window.db || {
             id: "EV-005",
             nombre: "Festival Cultural CENFOTEC",
             categoria: "cultural",
-            descripcion: "Actividades culturales incluyendo musica, arte y gastronomia para la comunidad universitaria.",
+            descripcion: "Actividades culturales incluyendo música, arte y gastronomía para la comunidad universitaria.",
             fechaInicio: "2026-09-15",
             fechaFin: "2026-09-15",
             lugar: "Plaza Central",
@@ -112,7 +112,7 @@ window.db = window.db || {
             eventoId: "EV-001",
             nombre: "Taller: Prompt Engineering Avanzado",
             categoria: "Tecnológicas",
-            descripcion: "Tecnicas de diseno de prompts para modelos generativos.",
+            descripcion: "Técnicas de diseño de prompts para modelos generativos.",
             fecha: "2026-11-15",
             horaInicio: "14:00",
             horaFin: "16:00",
@@ -128,9 +128,9 @@ window.db = window.db || {
         {
             id: "ACT-002",
             eventoId: "EV-001",
-            nombre: "Panel: Etica en IA",
+            nombre: "Panel: Ética en IA",
             categoria: "Tecnológicas",
-            descripcion: "Discusion sobre sesgos algoritmicos y regulacion de la IA.",
+            descripcion: "Discusión sobre sesgos algorítmicos y regulación de la IA.",
             fecha: "2026-11-16",
             horaInicio: "10:00",
             horaFin: "12:00",
@@ -146,7 +146,7 @@ window.db = window.db || {
         {
             id: "ACT-003",
             eventoId: "EV-001",
-            nombre: "Feria de Stands Tecnologicos",
+            nombre: "Feria de Stands Tecnológicos",
             categoria: "Tecnológicas",
             descripcion: "Espacio abierto para recorrer los stands de empresas y proyectos.",
             fecha: "2026-11-16",
@@ -164,7 +164,7 @@ window.db = window.db || {
         {
             id: "ACT-004",
             eventoId: "EV-002",
-            nombre: "Partido de Futbol Inaugural",
+            nombre: "Partido de Fútbol Inaugural",
             categoria: "Deportivas",
             descripcion: "Partido inaugural entre CENFOTEC y Universidad Latina.",
             fecha: "2026-11-20",
@@ -203,12 +203,12 @@ window.db = window.db || {
     oradores: [
         {
             id: "OR-001",
-            nombre: "Ana Rodriguez",
+            nombre: "Ana Rodríguez",
             correo: "ana.rodriguez@techcorp.cr",
             telefono: "8888-0001",
-            especialidad: "Ingenieria de Software",
+            especialidad: "Ingeniería de Software",
             empresa: "Tech Corp",
-            biografia: "Especialista en arquitectura de software con 10 anos de experiencia.",
+            biografia: "Especialista en arquitectura de software con 10 años de experiencia.",
             foto: null,
             eventoId: "EV-001",
             estado: "activo",
@@ -229,7 +229,7 @@ window.db = window.db || {
         },
         {
             id: "OR-003",
-            nombre: "Maria Lopez",
+            nombre: "María López",
             correo: "maria.lopez@securenet.cr",
             telefono: "8888-0003",
             especialidad: "Ciberseguridad",
@@ -242,10 +242,10 @@ window.db = window.db || {
         },
         {
             id: "OR-004",
-            nombre: "Roberto Jimenez",
+            nombre: "Roberto Jiménez",
             correo: "roberto.jimenez@deportecr.cr",
             telefono: "8888-0004",
-            especialidad: "Educacion Fisica",
+            especialidad: "Educación Física",
             empresa: "CENFOTEC",
             biografia: "Coordinador de actividades deportivas interuniversitarias.",
             foto: null,
@@ -260,7 +260,7 @@ window.db = window.db || {
             telefono: "8888-0005",
             especialidad: "Cloud Computing",
             empresa: "CloudSystems CR",
-            biografia: "Arquitecta de soluciones cloud con certificacion AWS y Azure.",
+            biografia: "Arquitecta de soluciones cloud con certificación AWS y Azure.",
             foto: null,
             eventoId: "EV-003",
             estado: "inactivo",
@@ -270,11 +270,11 @@ window.db = window.db || {
 
     // ── STANDS ──────────────────────────────────────────────────────────────
     stands: [
-        { id: "S-001", nombre: "Tech Corp",        categoria: "empresa",  descripcion: "Soluciones empresariales de software.",         encargado: "Juan Perez",      empresa: "Tech Corp",      correo: "juan@techcorp.cr",    telefono: "8888-1001", estado: "aprobado" },
-        { id: "S-002", nombre: "AI Solutions",      categoria: "empresa",  descripcion: "Inteligencia artificial aplicada a negocios.",  encargado: "Carlos Mora",     empresa: "AI Solutions",   correo: "carlos@aisol.cr",    telefono: "8888-1002", estado: "aprobado" },
-        { id: "S-003", nombre: "SecureNet",         categoria: "empresa",  descripcion: "Consultoria en ciberseguridad empresarial.",    encargado: "Maria Lopez",     empresa: "SecureNet",      correo: "maria@securenet.cr",  telefono: "8888-1003", estado: "aprobado" },
-        { id: "S-004", nombre: "Proyecto Estudiantil IoT", categoria: "personal", descripcion: "Demostracion de dispositivos IoT conectados.",  encargado: "Pedro Ramirez",   empresa: "CENFOTEC",       correo: "pedro@estudiante.cr", telefono: "8888-1004", estado: "aprobado" },
-        { id: "S-005", nombre: "CloudSystems CR",   categoria: "empresa",  descripcion: "Infraestructura en la nube para startups.",     encargado: "Laura Vindas",    empresa: "CloudSystems CR", correo: "laura@cloudcr.cr",   telefono: "8888-1005", estado: "cerrado" }
+        { id: "S-001", eventoId: "EV-001", nombre: "Tech Corp",        categoria: "empresa",  descripcion: "Soluciones empresariales de software.",         encargado: "Juan Pérez",      empresa: "Tech Corp",      correo: "juan@techcorp.cr",    telefono: "8888-1001", estado: "aprobado" },
+        { id: "S-002", eventoId: "EV-001", nombre: "AI Solutions",      categoria: "empresa",  descripcion: "Inteligencia artificial aplicada a negocios.",  encargado: "Carlos Mora",     empresa: "AI Solutions",   correo: "carlos@aisol.cr",    telefono: "8888-1002", estado: "aprobado" },
+        { id: "S-003", eventoId: "EV-001", nombre: "SecureNet",         categoria: "empresa",  descripcion: "Consultoría en ciberseguridad empresarial.",    encargado: "María López",     empresa: "SecureNet",      correo: "maria@securenet.cr",  telefono: "8888-1003", estado: "aprobado" },
+        { id: "S-004", eventoId: "EV-003", nombre: "Proyecto Estudiantil IoT", categoria: "personal", descripcion: "Demostración de dispositivos IoT conectados.",  encargado: "Pedro Ramírez",   empresa: "CENFOTEC",       correo: "pedro@estudiante.cr", telefono: "8888-1004", estado: "aprobado" },
+        { id: "S-005", eventoId: "EV-003", nombre: "CloudSystems CR",   categoria: "empresa",  descripcion: "Infraestructura en la nube para startups.",     encargado: "Laura Vindas",    empresa: "CloudSystems CR", correo: "laura@cloudcr.cr",   telefono: "8888-1005", estado: "cerrado" }
     ],
 
     // ── PARTICIPANTES / ASISTENTES ──────────────────────────────────────────
@@ -286,7 +286,7 @@ window.db = window.db || {
             correo: "ana.solano@estudiante.cr",
             telefono: "8811-2233",
             edad: 21,
-            carrera: "Ingenieria en Sistemas",
+            carrera: "Ingeniería en Sistemas",
             actividades: ["ACT-001"],
             estado: "Activo",
             fechaInscripcion: "2026-06-20"
@@ -294,11 +294,11 @@ window.db = window.db || {
         {
             id: "P-002",
             idDocumento: "222220002",
-            nombreCompleto: "Luis Fernandez",
+            nombreCompleto: "Luis Fernández",
             correo: "luis.fernandez@estudiante.cr",
             telefono: "8722-4455",
             edad: 24,
-            carrera: "Administracion de Empresas",
+            carrera: "Administración de Empresas",
             actividades: ["ACT-004"],
             estado: "Activo",
             fechaInscripcion: "2026-06-22"
@@ -306,11 +306,11 @@ window.db = window.db || {
         {
             id: "P-003",
             idDocumento: "333330003",
-            nombreCompleto: "Sofia Castillo",
+            nombreCompleto: "Sofía Castillo",
             correo: "sofia.castillo@estudiante.cr",
             telefono: "8633-7788",
             edad: 22,
-            carrera: "Ingenieria de Software",
+            carrera: "Ingeniería de Software",
             actividades: ["ACT-001", "ACT-002"],
             estado: "Activo",
             fechaInscripcion: "2026-07-01"
@@ -322,7 +322,7 @@ window.db = window.db || {
             correo: "diego.vargas@profesional.cr",
             telefono: "8544-9900",
             edad: 30,
-            carrera: "Ciencias de la Computacion",
+            carrera: "Ciencias de la Computación",
             actividades: ["ACT-005"],
             estado: "Activo",
             fechaInscripcion: "2026-07-03"
@@ -334,16 +334,16 @@ window.db = window.db || {
             correo: "valeria.rojas@estudiante.cr",
             telefono: "8455-1122",
             edad: 19,
-            carrera: "Diseno Digital",
+            carrera: "Diseño Digital",
             actividades: ["ACT-003"],
             estado: "Cancelado",
             fechaInscripcion: "2026-06-25"
         }
     ],
 
-    // ── POSTULACIONES DE ORADORES (solicitudes publicas) ────────────────────
+    // ── POSTULACIONES DE ORADORES (solicitudes públicas) ────────────────────
     postulaciones: [],
 
-    // ── SESION ──────────────────────────────────────────────────────────────
+    // ── SESIÓN ──────────────────────────────────────────────────────────────
     sesionActual: null
 };

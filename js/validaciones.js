@@ -253,3 +253,57 @@ const validaciones = {
         }
     }
 };
+
+
+// ── NAVBAR SEARCH DROPDOWN (paginas publicas) ───────────────────────────
+
+/**
+ * Inicializa el dropdown de busqueda en la navbar.
+ * Busca eventos publicos y muestra resultados al escribir.
+ * @param {string} basePath - prefijo de ruta para los links ('' para index, '../' para subpaginas)
+ */
+validaciones.inicializarNavbarSearch = function(basePath) {
+    const input = document.getElementById('searchInput');
+    const results = document.getElementById('navSearchResults');
+    if (!input || !results || !window.db) return;
+
+    input.addEventListener('input', () => {
+        const termino = input.value.trim().toLowerCase();
+
+        if (termino.length < 2) {
+            results.classList.remove('active');
+            results.innerHTML = '';
+            return;
+        }
+
+        const eventos = window.db.eventos.filter(ev =>
+            ev.visibilidad === 'publico' && (
+                ev.nombre.toLowerCase().includes(termino) ||
+                ev.lugar.toLowerCase().includes(termino) ||
+                ev.categoria.toLowerCase().includes(termino)
+            )
+        ).slice(0, 5);
+
+        if (eventos.length === 0) {
+            results.innerHTML = '<span class="navbar-search-result-item">No se encontraron eventos.</span>';
+            results.classList.add('active');
+            return;
+        }
+
+        results.innerHTML = eventos.map(ev => {
+            const href = basePath + 'detalle-evento.html?id=' + ev.id;
+            return `<a class="navbar-search-result-item" href="${href}">
+                ${ev.nombre}
+                <small>${ev.fechaInicio} · ${ev.lugar}</small>
+            </a>`;
+        }).join('');
+        results.classList.add('active');
+    });
+
+    // Cerrar al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !results.contains(e.target)) {
+            results.classList.remove('active');
+        }
+    });
+};

@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Toolbar: Editar (placeholder — participantes are read-only for now)
+    // Toolbar: Editar participante
     document.getElementById('btnEditarParticipante')?.addEventListener('click', () => {
         const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Solo puede editar un participante a la vez.');
             return;
         }
+        abrirModalEditarParticipante(seleccionados[0]);
     });
 
     // Toolbar: Eliminar
@@ -147,4 +148,89 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('buscar-participante')?.addEventListener('click', renderizarTablaParticipantes);
     document.getElementById('filtro-estado').addEventListener('change', renderizarTablaParticipantes);
     document.getElementById('filtro-fecha').addEventListener('change', renderizarTablaParticipantes);
+
+    // ── Modal Editar Participante ───────────────────────────────────────────
+    const modalEditar = document.getElementById('modalEditarParticipante');
+    let editandoPartId = null;
+
+    const cerrarModalEditar = () => {
+        modalEditar.classList.remove('active');
+        editandoPartId = null;
+        validaciones.limpiarErrores();
+    };
+
+    document.getElementById('btnCerrarEditarPart')?.addEventListener('click', cerrarModalEditar);
+    document.getElementById('btnCancelarEditarPart')?.addEventListener('click', cerrarModalEditar);
+    modalEditar?.addEventListener('click', (e) => {
+        if (e.target === modalEditar) cerrarModalEditar();
+    });
+
+    function abrirModalEditarParticipante(id) {
+        const participante = window.db.participantes.find(p => p.id === id);
+        if (!participante) return;
+
+        editandoPartId = id;
+        validaciones.limpiarErrores();
+
+        document.getElementById('edit-part-nombre').value = participante.nombreCompleto;
+        document.getElementById('edit-part-id').value = participante.idDocumento;
+        document.getElementById('edit-part-correo').value = participante.correo;
+        document.getElementById('edit-part-telefono').value = participante.telefono;
+        document.getElementById('edit-part-edad').value = participante.edad;
+        document.getElementById('edit-part-carrera').value = participante.carrera;
+
+        modalEditar.classList.add('active');
+    }
+
+    document.getElementById('btnGuardarEditarPart')?.addEventListener('click', () => {
+        validaciones.limpiarErrores();
+        let esValido = true;
+
+        const nombre = document.getElementById('edit-part-nombre').value.trim();
+        const telefono = document.getElementById('edit-part-telefono').value.trim();
+        const edad = document.getElementById('edit-part-edad').value.trim();
+        const carrera = document.getElementById('edit-part-carrera').value.trim();
+
+        if (!validaciones.validarRequerido(nombre)) {
+            validaciones.mostrarError('edit-part-nombre', 'El nombre es obligatorio.');
+            esValido = false;
+        } else if (!validaciones.validarNombre(nombre)) {
+            validaciones.mostrarError('edit-part-nombre', 'El nombre debe tener al menos 3 caracteres.');
+            esValido = false;
+        }
+
+        if (!validaciones.validarRequerido(telefono)) {
+            validaciones.mostrarError('edit-part-telefono', 'El telefono es obligatorio.');
+            esValido = false;
+        } else if (!validaciones.validarTelefono(telefono)) {
+            validaciones.mostrarError('edit-part-telefono', 'Ingrese un telefono valido (8 digitos).');
+            esValido = false;
+        }
+
+        if (!validaciones.validarRequerido(edad)) {
+            validaciones.mostrarError('edit-part-edad', 'La edad es obligatoria.');
+            esValido = false;
+        } else if (!validaciones.validarEdad(edad)) {
+            validaciones.mostrarError('edit-part-edad', 'Ingrese una edad valida (15-120).');
+            esValido = false;
+        }
+
+        if (!validaciones.validarRequerido(carrera)) {
+            validaciones.mostrarError('edit-part-carrera', 'La carrera es obligatoria.');
+            esValido = false;
+        }
+
+        if (!esValido) return;
+
+        const participante = window.db.participantes.find(p => p.id === editandoPartId);
+        if (participante) {
+            participante.nombreCompleto = nombre;
+            participante.telefono = telefono;
+            participante.edad = parseInt(edad, 10);
+            participante.carrera = carrera;
+        }
+
+        cerrarModalEditar();
+        renderizarTablaParticipantes();
+    });
 });
