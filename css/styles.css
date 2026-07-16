@@ -186,6 +186,56 @@ nav a:hover {
   box-shadow: 0 0 0 2px rgba(0, 106, 234, 0.2);
 }
 
+/* Navbar search results dropdown */
+.navbarSearch {
+  position: relative;
+}
+
+.navbar-search-results {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  min-width: 280px;
+}
+
+.navbar-search-results.active {
+  display: block;
+}
+
+.navbar-search-result-item {
+  display: block;
+  padding: 0.7rem 1rem;
+  color: var(--blue-800);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--gray-200);
+  transition: background-color 0.2s;
+}
+
+.navbar-search-result-item:last-child {
+  border-bottom: none;
+}
+
+.navbar-search-result-item:hover {
+  background-color: var(--blue-50);
+}
+
+.navbar-search-result-item small {
+  color: var(--gray-600);
+  display: block;
+  font-size: 0.8rem;
+}
+
 /* TABLE GLOBAL (base reset only) */
 
 table {

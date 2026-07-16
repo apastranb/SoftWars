@@ -251,6 +251,10 @@ main h2 {
   border-bottom: none;
 }
 
+.eventAgendaTable strong {
+  color: var(--blue-800);
+}
+
 /* FORM ASIDE */
 
 aside {
@@ -482,4 +486,35 @@ aside p {
   font-size: 0.95rem;
   line-height: 1.5;
   margin-top: 0.25rem;
+}
+
+
+/* Activity status tags in inscription form */
+.actividad-tag {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.tag-disponible {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.tag-lleno {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.tag-libre {
+  background-color: rgba(14, 165, 233, 0.12);
+  color: var(--info);
+}
+
+.actividad-info {
+  opacity: 0.8;
+  cursor: default;
 }

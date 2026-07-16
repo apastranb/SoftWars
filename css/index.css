@@ -128,6 +128,22 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.btn-limpiar-filtros {
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  background-color: transparent;
+  color: var(--blue-800);
+  border: 2px solid var(--blue-800);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-limpiar-filtros:hover {
+  background-color: var(--blue-800);
+  color: var(--white);
+}
+
 /* EVENTS SECTION */
 .eventsSection {
   padding: 3rem;
@@ -164,10 +180,12 @@
 /* EVENT CARDS */
 
 .eventsContainer {
-  display: flex;
-  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+  padding: 0 2rem;
   margin: 2rem auto;
+  max-width: 1600px;
 }
 
 .eventsCard {
@@ -228,4 +246,11 @@
 
 .eventsCardActions a:last-child:hover {
   background-color: var(--blue-500);
+}
+
+.detalle-placeholder {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem 0;
 }
