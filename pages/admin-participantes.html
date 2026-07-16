@@ -101,6 +101,51 @@
         </main>
     </div>
 
+    <!-- Modal Editar Participante -->
+    <div class="modal-overlay" id="modalEditarParticipante">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Editar Participante</h2>
+                <button class="modal-close" id="btnCerrarEditarPart" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="edit-part-nombre">Nombre Completo</label>
+                    <input type="text" id="edit-part-nombre">
+                    <span class="form__error-message" id="error-edit-part-nombre"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-id">Cedula / ID</label>
+                    <input type="text" id="edit-part-id" readonly>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-correo">Correo Electronico</label>
+                    <input type="email" id="edit-part-correo" readonly>
+                </div>
+                <p class="modal-hint">La cedula y el correo no se pueden modificar.</p>
+                <div class="modal-field">
+                    <label for="edit-part-telefono">Telefono</label>
+                    <input type="text" id="edit-part-telefono">
+                    <span class="form__error-message" id="error-edit-part-telefono"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-edad">Edad</label>
+                    <input type="number" id="edit-part-edad">
+                    <span class="form__error-message" id="error-edit-part-edad"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-carrera">Carrera / Profesion</label>
+                    <input type="text" id="edit-part-carrera">
+                    <span class="form__error-message" id="error-edit-part-carrera"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancelar" id="btnCancelarEditarPart" type="button">Cancelar</button>
+                <button class="modal-btn-registrar" id="btnGuardarEditarPart" type="button">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/data-store.js"></script>
     <script src="../js/validaciones.js"></script>
     <script src="../js/admin-participantes-logic.js"></script>

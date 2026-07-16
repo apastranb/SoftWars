@@ -116,7 +116,7 @@
                 <th>Cupo</th>
                 <th>Tipo Entrada</th>
                 <th>Visibilidad</th>
-                <th>Responsable</th>
+                <th>Admin Responsable</th>
               </tr>
             </thead>
             <tbody id="adminEventsTableBody">
@@ -125,6 +125,45 @@
           </table>
           <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron eventos.</p>
         </section>
+
+        <!-- Secciones de detalle (visibles al seleccionar 1 evento) -->
+        <div class="widgets-layout-grid oculto" id="evento-detalle-panels">
+          
+          <div class="group-style-card" id="panel-agenda">
+            <div class="card-header-title">
+              <i class="bi bi-calendar-check"></i>
+              <h3>Agenda del Evento</h3>
+              <button class="eventsAdminBtnSecondary btn-exportar-agenda" id="btnExportarAgendaPDF">
+                <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+              </button>
+            </div>
+            <div id="agenda-contenido">
+              <p class="detalle-placeholder">Seleccione un evento para ver su agenda.</p>
+            </div>
+          </div>
+
+          <div class="group-style-card" id="panel-presentadores">
+            <div class="card-header-title">
+              <i class="bi bi-people-fill"></i>
+              <h3>Presentadores</h3>
+            </div>
+            <div id="presentadores-contenido">
+              <p class="detalle-placeholder">Seleccione un evento para ver sus presentadores.</p>
+            </div>
+          </div>
+
+          <div class="group-style-card" id="panel-stands-evento">
+            <div class="card-header-title">
+              <i class="bi bi-shop-window"></i>
+              <h3>Stands del Evento</h3>
+            </div>
+            <div id="stands-evento-contenido">
+              <p class="detalle-placeholder">Seleccione un evento para ver sus stands.</p>
+            </div>
+          </div>
+
+        </div>
+
       </main>
     </div>
 

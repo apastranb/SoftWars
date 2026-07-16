@@ -91,7 +91,6 @@
                 <div class="admin-toolbar__actions">
                     <button id="btn-editar-actividad" class="eventsAdminBtnSecondary">Editar</button>
                     <button id="btn-eliminar-actividad" class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
-                    <button id="btn-exportar-pdf" class="eventsAdminBtnSecondary">Exportar PDF</button>
                     <button id="btn-abrir-crear" class="eventsAdminBtnPrimary"><i class="bi bi-plus-lg"></i> Crear Actividad</button>
                 </div>
             </section>
@@ -121,37 +120,18 @@
                 </table>
                 <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron actividades.</p>
             </section>
-            <div class="widgets-layout-grid">
-                
-                <div class="group-style-card">
+
+            <!-- Seccion de detalle (visible al seleccionar 1 actividad) -->
+            <div class="widgets-layout-grid oculto" id="actividad-detalle-panels">
+                <div class="group-style-card" id="panel-encargado">
                     <div class="card-header-title">
-                        <i class="bi bi-calendar-check"></i>
-                        <h3>Consulta de Agenda</h3>
+                        <i class="bi bi-person-badge"></i>
+                        <h3>Responsable de la Actividad</h3>
                     </div>
-                    <div class="timeline-block block-blue">
-                        <strong>09:00 AM - Apertura del Evento</strong>
-                        <p>Lugar: Auditorio Principal</p>
-                    </div>
-                    <div class="timeline-block block-blue">
-                        <strong>11:00 AM - Break / Networking de Stands</strong>
-                        <p>Lugar: Pasillo Central</p>
+                    <div id="encargado-contenido">
+                        <p class="detalle-placeholder">Seleccione una actividad para ver su encargado.</p>
                     </div>
                 </div>
-
-                <div class="group-style-card">
-                    <div class="card-header-title">
-                        <i class="bi bi-people"></i>
-                        <h3>Encargado de Actividad</h3>
-                    </div>
-                    <div class="participant-row-item">
-                        <div class="user-avatar-circle"></div>
-                        <div class="user-metadata">
-                            <strong>Esteban Rodríguez</strong>
-                            <p>esteban.rod@cenfotec.ac.cr</p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
         </main>
@@ -168,9 +148,9 @@
             <div class="modal-body">
                 <form id="form-actividad-modal" novalidate>
                     <div class="input-group">
-                        <label for="modal-evento">Evento Padre</label>
+                        <label for="modal-evento">Evento al que pertenece</label>
                         <select id="modal-evento">
-                            <option value="">Seleccione un evento</option>
+                            <option value="">Seleccionar evento...</option>
                         </select>
                         <span class="form__error-message" id="error-modal-evento"></span>
                     </div>
@@ -255,8 +235,8 @@
                         <div class="input-group">
                             <label for="modal-entrada-libre">Tipo de Entrada</label>
                             <select id="modal-entrada-libre">
-                                <option value="false">Con cupo limitado</option>
-                                <option value="true">Entrada libre</option>
+                                <option value="libre">Entrada Libre</option>
+                                <option value="pago">De Pago</option>
                             </select>
                             <span class="form__error-message" id="error-modal-entrada-libre"></span>
                         </div>

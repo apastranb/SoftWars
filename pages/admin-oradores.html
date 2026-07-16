@@ -113,6 +113,13 @@
             </div>
             <div class="modal-body">
                 <div class="modal-field">
+                    <label for="inputEventoOrador">Evento al que pertenece</label>
+                    <select id="inputEventoOrador" class="filter-select modal-select-full">
+                        <option value="">Seleccionar evento...</option>
+                    </select>
+                    <span class="form__error-message" id="error-inputEventoOrador"></span>
+                </div>
+                <div class="modal-field">
                     <label for="inputNombreOrador">Nombre Completo</label>
                     <input type="text" id="inputNombreOrador" placeholder="Nombre del presentador">
                     <span class="form__error-message" id="error-inputNombreOrador"></span>
@@ -157,13 +164,6 @@
                         <input type="file" id="inputFotoOrador" accept="image/*" class="file-input-hidden">
                     </div>
                     <span class="form__error-message" id="error-inputFotoOrador"></span>
-                </div>
-                <div class="modal-field">
-                    <label for="inputEventoOrador">Evento / Actividad</label>
-                    <select id="inputEventoOrador" class="filter-select modal-select-full">
-                        <option value="">Seleccionar evento...</option>
-                    </select>
-                    <span class="form__error-message" id="error-inputEventoOrador"></span>
                 </div>
             </div>
             <div class="modal-footer">
