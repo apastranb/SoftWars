@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cerrar sesión
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');
@@ -249,11 +251,15 @@ document.addEventListener('DOMContentLoaded', () => {
             window.db.stands.push(nuevoStand);
         }
 
+        const esEdicion = !!editandoId;
         cerrarModal();
         renderTabla();
+        if (esEdicion) {
+            validaciones.exito('Stand actualizado', 'Los datos se guardaron correctamente.');
+        } else {
+            validaciones.exito('Stand registrado', 'El stand se registró con éxito.');
+        }
     }
-
-    // ── Editar stand ────────────────────────────────────────────────────────
 
     function abrirModalEditar(id) {
         const stand = window.db.stands.find(s => s.id === id);
@@ -278,11 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Eliminar stand ──────────────────────────────────────────────────────
 
-    function eliminarStand(id) {
+    async function eliminarStand(id) {
         const stand = window.db.stands.find(s => s.id === id);
         if (!stand) return;
 
-        const confirmar = confirm(`¿Estás seguro de que deseas eliminar "${stand.nombre}"? Esta acción no se puede deshacer.`);
+        const confirmar = await validaciones.confirmar('¿Eliminar stand?', `Se eliminará "${stand.nombre}". Esta acción no se puede deshacer.`);
         if (!confirmar) return;
 
         window.db.stands = window.db.stands.filter(s => s.id !== id);
@@ -304,24 +310,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnEditarStand').addEventListener('click', () => {
         const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
-            alert('Seleccione un stand para editar.');
+            validaciones.alerta('Seleccione un stand', 'Debe seleccionar un stand para editar.', 'warning');
             return;
         }
         if (seleccionados.length > 1) {
-            alert('Solo puede editar un stand a la vez.');
+            validaciones.alerta('Solo uno a la vez', 'Solo puede editar un stand a la vez.', 'warning');
             return;
         }
         abrirModalEditar(seleccionados[0]);
     });
 
     // Eliminar desde toolbar (1 o mas seleccionados)
-    document.getElementById('btnEliminarStand').addEventListener('click', () => {
+    document.getElementById('btnEliminarStand').addEventListener('click', async () => {
         const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
-            alert('Seleccione al menos un stand para eliminar.');
+            validaciones.alerta('Seleccione stands', 'Seleccione al menos un stand para eliminar.', 'warning');
             return;
         }
-        const confirmar = confirm(`¿Eliminar ${seleccionados.length} stand(s)? Esta acción no se puede deshacer.`);
+        const confirmar = await validaciones.confirmar('¿Eliminar stand(s)?', `Se eliminarán ${seleccionados.length} stand(s). Esta acción no se puede deshacer.`);
         if (!confirmar) return;
         window.db.stands = window.db.stands.filter(s => !seleccionados.includes(s.id));
         renderTabla();

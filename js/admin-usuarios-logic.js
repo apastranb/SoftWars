@@ -47,8 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#headerUserRol').textContent = localStorage.getItem('sesionRol') || '';
 
     // Cerrar Sesion
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         usuario.estado = nuevoEstado;
         e.target.className = `tableSelectStatus estado-${nuevoEstado.toLowerCase()}`;
-        mostrarToast(`Estado de ${usuario.nombre} actualizado a "${nuevoEstado}".`);
+        validaciones.exito('Estado actualizado', `Estado de ${usuario.nombre} actualizado a "${nuevoEstado}".`);
     });
 
     // ==========================================================
@@ -164,11 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnEditarUsuario').addEventListener('click', () => {
         const seleccionados = [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.email);
         if (seleccionados.length === 0) {
-            alert('Seleccione un usuario para editar.');
+            validaciones.alerta('Seleccione un usuario', 'Debe seleccionar un usuario para editar.', 'warning');
             return;
         }
         if (seleccionados.length > 1) {
-            alert('Solo puede editar un usuario a la vez.');
+            validaciones.alerta('Solo uno a la vez', 'Solo puede editar un usuario a la vez.', 'warning');
             return;
         }
 
@@ -218,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cerrarModalEditar();
         renderTabla();
-        mostrarToast('Usuario actualizado correctamente.');
+        validaciones.exito('Usuario actualizado', 'Los datos se guardaron correctamente.');
     });
 
     // ==========================================================
@@ -334,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cerrarModalCrear();
         renderTabla();
-        mostrarToast('Administrador creado correctamente.');
+        validaciones.exito('Administrador creado', 'La cuenta se creó correctamente.');
     });
 
     // Primer render

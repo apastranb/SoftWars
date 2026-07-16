@@ -196,9 +196,9 @@ const controladorEditarActividad = (id) => {
     abrirModal();
 };
 
-const controladorEliminarActividad = (id) => {
-    const confirmacion = confirm(`¿Estás seguro de que deseas eliminar la actividad ${id}?`);
-    if (confirmacion) {
+const controladorEliminarActividad = async (id) => {
+    const confirmado = await validaciones.confirmar('¿Eliminar actividad?', `Se eliminará la actividad ${id}. Esta acción no se puede deshacer.`);
+    if (confirmado) {
         window.db.actividades = window.db.actividades.filter(act => act.id !== id);
         renderizarTablaActividades();
     }
@@ -334,11 +334,11 @@ const inicializarToolbarActividades = () => {
         btnEditar.addEventListener('click', () => {
             const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
             if (seleccionados.length === 0) {
-                alert('Seleccione una actividad para editar.');
+                validaciones.alerta('Seleccione una actividad', 'Debe seleccionar una actividad para editar.', 'warning');
                 return;
             }
             if (seleccionados.length > 1) {
-                alert('Solo puede editar una actividad a la vez.');
+                validaciones.alerta('Solo una a la vez', 'Solo puede editar una actividad a la vez.', 'warning');
                 return;
             }
             controladorEditarActividad(seleccionados[0]);
@@ -347,13 +347,13 @@ const inicializarToolbarActividades = () => {
 
     // Eliminar desde toolbar (1 o mas seleccionados)
     if (btnEliminar) {
-        btnEliminar.addEventListener('click', () => {
+        btnEliminar.addEventListener('click', async () => {
             const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
             if (seleccionados.length === 0) {
-                alert('Seleccione al menos una actividad para eliminar.');
+                validaciones.alerta('Seleccione actividades', 'Seleccione al menos una actividad para eliminar.', 'warning');
                 return;
             }
-            const confirmar = confirm(`¿Eliminar ${seleccionados.length} actividad(es)? Esta acción no se puede deshacer.`);
+            const confirmar = await validaciones.confirmar('¿Eliminar actividad(es)?', `Se eliminarán ${seleccionados.length} actividad(es). Esta acción no se puede deshacer.`);
             if (!confirmar) return;
             window.db.actividades = window.db.actividades.filter(a => !seleccionados.includes(a.id));
             renderizarTablaActividades();
@@ -392,8 +392,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cerrar sesión
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');
@@ -438,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.db.actividades[index].entradaLibre = entradaLibre;
                 window.db.actividades[index].incluyeRefrigerio = document.getElementById('modal-refrigerio').checked;
             }
-            alert('¡Actividad actualizada con éxito!');
+            validaciones.exito('Actividad actualizada', 'La actividad se actualizó con éxito.');
         } else {
             const nuevoId = `ACT-${String(window.db.actividades.length + 1).padStart(3, '0')}`;
             window.db.actividades.push({
@@ -459,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 entradaLibre: entradaLibre,
                 incluyeRefrigerio: document.getElementById('modal-refrigerio').checked
             });
-            alert('¡Actividad registrada con éxito!');
+            validaciones.exito('Actividad registrada', 'La actividad se registró con éxito.');
         }
 
         renderizarTablaActividades();

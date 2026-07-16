@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.addEventListener('click', () => {
         if (!validarFormulario()) return;
 
-        alert(`✅ Pago aprobado\n\nActividad: ${nombreActividad}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
+        validaciones.exito('Pago aprobado', `Actividad: ${nombreActividad}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
         limpiarFormulario();
     });
 

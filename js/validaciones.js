@@ -307,3 +307,47 @@ validaciones.inicializarNavbarSearch = function(basePath) {
         }
     });
 };
+
+
+// ── SWEETALERT2 WRAPPERS ────────────────────────────────────────────────
+
+/**
+ * Muestra una alerta informativa (reemplaza alert()).
+ */
+validaciones.alerta = function(titulo, texto, icono) {
+    return Swal.fire({
+        title: titulo,
+        text: texto || '',
+        icon: icono || 'info',
+        confirmButtonColor: '#164a98'
+    });
+};
+
+/**
+ * Muestra un mensaje de éxito.
+ */
+validaciones.exito = function(titulo, texto) {
+    return Swal.fire({
+        title: titulo,
+        text: texto || '',
+        icon: 'success',
+        confirmButtonColor: '#164a98'
+    });
+};
+
+/**
+ * Muestra una confirmación (reemplaza confirm()).
+ * Retorna una promesa que resuelve a true si el usuario confirma.
+ */
+validaciones.confirmar = function(titulo, texto) {
+    return Swal.fire({
+        title: titulo,
+        text: texto || '',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#164a98',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then(result => result.isConfirmed);
+};

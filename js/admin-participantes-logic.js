@@ -98,8 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('headerUserRol').textContent  = localStorage.getItem('sesionRol')    || '';
 
     // Cerrar sesión
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');
@@ -120,24 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnEditarParticipante')?.addEventListener('click', () => {
         const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
-            alert('Seleccione un participante para editar.');
+            validaciones.alerta('Seleccione un participante', 'Debe seleccionar un participante para editar.', 'warning');
             return;
         }
         if (seleccionados.length > 1) {
-            alert('Solo puede editar un participante a la vez.');
+            validaciones.alerta('Solo uno a la vez', 'Solo puede editar un participante a la vez.', 'warning');
             return;
         }
         abrirModalEditarParticipante(seleccionados[0]);
     });
 
     // Toolbar: Eliminar
-    document.getElementById('btnEliminarParticipante')?.addEventListener('click', () => {
+    document.getElementById('btnEliminarParticipante')?.addEventListener('click', async () => {
         const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
-            alert('Seleccione al menos un participante para eliminar.');
+            validaciones.alerta('Seleccione participantes', 'Seleccione al menos un participante para eliminar.', 'warning');
             return;
         }
-        const confirmar = confirm(`¿Eliminar ${seleccionados.length} participante(s)? Esta accion no se puede deshacer.`);
+        const confirmar = await validaciones.confirmar('¿Eliminar participante(s)?', `Se eliminarán ${seleccionados.length} participante(s). Esta acción no se puede deshacer.`);
         if (!confirmar) return;
         window.db.participantes = window.db.participantes.filter(p => !seleccionados.includes(p.id));
         renderizarTablaParticipantes();
@@ -232,5 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cerrarModalEditar();
         renderizarTablaParticipantes();
+        validaciones.exito('Participante actualizado', 'Los datos se guardaron correctamente.');
     });
 });

@@ -179,6 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fotoDataUrl = null;
         if (fotoPreview) fotoPreview.src = '../img/img-placeholder.png';
 
-        validaciones.mostrarResultado('resultado-postulacion', '¡Postulación enviada con éxito! Un administrador revisará tu solicitud.', 'success');
+        validaciones.exito('Postulación enviada', 'Un administrador revisará tu solicitud.');
     });
 });

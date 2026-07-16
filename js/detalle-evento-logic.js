@@ -374,7 +374,7 @@ const validarInscripcion = (e) => {
                     inscripcionExistente.actividades.push(actId);
                 }
             });
-            alert('Se agregaron las nuevas actividades a tu inscripcion existente.');
+            validaciones.exito('Inscripción actualizada', 'Se agregaron las nuevas actividades a tu inscripción existente.');
         } else {
             const nuevoId = 'P-' + String(window.db.participantes.length + 1).padStart(3, '0');
             window.db.participantes.push({
@@ -389,7 +389,7 @@ const validarInscripcion = (e) => {
                 estado: 'Activo',
                 fechaInscripcion: new Date().toISOString().slice(0, 10)
             });
-            alert('Inscripcion exitosa.');
+            validaciones.exito('Inscripción exitosa', 'Te has inscrito correctamente al evento.');
         }
 
         document.getElementById('inscribirVisitante').reset();

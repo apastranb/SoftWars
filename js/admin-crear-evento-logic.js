@@ -55,7 +55,7 @@ const inicializarDragAndDrop = () => {
     function procesarArchivo(file) {
         const formatosValidos = ['image/jpeg', 'image/png'];
         if (!formatosValidos.includes(file.type)) {
-            alert('Formato inválido. Por favor, selecciona un archivo PNG o JPG.');
+            validaciones.alerta('Formato inválido', 'Por favor, selecciona un archivo PNG o JPG.', 'error');
             fileInput.value = '';
             return;
         }
@@ -292,7 +292,14 @@ const validarFormularioEvento = (e) => {
         }
 
         guardarEventos(eventos);
-        window.location.href = 'admin-eventos.html';
+
+        const esEdicion = form.dataset.indiceEdicion !== undefined && form.dataset.indiceEdicion !== '';
+        validaciones.exito(
+            esEdicion ? 'Evento actualizado' : 'Evento creado',
+            esEdicion ? 'Los cambios se guardaron correctamente.' : 'El evento se registró con éxito.'
+        ).then(() => {
+            window.location.href = 'admin-eventos.html';
+        });
     }
 };
 
@@ -306,8 +313,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cerrar sesión
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');

@@ -121,26 +121,26 @@ const obtenerIndicesSeleccionados = () => {
 const editarEventoSeleccionado = () => {
     const indices = obtenerIndicesSeleccionados();
     if (indices.length === 0) {
-        alert('Seleccione un evento para editar.');
+        validaciones.alerta('Seleccione un evento', 'Debe seleccionar un evento para editar.', 'warning');
         return;
     }
     if (indices.length > 1) {
-        alert('Solo puede editar un evento a la vez.');
+        validaciones.alerta('Solo uno a la vez', 'Solo puede editar un evento a la vez.', 'warning');
         return;
     }
     window.location.href = `admin-crear-evento.html?editar=${indices[0]}`;
 };
 
 // ELIMINAR EVENTOS SELECCIONADOS
-const eliminarEventosSeleccionados = () => {
+const eliminarEventosSeleccionados = async () => {
     const indices = obtenerIndicesSeleccionados();
     if (indices.length === 0) {
-        alert('Seleccione al menos un evento para eliminar.');
+        validaciones.alerta('Seleccione eventos', 'Seleccione al menos un evento para eliminar.', 'warning');
         return;
     }
 
-    const confirmacion = confirm(`¿Eliminar ${indices.length} evento(s)? Esta accion no se puede deshacer.`);
-    if (!confirmacion) return;
+    const confirmado = await validaciones.confirmar('¿Eliminar evento(s)?', `Se eliminarán ${indices.length} evento(s). Esta acción no se puede deshacer.`);
+    if (!confirmado) return;
 
     let eventos = obtenerEventos();
     indices.sort((a, b) => b - a).forEach(idx => {
@@ -243,8 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cerrar sesion
-    document.getElementById('btnLogOut').addEventListener('click', (e) => {
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
         e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
         localStorage.removeItem('sesionActiva');
         localStorage.removeItem('sesionEmail');
         localStorage.removeItem('sesionNombre');
