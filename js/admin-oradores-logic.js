@@ -240,7 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
             select.addEventListener('change', (e) => {
                 const id = e.target.dataset.id;
                 const orador = window.db.oradores.find(o => o.id === id);
-                if (orador) orador.estado = e.target.value;
+                if (orador) {
+                    orador.estado = e.target.value;
+                    validaciones.exito('Estado actualizado', `El presentador se marcó como "${e.target.value}".`);
+                }
             });
         });
     }

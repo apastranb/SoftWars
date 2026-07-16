@@ -213,7 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
             select.addEventListener('change', (e) => {
                 const id = e.target.dataset.id;
                 const stand = window.db.stands.find(s => s.id === id);
-                if (stand) stand.estado = e.target.value;
+                if (stand) {
+                    stand.estado = e.target.value;
+                    validaciones.exito('Estado actualizado', `El stand se marcó como "${e.target.value}".`);
+                }
             });
         });
     }

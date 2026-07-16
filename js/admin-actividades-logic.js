@@ -66,7 +66,10 @@ const renderizarTablaActividades = (datosAFiltrar) => {
         select.addEventListener('change', (e) => {
             const id = e.target.dataset.id;
             const actividad = window.db.actividades.find(a => a.id === id);
-            if (actividad) actividad.estado = e.target.value;
+            if (actividad) {
+                actividad.estado = e.target.value;
+                validaciones.exito('Estado actualizado', `La actividad se marcó como "${e.target.value}".`);
+            }
         });
     });
 };

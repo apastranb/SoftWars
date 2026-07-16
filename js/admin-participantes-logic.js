@@ -78,7 +78,10 @@ const renderizarTablaParticipantes = () => {
         select.addEventListener('change', (e) => {
             const id = e.target.dataset.id;
             const participante = window.db.participantes.find(p => p.id === id);
-            if (participante) participante.estado = e.target.value;
+            if (participante) {
+                participante.estado = e.target.value;
+                validaciones.exito('Estado actualizado', `El participante se marcó como "${e.target.value}".`);
+            }
         });
     });
 };

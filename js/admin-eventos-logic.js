@@ -70,6 +70,7 @@ const renderizarTabla = (lista) => {
             if (eventos[idx]) {
                 eventos[idx].estado = e.target.value;
                 guardarEventos(eventos);
+                validaciones.exito('Estado actualizado', `El evento se marcó como "${e.target.value}".`);
             }
         });
     });
