@@ -1,5 +1,11 @@
-# Kiro IDE configuration (local steering docs)
+# Kiro IDE configuration
 .kiro/
 
 # VS Code local settings
 .vscode/
+
+# Node.js dependencies
+node_modules/
+
+# Variables de entorno (credenciales)
+.env

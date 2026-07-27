@@ -1,0 +1,27 @@
+{
+  "name": "softwars",
+  "version": "1.0.0",
+  "description": "Proyecto Integrador Cenfotec",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apastranb/SoftWars.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/apastranb/SoftWars/issues"
+  },
+  "homepage": "https://github.com/apastranb/SoftWars#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.5.0"
+  }
+}
