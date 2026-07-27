@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
         limpiarErrores(...camposCambiarPass);
         document.querySelector('#resultado-cambiar-pass').className = 'form__result-message';
         document.querySelector('#resultado-cambiar-pass').textContent = '';
-        modalCambiarPass.classList.add('active');
+        modalCambiarPass.classList.add('modal-visible');
     };
 
-    const cerrarModalCambiarPass = () => modalCambiarPass.classList.remove('active');
+    const cerrarModalCambiarPass = () => modalCambiarPass.classList.remove('modal-visible');
 
     linkForgotPass.addEventListener('click', abrirModalCambiarPass);
     document.querySelector('#btnCerrarCambiarPass').addEventListener('click', cerrarModalCambiarPass);

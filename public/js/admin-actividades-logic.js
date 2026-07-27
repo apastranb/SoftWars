@@ -86,14 +86,14 @@ const abrirModal = () => {
     const modal = document.getElementById('modal-actividad');
     if (modal) {
         modal.classList.remove('modal-hidden');
-        modal.classList.add('active');
+        modal.classList.add('modal-visible');
     }
 };
 
 const cerrarModal = () => {
     const modal = document.getElementById('modal-actividad');
     if (modal) {
-        modal.classList.remove('active');
+        modal.classList.remove('modal-visible');
         modal.classList.add('modal-hidden');
     }
     document.getElementById('form-actividad-modal').reset();

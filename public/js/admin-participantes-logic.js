@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let editandoPartId = null;
 
     const cerrarModalEditar = () => {
-        modalEditar.classList.remove('active');
+        modalEditar.classList.remove('modal-visible');
         editandoPartId = null;
         validaciones.limpiarErrores();
     };
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-part-edad').value = participante.edad;
         document.getElementById('edit-part-carrera').value = participante.carrera;
 
-        modalEditar.classList.add('active');
+        modalEditar.classList.add('modal-visible');
     }
 
     document.getElementById('btnGuardarEditarPart')?.addEventListener('click', () => {

@@ -126,10 +126,10 @@ const cargarDatosEdicion = () => {
     const evento = eventos[parseInt(indice)];
     if (!evento) return;
 
-    // Cambiar título y breadcrumb
+    // Cambiar titulo y breadcrumb
     const titulo = document.querySelector('.headerTitle h1');
     if (titulo) titulo.textContent = 'Editar Evento';
-    const breadcrumbActual = document.querySelector('.breadcrumb-item[aria-current="page"]');
+    const breadcrumbActual = document.querySelector('.page-breadcrumb-item[aria-current="page"]');
     if (breadcrumbActual) breadcrumbActual.textContent = 'Editar Evento';
 
     // Rellenar campos

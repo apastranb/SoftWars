@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalEditar = document.querySelector('#modalEditarUsuario');
     let emailUsuarioEditando = null;
 
-    const cerrarModalEditar = () => modalEditar.classList.remove('active');
+    const cerrarModalEditar = () => modalEditar.classList.remove('modal-visible');
 
     // Edit from toolbar button
     document.getElementById('btnEditarUsuario').addEventListener('click', () => {
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#edit-nombre').value = usuario.nombre;
         document.querySelector('#edit-email').value = usuario.email;
         document.querySelector('#edit-rol').value = usuario.rol;
-        modalEditar.classList.add('active');
+        modalEditar.classList.add('modal-visible');
     });
 
     document.querySelector('#btnCerrarEditar').addEventListener('click', cerrarModalEditar);
@@ -245,10 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
         crearPasswordInput.value = '';
         crearRolSelect.value = window.db.roles.includes('Administrador') ? 'Administrador' : window.db.roles[0];
         limpiarErrores();
-        modalCrear.classList.add('active');
+        modalCrear.classList.add('modal-visible');
     };
 
-    const cerrarModalCrear = () => modalCrear.classList.remove('active');
+    const cerrarModalCrear = () => modalCrear.classList.remove('modal-visible');
 
     const btnNuevoUsuario = document.querySelector('#btnNuevoUsuario');
     btnNuevoUsuario.addEventListener('click', abrirModalCrear);

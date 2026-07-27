@@ -1,5 +1,5 @@
 /* BREADCRUMBS */
-.breadcrumb {
+.page-breadcrumb {
   background-color: transparent;
   display: flex;
   border: none;
@@ -11,24 +11,24 @@
   font-size: 0.9rem;
 }
 
-.breadcrumb-item a {
+.page-breadcrumb-item a {
   color: var(--blue-500);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.breadcrumb-item a:hover {
+.page-breadcrumb-item a:hover {
   color: var(--blue-800);
   text-decoration: underline;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
+.page-breadcrumb-item + .page-breadcrumb-item::before {
   content: "/";
   color: var(--gray-600);
   padding: 0 0.5rem;
 }
 
-.breadcrumb-item.active {
+.page-breadcrumb-item.active {
   color: var(--gray-600);
   font-weight: normal;
   pointer-events: none;

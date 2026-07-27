@@ -61,6 +61,11 @@
   padding: 0;
 }
 
+/* Override Bootstrap's default margins on text elements */
+p, h1, h2, h3, h4, h5, h6, hr {
+  margin: 0;
+}
+
 body {
   font-family: "Circular-Std-Book", sans-serif;
   min-height: 100vh;
@@ -134,7 +139,7 @@ nav a:hover {
   transform: scale(1.05);
 }
 
-.active {
+.nav-active {
   border-bottom: 2px solid var(--blue-800);
 }
 
@@ -335,7 +340,7 @@ table {
 }
 
 /* Primary button (used in public forms) */
-.btn-primary {
+.btn-submit {
   width: 100%;
   padding: 0.85rem;
   margin-top: 0.5rem;
@@ -349,12 +354,12 @@ table {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.btn-primary:hover {
+.btn-submit:hover {
   background-color: var(--blue-500);
   transform: translateY(-1px);
 }
 
-.btn-primary:active {
+.btn-submit:active {
   transform: scale(0.98);
 }
 

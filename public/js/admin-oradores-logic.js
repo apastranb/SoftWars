@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${y}/${m}/${d}`;
     }
 
-    function abrirModal()  { modalOverlay.classList.add('active'); }
+    function abrirModal()  { modalOverlay.classList.add('modal-visible'); }
     function cerrarModal() {
-        modalOverlay.classList.remove('active');
+        modalOverlay.classList.remove('modal-visible');
         limpiarModal();
         editandoId  = null;
         fotoDataUrl = null;
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Evitar que clicks dentro del modal cierren el overlay
-    document.querySelector('#modalCrearOrador .modal').addEventListener('click', (e) => {
+    document.querySelector('#modalCrearOrador .custom-modal').addEventListener('click', (e) => {
         e.stopPropagation();
     });
 

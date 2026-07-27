@@ -406,7 +406,7 @@ aside p {
   color: var(--gray-600);
   font-size: 0.95rem;
   line-height: 1.5;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem 0;
 }
 
 .eventActivityDateTime {
@@ -416,6 +416,7 @@ aside p {
   font-weight: 500;
   color: var(--gray-800);
   font-size: 0.9rem;
+  margin: 0;
 }
 
 .eventActivityDateTime i {
@@ -445,11 +446,15 @@ aside p {
   border: 2px solid var(--blue-200);
 }
 
+.eventParticipantsName {
+  margin: 0;
+}
+
 .eventParticipantsSubTitle {
   font-weight: 400;
-  font-size: 1rem !important;
+  font-size: 1rem;
   color: var(--blue-500);
-  font-size: 0.9rem;
+  margin: 0;
 }
 
 .eventParticipantsBio {
@@ -485,7 +490,11 @@ aside p {
   color: var(--gray-600);
   font-size: 0.95rem;
   line-height: 1.5;
-  margin-top: 0.25rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.standName {
+  margin: 0;
 }
 
 

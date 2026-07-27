@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** Muestra u oculta el modal */
-    function abrirModal() { modalOverlay.classList.add('active'); }
+    function abrirModal() { modalOverlay.classList.add('modal-visible'); }
     function cerrarModal() {
-        modalOverlay.classList.remove('active');
+        modalOverlay.classList.remove('modal-visible');
         limpiarModal();
         editandoId = null;
     }
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Evitar que clicks dentro del modal propaguen al overlay
-    document.querySelector('#modalCrearStand .modal').addEventListener('click', (e) => {
+    document.querySelector('#modalCrearStand .custom-modal').addEventListener('click', (e) => {
         e.stopPropagation();
     });
 

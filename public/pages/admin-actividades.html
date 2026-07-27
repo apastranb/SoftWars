@@ -140,13 +140,13 @@
 
     <!-- MODAL REGISTRAR / EDITAR ACTIVIDAD -->
     <div id="modal-actividad" class="modal-overlay modal-hidden">
-        <div class="modal">
-            <div class="modal-header">
+        <div class="custom-modal">
+            <div class="custom-modal__header">
                 <h2 id="modal-titulo-accion">Registrar Actividad</h2>
-                <button id="btn-cerrar-modal" class="modal-close" type="button">&times;</button>
+                <button id="btn-cerrar-modal" class="custom-modal__close" type="button">&times;</button>
             </div>
             
-            <div class="modal-body">
+            <div class="custom-modal__body">
                 <form id="form-actividad-modal" novalidate>
                     <div class="input-group">
                         <label for="modal-evento">Evento al que pertenece</label>
@@ -252,7 +252,7 @@
                 </form>
             </div>
 
-            <div class="modal-footer">
+            <div class="custom-modal__footer">
                 <button type="button" id="btn-cancelar-modal" class="modal-btn-cancelar">Cancelar</button>
                 <button type="submit" id="btn-guardar-modal" form="form-actividad-modal" class="modal-btn-registrar">Registrar</button>
             </div>
