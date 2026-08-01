@@ -52,6 +52,10 @@
   --danger-bg: #fee2e2;
   --danger-text: #991b1b;
   --info: #0ea5e9;
+
+  /* Bootstrap overrides */
+  --bs-primary: #164a98;
+  --bs-primary-rgb: 22, 74, 152;
 }
 
 /* RESET Y BASE */
@@ -91,11 +95,11 @@ h6 {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
 }
 
 h3 {
@@ -117,47 +121,46 @@ img {
   max-width: 100%;
 }
 
-/* NAVBAR */
-nav {
-  background-color: var(--white);
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: clamp(0.5rem, 2vw, 1rem);
+/* NAVBAR — Bootstrap overrides for public navbar */
+.navbar {
+  padding: 0.75rem 0;
 }
 
-.navLogo {
-    display: flex;
-    align-items: center;
-}
-
-.navLogo img {
-  height: clamp(40px, 5vw, 60px);
-  width: auto;
-}
-
-nav a {
+.navbar .nav-link {
   color: var(--blue-800);
   font-weight: bold;
-  font-size: 1rem;
-  margin-left: 1.5rem;
+  font-size: 0.95rem;
   transition: color 0.3s ease;
 }
 
-nav a:hover {
+.navbar .nav-link:hover {
   color: var(--blue-500);
-  transform: scale(1.05);
 }
 
-.nav-active {
+.navbar .nav-link.active {
+  color: var(--blue-800);
   border-bottom: 2px solid var(--blue-800);
 }
 
-.navLinks {
-  display: flex;
-  align-items: center;
+/* Right section: search + acceso admin */
+.navbar-right-section {
+  flex-shrink: 0;
+}
+
+.navbar-right-section .navbarSearch {
+  min-width: 220px;
+}
+
+/* Mobile: search takes full width */
+@media (max-width: 991.98px) {
+  .navbar-right-section {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .navbar-right-section .navbarSearch {
+    width: 100%;
+  }
 }
 
 .navbarSearch {
@@ -168,6 +171,7 @@ nav a:hover {
   padding: 0.25rem 0.75rem;
   background-color: transparent;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .navbarSearch input {
@@ -175,7 +179,7 @@ nav a:hover {
   border: none;
   outline: none;
   padding: 0.25rem 0.5rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--blue-800);
   width: 100%;
 }
@@ -186,12 +190,10 @@ nav a:hover {
   border: none;
   padding: 0;
   margin-right: 0.25rem;
-  margin-left: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .navbarSearch button:hover {
@@ -201,11 +203,6 @@ nav a:hover {
 .navbarSearch:focus-within {
   border-color: var(--blue-500);
   box-shadow: 0 0 0 2px rgba(0, 106, 234, 0.2);
-}
-
-/* Navbar search results dropdown */
-.navbarSearch {
-  position: relative;
 }
 
 .navbar-search-results {
@@ -476,15 +473,45 @@ table {
   display: none;
 }
 
-/* FOOTER */
+/* FOOTER — Bootstrap overrides */
 footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: var(--blue-800) !important;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* Bootstrap button overrides for CENFOTEC brand */
+.btn-primary {
+  background-color: var(--blue-800);
+  border-color: var(--blue-800);
+}
+
+.btn-primary:hover {
+  background-color: var(--blue-500);
+  border-color: var(--blue-500);
+}
+
+.btn-outline-secondary {
+  color: var(--gray-700);
+  border-color: var(--gray-600);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--gray-700);
+  border-color: var(--gray-700);
+  color: var(--white);
+}
+
+/* Botón limpiar filtros — contraste sobre fondo claro */
+.btn-limpiar {
+  color: var(--blue-800);
+  border: 2px solid var(--blue-800);
+  background-color: transparent;
+}
+
+.btn-limpiar:hover {
   background-color: var(--blue-800);
   color: var(--white);
-  text-align: center;
-  padding: 1rem;
-  height: 10vh;
-  margin-top: auto;
 }

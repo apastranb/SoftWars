@@ -10,91 +10,111 @@
     <link rel="icon" type="image/svg" href="img/CENFOTEC-FAVICON.svg">
   </head>
   <body>
-    <nav>
-      <div class="navLogo">
-        <a href="index.html">
-          <img
-            src="img/eventos-cenfotec-logo-dark.svg"
-            alt="Eventos CENFOTEC"
-          />
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="img/eventos-cenfotec-logo-dark.svg" alt="Eventos CENFOTEC" height="55" />
         </a>
-      </div>
-      <div class="navLinks">
-        <a class="nav-active" href="index.html">Eventos</a>
-        <a href="pages/postular-participante.html">Postularse</a>
-      </div>
-      <div class="navLinks">
-        <div class="navbarSearch">
-          <button id="searchButtonIndex"><i class="bi bi-search"></i></button>
-          <input type="text" placeholder="Buscar eventos..." id="searchInput"/>
-          <div class="navbar-search-results" id="navSearchResults"></div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublico" aria-controls="navbarPublico" aria-expanded="false" aria-label="Menú de navegación">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarPublico">
+          <!-- Links de navegación centrados -->
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Eventos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="pages/postular-participante.html">Postularse</a>
+            </li>
+            <li class="nav-item d-lg-none">
+              <a class="nav-link" href="pages/login.html">Acceso Admin</a>
+            </li>
+          </ul>
+
+          <!-- Búsqueda + Acceso Admin a la derecha -->
+          <div class="d-flex align-items-center gap-3 navbar-right-section">
+            <div class="navbarSearch">
+              <button id="searchButtonIndex"><i class="bi bi-search"></i></button>
+              <input type="text" placeholder="Buscar eventos..." id="searchInput" />
+              <div class="navbar-search-results" id="navSearchResults"></div>
+            </div>
+            <a class="nav-link d-none d-lg-block" href="pages/login.html">Acceso Admin</a>
+          </div>
         </div>
-        <a href="pages/login.html">Acceso Admin</a>
       </div>
     </nav>
 
     <main>
+      <!-- HERO -->
       <section class="hero">
-        <div class="heroInnerContainer">
-          <h1>Próximos Eventos Académicos</h1>
-          <p>
-            Descubre y participa en una variedad de actividades diseñadas para
-            enriquecer tu experiencia universitaria. Encuentra desde charlas
-            técnicas hasta actividades de voluntariado de alto impacto.
-          </p>
+        <div class="container">
+          <div class="heroInnerContainer">
+            <h1>Próximos Eventos Académicos</h1>
+            <p>
+              Descubre y participa en una variedad de actividades diseñadas para
+              enriquecer tu experiencia universitaria. Encuentra desde charlas
+              técnicas hasta actividades de voluntariado de alto impacto.
+            </p>
 
-          <div class="heroCTA">
-            <div class="heroSearch">
-              <button id="searchButtonHero">
-                <i class="bi bi-search"></i>
-              </button>
-              <input
-                type="text"
-                placeholder="Buscar eventos..."
-                id="searchInputHero"
-              />
-            </div>
-            <div class="heroFilters">
-              <div class="heroDropdown">
-                <select id="categoryFilter">
+            <div class="heroCTA">
+              <div class="heroSearch">
+                <button id="searchButtonHero">
+                  <i class="bi bi-search"></i>
+                </button>
+                <input
+                  type="text"
+                  placeholder="Buscar eventos..."
+                  id="searchInputHero"
+                />
+              </div>
+              <div class="heroFilters">
+                <select id="categoryFilter" class="form-select">
                   <option value="" selected>Todas las categorías</option>
                   <option value="artistica">Artísticas</option>
                   <option value="cultural">Culturales</option>
                   <option value="deportiva">Deportivas</option>
                   <option value="recreativa">Recreativas</option>
                   <option value="tecnologica">Tecnológicas</option>
-                  <option value="voluntariado">Voluntariados</option>                 
+                  <option value="voluntariado">Voluntariados</option>
                 </select>
-              </div>
-              <div class="heroDateFilter">
-                <input type="date" id="dateFilter" />
-              </div>
-              <div>
-                <button id="filterButton">Filtrar eventos</button>
-              </div>
-              <div>
-                <button id="clearFiltersButton" class="btn-limpiar-filtros">Limpiar</button>
+                <input type="date" id="dateFilter" class="form-control" />
+                <button id="filterButton" class="btn btn-primary">Filtrar eventos</button>
+                <button id="clearFiltersButton" class="btn btn-limpiar">Limpiar</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      <!-- EVENTOS -->
       <section class="eventsSection">
-        <h2>Eventos Destacados</h2>
-        <div id="eventsContainer" class="eventsContainer">
-          <!-- Renderizado dinamicamente por JS -->
+        <div class="container">
+          <h2>Eventos Destacados</h2>
+          <div id="eventsContainer" class="row g-4">
+            <!-- Renderizado dinamicamente por JS -->
+          </div>
+          <div class="text-center mt-4">
+            <button id="loadMoreButton" class="btn btn-outline-primary oculto">
+              Cargar más eventos
+            </button>
+          </div>
         </div>
-        <button id="loadMoreButton" class="loadMoreButton oculto">
-          Cargar más eventos
-        </button>
       </section>
     </main>
 
-    <footer>
-      <p>&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+    <!-- FOOTER -->
+    <footer class="bg-primary text-white text-center py-3 mt-auto">
+      <div class="container">
+        <p class="mb-0">&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+      </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/data-store.js"></script>
     <script src="js/validaciones.js"></script>

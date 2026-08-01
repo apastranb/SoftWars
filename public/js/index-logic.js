@@ -3,7 +3,7 @@
 // Renderiza cards desde window.db.eventos (solo publicos)
 // ==========================================================================
 
-const EVENTOS_POR_PAGINA = 3;
+const EVENTOS_POR_PAGINA = 8;
 let eventosMostrados = 0;
 
 // Capitalizar texto
@@ -60,25 +60,27 @@ const renderizarEventos = (resetear) => {
             ? 'Entrada Libre'
             : `${evento.cupoActual || 0} / ${evento.cupoMax} cupos`;
 
-        const card = document.createElement('div');
-        card.className = 'eventsCard';
-        card.innerHTML = `
-            <div class="eventsCardImg">
-                <img src="${evento.imagen || 'img/img-placeholder.png'}" alt="${evento.nombre}">
-            </div>
-            <div class="eventsCardBody">
-                <h2>${evento.nombre}</h2>
-                <span><i class="bi bi-calendar"></i> <p>${evento.fechaInicio} | ${evento.horaInicio} - ${evento.horaFin}</p></span>
-                <span><i class="bi bi-geo-alt-fill"></i> <p>${evento.lugar}</p></span>
-                <span><i class="bi bi-tag"></i> <p>${capitalizarTexto(evento.categoria)}</p></span>
-                <span><i class="bi bi-people-fill"></i> <p>${cupoTexto}</p></span>
-            </div>
-            <hr class="eventsCardDivisor">
-            <div class="eventsCardActions">
-                <a href="pages/detalle-evento.html?id=${evento.id}" class="btn-ver-detalle">Ver detalles <i class="bi bi-arrow-right"></i></a>
+        const col = document.createElement('div');
+        col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+
+        col.innerHTML = `
+            <div class="card eventsCard h-100">
+                <img src="${evento.imagen || 'img/img-placeholder.png'}" class="card-img-top" alt="${evento.nombre}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${evento.nombre}</h5>
+                    <div class="eventsCardInfo">
+                        <span><i class="bi bi-calendar"></i> ${evento.fechaInicio} | ${evento.horaInicio} - ${evento.horaFin}</span>
+                        <span><i class="bi bi-geo-alt-fill"></i> ${evento.lugar}</span>
+                        <span><i class="bi bi-tag"></i> ${capitalizarTexto(evento.categoria)}</span>
+                        <span><i class="bi bi-people-fill"></i> ${cupoTexto}</span>
+                    </div>
+                    <div class="mt-auto pt-3">
+                        <a href="pages/detalle-evento.html?id=${evento.id}" class="btn btn-primary w-100">Ver detalles <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
             </div>
         `;
-        container.appendChild(card);
+        container.appendChild(col);
     });
 
     eventosMostrados += eventosAMostrar.length;
