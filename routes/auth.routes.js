@@ -1,11 +1,4 @@
-// ==========================================================================
-// RUTAS DE AUTENTICACIÓN — routes/auth.routes.js
-// Responsable: Kenner Gamboa (SW-10)
-// Endpoints: POST /api/auth/login, POST /api/auth/logout, GET /api/auth/sesion
-// ==========================================================================
-
+// Rutas de autenticación — Responsable: Kenner Gamboa (SW-10)
 const router = require('express').Router();
-
-// TODO (Kenner - SW-10): implementar endpoints de autenticación
 
 module.exports = router;

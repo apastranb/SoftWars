@@ -1,11 +1,4 @@
-// ==========================================================================
-// RUTAS DE INSCRIPCIONES — routes/inscripciones.routes.js
-// Responsable: Kenner Gamboa (SW-16)
-// Endpoints: POST, GET, DELETE/:id
-// ==========================================================================
-
+// Rutas de inscripciones — Responsable: Kenner Gamboa (SW-16)
 const router = require('express').Router();
-
-// TODO (Kenner - SW-16): implementar endpoints de inscripciones
 
 module.exports = router;

@@ -1,11 +1,4 @@
-// ==========================================================================
-// RUTAS DE POSTULACIONES — routes/postulaciones.routes.js
-// Responsable: Josué Arroyo (SW-17)
-// Endpoints: GET, POST, PUT/:id
-// ==========================================================================
-
+// Rutas de postulaciones — Responsable: Josué Arroyo (SW-17)
 const router = require('express').Router();
-
-// TODO (Josué - SW-17): implementar endpoints de postulaciones
 
 module.exports = router;
