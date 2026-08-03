@@ -413,4 +413,198 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Render inicial ──────────────────────────────────────────────────────
     renderTabla();
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // POSTULACIONES DE PRESENTADORES
+    // ══════════════════════════════════════════════════════════════════════════
+
+    const tbodyPostulaciones = document.getElementById('adminPostulacionesTableBody');
+    const btnAprobar = document.getElementById('btnAprobarPostulacion');
+    const btnEliminarPost = document.getElementById('btnEliminarPostulacion');
+
+    function obtenerNombreActividad(actividadId) {
+        const act = window.db.actividades.find(a => a.id === actividadId);
+        return act ? act.nombre : 'Sin asignar';
+    }
+
+    function renderPostulaciones() {
+        const postulaciones = window.db.postulaciones || [];
+        const filtroEstado = document.getElementById('filterEstadoPostulacion').value;
+        const filtroFecha = document.getElementById('filterFechaPostulacion').value;
+
+        const filtradas = postulaciones.filter(p => {
+            const coincideEstado = !filtroEstado || p.estado === filtroEstado;
+            const coincideFecha = !filtroFecha || p.fechaPostulacion === filtroFecha;
+            return coincideEstado && coincideFecha;
+        });
+
+        tbodyPostulaciones.innerHTML = '';
+
+        if (filtradas.length === 0) {
+            document.getElementById('tabla-vacia-postulaciones').classList.remove('oculto');
+            return;
+        }
+        document.getElementById('tabla-vacia-postulaciones').classList.add('oculto');
+
+        filtradas.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="row-check-post" data-id="${p.id}"></td>
+                <td>${p.fechaPostulacion || ''}</td>
+                <td>${p.nombre}</td>
+                <td>${p.correo}</td>
+                <td>${p.especialidad}</td>
+                <td>${obtenerNombreActividad(p.actividadId)}</td>
+                <td>
+                    <select class="tableSelectStatus" data-id="${p.id}">
+                        <option value="pendiente" ${p.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                        <option value="aprobada" ${p.estado === 'aprobada' ? 'selected' : ''}>Aprobada</option>
+                        <option value="rechazada" ${p.estado === 'rechazada' ? 'selected' : ''}>Rechazada</option>
+                    </select>
+                </td>
+            `;
+            tbodyPostulaciones.appendChild(tr);
+        });
+
+        // Select all
+        document.getElementById('selectAllPostulaciones').checked = false;
+
+        // Estado change — aprobar crea orador
+        tbodyPostulaciones.querySelectorAll('.tableSelectStatus').forEach(select => {
+            select.addEventListener('change', async (e) => {
+                const id = e.target.dataset.id;
+                const nuevoEstado = e.target.value;
+                const postulacion = window.db.postulaciones.find(p => p.id === id);
+                if (!postulacion) return;
+
+                // Si ya estaba aprobada, no dejar cambiar
+                if (postulacion.estado === 'aprobada' && nuevoEstado !== 'aprobada') {
+                    validaciones.alerta('No permitido', 'Una postulación aprobada no se puede revertir.', 'warning');
+                    e.target.value = 'aprobada';
+                    return;
+                }
+
+                // Confirmar aprobación
+                if (nuevoEstado === 'aprobada') {
+                    const confirmar = await validaciones.confirmar(
+                        '¿Aprobar postulación?',
+                        `Se creará a "${postulacion.nombre}" como presentador.`
+                    );
+                    if (!confirmar) {
+                        e.target.value = postulacion.estado;
+                        return;
+                    }
+                    crearOradorDesdePostulacion(postulacion);
+                }
+
+                postulacion.estado = nuevoEstado;
+                renderPostulaciones();
+
+                if (nuevoEstado === 'aprobada') {
+                    renderTabla();
+                    validaciones.exito('Postulación aprobada', `"${postulacion.nombre}" fue registrado como presentador.`);
+                }
+            });
+        });
+    }
+
+    function crearOradorDesdePostulacion(postulacion) {
+        const ids = window.db.oradores.map(o => parseInt(o.id.replace('OR-', ''), 10));
+        const max = ids.length > 0 ? Math.max(...ids) : 0;
+        const nuevoId = `OR-${String(max + 1).padStart(3, '0')}`;
+
+        window.db.oradores.push({
+            id: nuevoId,
+            nombre: postulacion.nombre,
+            correo: postulacion.correo,
+            telefono: postulacion.telefonos ? postulacion.telefonos[0] : '',
+            telefonos: postulacion.telefonos || [],
+            especialidad: postulacion.especialidad,
+            empresa: postulacion.empresa || '',
+            biografia: postulacion.biografia || '',
+            foto: postulacion.foto || null,
+            eventoId: '',
+            estado: 'activo',
+            fechaRegistro: new Date().toISOString().slice(0, 10)
+        });
+    }
+
+    // Botón Aprobar (con checks)
+    btnAprobar.addEventListener('click', async () => {
+        const seleccionados = [...tbodyPostulaciones.querySelectorAll('.row-check-post:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            validaciones.alerta('Seleccione postulaciones', 'Debe seleccionar al menos una postulación para aprobar.', 'warning');
+            return;
+        }
+
+        const pendientes = seleccionados.filter(id => {
+            const p = window.db.postulaciones.find(post => post.id === id);
+            return p && p.estado === 'pendiente';
+        });
+
+        if (pendientes.length === 0) {
+            validaciones.alerta('Sin pendientes', 'Las postulaciones seleccionadas ya fueron procesadas.', 'info');
+            return;
+        }
+
+        const confirmar = await validaciones.confirmar(
+            '¿Aprobar postulaciones?',
+            `Se aprobarán ${pendientes.length} postulación(es) y se crearán como presentadores.`
+        );
+        if (!confirmar) return;
+
+        pendientes.forEach(id => {
+            const postulacion = window.db.postulaciones.find(p => p.id === id);
+            if (postulacion) {
+                postulacion.estado = 'aprobada';
+                crearOradorDesdePostulacion(postulacion);
+            }
+        });
+
+        renderPostulaciones();
+        renderTabla();
+        validaciones.exito('Postulaciones aprobadas', `${pendientes.length} presentador(es) registrado(s).`);
+    });
+
+    // Botón Eliminar (solo rechazadas)
+    btnEliminarPost.addEventListener('click', async () => {
+        const seleccionados = [...tbodyPostulaciones.querySelectorAll('.row-check-post:checked')].map(cb => cb.dataset.id);
+        if (seleccionados.length === 0) {
+            validaciones.alerta('Seleccione postulaciones', 'Debe seleccionar al menos una postulación para eliminar.', 'warning');
+            return;
+        }
+
+        const eliminables = seleccionados.filter(id => {
+            const p = window.db.postulaciones.find(post => post.id === id);
+            return p && p.estado === 'rechazada';
+        });
+
+        if (eliminables.length === 0) {
+            validaciones.alerta('No eliminable', 'Solo se pueden eliminar postulaciones rechazadas.', 'warning');
+            return;
+        }
+
+        const confirmar = await validaciones.confirmar(
+            '¿Eliminar postulaciones?',
+            `Se eliminarán ${eliminables.length} postulación(es) rechazada(s).`
+        );
+        if (!confirmar) return;
+
+        window.db.postulaciones = window.db.postulaciones.filter(p => !eliminables.includes(p.id));
+        renderPostulaciones();
+        validaciones.exito('Eliminadas', `${eliminables.length} postulación(es) eliminada(s).`);
+    });
+
+    // Select all postulaciones
+    document.getElementById('selectAllPostulaciones').addEventListener('change', (e) => {
+        tbodyPostulaciones.querySelectorAll('.row-check-post').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
+    });
+
+    // Filtros de postulaciones
+    document.getElementById('filterEstadoPostulacion').addEventListener('change', renderPostulaciones);
+    document.getElementById('filterFechaPostulacion').addEventListener('change', renderPostulaciones);
+
+    renderPostulaciones();
 });

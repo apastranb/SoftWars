@@ -81,7 +81,7 @@
                 </div>
             </section>
 
-            <section class="admin-table-wrapper">
+            <section class="admin-table-wrapper admin-table-scroll">
                 <table class="admin-table" id="tabla-oradores">
                     <thead>
                         <tr>
@@ -100,6 +100,49 @@
                     </tbody>
                 </table>
                 <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron presentadores.</p>
+            </section>
+
+            <!-- POSTULACIONES DE PRESENTADORES -->
+            <div class="postulaciones-header">
+                <h2><i class="bi bi-person-raised-hand"></i> Postulaciones de presentadores</h2>
+            </div>
+
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filterEstadoPostulacion">
+                        <option value="">Estado</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="aprobada">Aprobada</option>
+                        <option value="rechazada">Rechazada</option>
+                    </select>
+                    <input type="date" class="filter-select" id="filterFechaPostulacion" />
+                </div>
+                <div class="admin-toolbar__actions">
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarPostulacion">Eliminar</button>
+                    <button class="eventsAdminBtnPrimary" id="btnAprobarPostulacion">
+                        <i class="bi bi-check-lg"></i> Aprobar
+                    </button>
+                </div>
+            </section>
+
+            <section class="admin-table-wrapper admin-table-scroll">
+                <table class="admin-table" id="tabla-postulaciones">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllPostulaciones" title="Seleccionar todos"></th>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Especialidad</th>
+                            <th>Actividad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminPostulacionesTableBody">
+                        <!-- Renderizado dinámicamente por JS -->
+                    </tbody>
+                </table>
+                <p class="tabla-vacia oculto" id="tabla-vacia-postulaciones">No hay postulaciones registradas.</p>
             </section>
 
         </main>
