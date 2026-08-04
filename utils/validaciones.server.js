@@ -1,71 +1,87 @@
 // ==========================================================================
 // VALIDACIONES DEL SERVIDOR — utils/validaciones.server.js
-// Atiende la observación OB-04 del profesor: la validación del navegador
-// puede omitirse (con Postman o desactivando JavaScript), así que las mismas
-// reglas se repiten aquí antes de escribir en MongoDB.
+// Responsable: Kenner Gamboa (SW-20)
 //
-// ALCANCE DE ESTE ARCHIVO
-// Contiene únicamente los VALIDADORES DE CAMPO, que son el espejo exacto de
-// public/js/validaciones.js. Se agregaron ahora porque las APIs de oradores,
-// stands y postulaciones (SW-12, SW-14, SW-17) los necesitan en el sprint 1.
-//
-// Las reglas de negocio propias de cada módulo (cupos, inscripciones
-// duplicadas, conflictos de horario) NO van aquí: viven en el controller de
-// su módulo. SW-20 (Kenner) amplía este archivo con lo que falte de
-// participantes e inscripciones sin tener que tocar lo ya escrito.
-//
-// Iniciado por: Josué Arroyo (SW-12) — a completar por Kenner Gamboa (SW-20)
+// Replica exactamente las mismas reglas de public/js/validaciones.js
+// para que ninguna escritura llegue a MongoDB sin pasar por esta capa.
+// Los controllers importan este módulo y llaman a sus funciones antes
+// de ejecutar cualquier operación sobre la base de datos.
 // ==========================================================================
 
-// ── VALIDADORES DE CAMPO (espejo de public/js/validaciones.js) ────────────
+// ── VALIDADORES DE CAMPO ────────────────────────────────────────────────
 
-/** Valida que un campo de texto no venga vacío ni sea solo espacios. */
+/** Valida que un valor no esté vacío tras trim(). */
 function validarRequerido(valor) {
-    return typeof valor === 'string' && valor.trim() !== '';
-}
-
-/** Valida formato de correo electrónico: usuario@dominio.ext */
-function validarCorreo(correo) {
-    if (typeof correo !== 'string') return false;
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim());
-}
-
-/** Valida teléfono costarricense: 8 dígitos, con o sin guión. */
-function validarTelefono(telefono) {
-    if (typeof telefono !== 'string') return false;
-    return /^[0-9]{8}$/.test(telefono.replace(/-/g, ''));
-}
-
-/** Valida cédula o documento de identidad: entre 8 y 12 dígitos. */
-function validarCedula(idDocumento) {
-    if (typeof idDocumento !== 'string') return false;
-    return /^[0-9]{8,12}$/.test(idDocumento.replace(/-/g, ''));
-}
-
-/** Valida nombre: mínimo 3 caracteres. */
-function validarNombre(nombre) {
-    return typeof nombre === 'string' && nombre.trim().length >= 3;
+    if (typeof valor !== 'string') return false;
+    return valor.trim() !== '';
 }
 
 /**
- * RF-02 — Contraseña sin vocales.
- * Longitud 8-16, al menos un número, un especial, una mayúscula, una
- * minúscula y CERO vocales.
+ * Valida formato de correo electrónico.
+ * Patrón: usuario@dominio.ext
+ */
+function validarCorreo(correo) {
+    if (typeof correo !== 'string') return false;
+    const patron = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return patron.test(correo.trim());
+}
+
+/**
+ * RF-02: Contraseña sin vocales.
+ * Longitud 8-16, al menos 1 número, 1 carácter especial,
+ * 1 mayúscula, 1 minúscula y CERO vocales.
  */
 function validarContrasena(password) {
     if (typeof password !== 'string') return false;
-    return password.length >= 8 && password.length <= 16 &&
-        /[0-9]/.test(password) &&
-        /[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\;'/~`]/.test(password) &&
-        /[A-Z]/.test(password) &&
-        /[a-z]/.test(password) &&
-        /^[^aeiouAEIOUáéíóúÁÉÍÓÚ]+$/.test(password);
+    const tieneLongitud  = password.length >= 8 && password.length <= 16;
+    const tieneNumero    = /[0-9]/.test(password);
+    const tieneEspecial  = /[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\;'/~`]/.test(password);
+    const tieneMayuscula = /[A-Z]/.test(password);
+    const tieneMinuscula = /[a-z]/.test(password);
+    const ceroVocales    = /^[^aeiouAEIOUáéíóúÁÉÍÓÚ]+$/.test(password);
+    return tieneLongitud && tieneNumero && tieneEspecial && tieneMayuscula && tieneMinuscula && ceroVocales;
 }
 
 /**
- * Valida una descripción o biografía: máximo 200 caracteres.
- * @param {string} texto
- * @param {boolean} [esRequerido=false] - Si es true, no puede venir vacía.
+ * Valida teléfono costarricense (8 dígitos, con o sin guión).
+ */
+function validarTelefono(telefono) {
+    if (typeof telefono !== 'string') return false;
+    const limpio = telefono.replace(/-/g, '');
+    return /^[0-9]{8}$/.test(limpio);
+}
+
+/**
+ * Valida cédula / documento de identidad (8 a 12 dígitos, con o sin guiones).
+ */
+function validarCedula(idDocumento) {
+    if (typeof idDocumento !== 'string') return false;
+    const limpio = idDocumento.replace(/-/g, '');
+    return /^[0-9]{8,12}$/.test(limpio);
+}
+
+/** Valida nombre (mínimo 3 caracteres). */
+function validarNombre(nombre) {
+    if (typeof nombre !== 'string') return false;
+    return nombre.trim().length >= 3;
+}
+
+/**
+ * Valida que una fecha sea futura (posterior a hoy).
+ * @param {string} fechaStr - Fecha en formato YYYY-MM-DD.
+ */
+function validarFechaFutura(fechaStr) {
+    if (!fechaStr) return false;
+    const fecha = new Date(fechaStr + 'T00:00:00');
+    const hoy   = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    return fecha > hoy;
+}
+
+/**
+ * Valida descripción.
+ * Si esRequerido=true no puede estar vacía.
+ * Si tiene contenido no puede superar 200 caracteres.
  */
 function validarDescripcion(texto, esRequerido = false) {
     if (typeof texto !== 'string') return !esRequerido;
@@ -74,103 +90,113 @@ function validarDescripcion(texto, esRequerido = false) {
     return texto.trim().length <= 200;
 }
 
-/** Valida edad: entero entre 15 y 120. */
+/** Valida edad (número entero entre 15 y 120). */
 function validarEdad(edad) {
-    const numero = parseInt(edad, 10);
-    return !isNaN(numero) && numero >= 15 && numero <= 120;
+    const num = parseInt(edad, 10);
+    return !isNaN(num) && num >= 15 && num <= 120;
 }
 
-/** Valida cupo máximo: entero mayor o igual a 1. */
+/** Valida cupo máximo (número entero mayor o igual a 1). */
 function validarCupo(cupo) {
-    const numero = parseInt(cupo, 10);
-    return !isNaN(numero) && numero >= 1;
+    const num = parseInt(cupo, 10);
+    return !isNaN(num) && num >= 1;
 }
 
-/** Valida que la hora de fin sea posterior a la de inicio (formato HH:mm). */
+/**
+ * Valida que fechaFin no sea anterior a fechaInicio.
+ * @param {string} fechaInicio - Formato YYYY-MM-DD.
+ * @param {string} fechaFin    - Formato YYYY-MM-DD.
+ */
+function validarFechasOrden(fechaInicio, fechaFin) {
+    if (!fechaInicio || !fechaFin) return true;
+    return new Date(fechaFin + 'T00:00:00') >= new Date(fechaInicio + 'T00:00:00');
+}
+
+/**
+ * Valida que horaFin sea posterior a horaInicio.
+ * @param {string} horaInicio - Formato HH:mm.
+ * @param {string} horaFin    - Formato HH:mm.
+ */
 function validarHorasOrden(horaInicio, horaFin) {
     if (!horaInicio || !horaFin) return true;
     return horaFin > horaInicio;
 }
 
-/** Valida que la fecha de fin no sea anterior a la de inicio. */
-function validarFechasOrden(fechaInicio, fechaFin) {
-    if (!fechaInicio || !fechaFin) return true;
-    return new Date(`${fechaFin}T00:00:00`) >= new Date(`${fechaInicio}T00:00:00`);
-}
+// ── VALIDADORES DE LÓGICA DE NEGOCIO ────────────────────────────────────
 
-/** Valida que un valor pertenezca a un catálogo, ignorando mayúsculas. */
-function validarEnCatalogo(valor, catalogo) {
-    if (typeof valor !== 'string') return false;
-    return catalogo.some(opcion => opcion.toLowerCase() === valor.trim().toLowerCase());
-}
-
-// ── NORMALIZADORES ────────────────────────────────────────────────────────
-// El frontend de la iteración 1 guarda algunos valores en minúscula
-// ("aprobado", "activo") mientras que utils/catalogos.js los define
-// capitalizados. Estas funciones evitan que esa diferencia genere registros
-// inconsistentes en la base de datos.
-
-/** Recorta espacios y devuelve cadena vacía si el valor no es texto. */
-function limpiar(valor) {
-    return typeof valor === 'string' ? valor.trim() : '';
-}
-
-/** Normaliza un valor al que corresponda del catálogo, respetando su forma canónica. */
-function normalizarCatalogo(valor, catalogo, porDefecto = null) {
-    const encontrado = catalogo.find(
-        opcion => opcion.toLowerCase() === limpiar(valor).toLowerCase()
+/**
+ * RF-25: Verifica si un correo ya está inscrito en una actividad específica.
+ * Se usa en el controller de inscripciones antes de insertar.
+ * @param {string}   correo      - Correo del participante.
+ * @param {string}   actividadId - ID de la actividad (string o ObjectId).
+ * @param {object[]} participantes - Documentos de la colección participantes.
+ */
+function validarInscripcionDuplicada(correo, actividadId, participantes) {
+    return participantes.some(p =>
+        p.estado === 'Activo' &&
+        p.correo.toLowerCase() === correo.toLowerCase() &&
+        p.actividades.some(id => id.toString() === actividadId.toString())
     );
-    return encontrado || porDefecto;
-}
-
-/** Deja el teléfono en formato 0000-0000. Devuelve '' si no es válido. */
-function normalizarTelefono(telefono) {
-    const digitos = limpiar(telefono).replace(/-/g, '');
-    if (!/^[0-9]{8}$/.test(digitos)) return '';
-    return `${digitos.slice(0, 4)}-${digitos.slice(4)}`;
-}
-
-/** Pasa el correo a minúsculas y sin espacios, para comparaciones de unicidad. */
-function normalizarCorreo(correo) {
-    return limpiar(correo).toLowerCase();
 }
 
 /**
- * Acepta el teléfono en cualquiera de las formas que envía el frontend
- * (un string, `telefono` + `telefono2`, o un arreglo `telefonos`) y devuelve
- * siempre un arreglo normalizado sin vacíos ni repetidos.
- * RF-12 y RF-24 hablan de "teléfonos" en plural.
- * @param {object} cuerpo - req.body
- * @returns {string[]}
+ * Verifica si el correo pertenece al responsable de la actividad.
+ * Impide que el orador responsable se inscriba en su propia actividad (RF-23).
+ * @param {string}   correo      - Correo a verificar.
+ * @param {object}   actividad   - Documento de la actividad (con responsableId).
+ * @param {object[]} oradores    - Documentos de la colección oradores.
  */
-function extraerTelefonos(cuerpo) {
-    const candidatos = Array.isArray(cuerpo.telefonos)
-        ? cuerpo.telefonos
-        : [cuerpo.telefono, cuerpo.telefono2, cuerpo.telefonoSecundario];
-
-    const normalizados = candidatos
-        .map(normalizarTelefono)
-        .filter(Boolean);
-
-    return [...new Set(normalizados)];
+function esResponsableDeActividad(correo, actividad, oradores) {
+    if (!actividad.responsableId) return false;
+    const responsable = oradores.find(o =>
+        o._id.toString() === actividad.responsableId.toString()
+    );
+    return responsable && responsable.correo.toLowerCase() === correo.toLowerCase();
 }
+
+/**
+ * Verifica si una actividad tiene cupo disponible.
+ * @param {object} actividad - Documento de la colección actividades.
+ */
+function tieneCupoDisponible(actividad) {
+    if (actividad.entradaLibre) return true;
+    return actividad.cupoOcupado < actividad.cupoMaximo;
+}
+
+/**
+ * Filtra una lista blanca de campos del body para no persistir campos
+ * no autorizados en MongoDB (defensa contra inyección NoSQL).
+ * @param {object}   body         - req.body completo.
+ * @param {string[]} camposPermitidos - Lista de campos que sí se aceptan.
+ * @returns {object} Objeto limpio con solo los campos permitidos.
+ */
+function filtrarCampos(body, camposPermitidos) {
+    const limpio = {};
+    camposPermitidos.forEach(campo => {
+        if (body[campo] !== undefined) {
+            limpio[campo] = body[campo];
+        }
+    });
+    return limpio;
+}
+
+// ── EXPORTAR ─────────────────────────────────────────────────────────────
 
 module.exports = {
     validarRequerido,
     validarCorreo,
+    validarContrasena,
     validarTelefono,
     validarCedula,
     validarNombre,
-    validarContrasena,
+    validarFechaFutura,
     validarDescripcion,
     validarEdad,
     validarCupo,
-    validarHorasOrden,
     validarFechasOrden,
-    validarEnCatalogo,
-    limpiar,
-    normalizarCatalogo,
-    normalizarTelefono,
-    normalizarCorreo,
-    extraerTelefonos
+    validarHorasOrden,
+    validarInscripcionDuplicada,
+    esResponsableDeActividad,
+    tieneCupoDisponible,
+    filtrarCampos
 };
