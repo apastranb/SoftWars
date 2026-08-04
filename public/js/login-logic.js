@@ -164,7 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validarCpConfirmar = () => {
-        if (cpNuevaInput.value && cpConfirmarInput.value && cpNuevaInput.value !== cpConfirmarInput.value) {
+        if (!cpConfirmarInput.value) {
+            mostrarError('cp-confirmar', 'Confirma tu nueva contraseña.');
+            return false;
+        }
+        if (cpNuevaInput.value !== cpConfirmarInput.value) {
             mostrarError('cp-confirmar', 'Las contraseñas no coinciden.');
             return false;
         }
@@ -182,7 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const actual = cpActualInput.value;
         const nueva = cpNuevaInput.value;
 
-        const esValido = validarCpEmail() && validarCpActual() && validarCpNueva() && validarCpConfirmar();
+        const emailValido     = validarCpEmail();
+        const actualValido    = validarCpActual();
+        const nuevaValida     = validarCpNueva();
+        const confirmarValido = validarCpConfirmar();
+        const esValido = emailValido && actualValido && nuevaValida && confirmarValido;
         if (!esValido) return;
 
         const usuario = window.db.usuarios.find(

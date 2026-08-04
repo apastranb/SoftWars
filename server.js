@@ -5,6 +5,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const { conectarDB, cerrarDB } = require('./config/db');
@@ -12,6 +13,18 @@ const { conectarDB, cerrarDB } = require('./config/db');
 // --- Middleware global ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// --- Sesiones (SW-10, SW-11) ---
+app.use(session({
+    secret:            process.env.SESSION_SECRET || 'softwars_secret_dev',
+    resave:            false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure:   false,   // cambiar a true en producción con HTTPS
+        maxAge:   1000 * 60 * 60 * 8  // 8 horas
+    }
+}));
 
 // --- Archivos estáticos ---
 app.use(express.static('public'));
