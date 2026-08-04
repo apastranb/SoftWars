@@ -6,17 +6,32 @@ const crearIndices = async () => {
     await conectarDB();
     const db = getDB();
 
-    // 1. Índices Únicos
-    await db.collection('usuarios').createIndex({ email: 1 }, { unique: true });
-    await db.collection('eventos').createIndex({ codigo: 1 }, { unique: true });
+    console.log('Creando los 11 índices en MongoDB Atlas...');
 
-    // 2. Índice Compuesto (visibilidad + estado + fechaInicio)
-    await db.collection('eventos').createIndex({ visibilidad: 1, estado: 1, fechaInicio: 1 });
+    // --- USUARIOS ---
+    await db.collection('usuarios').createIndex({ email: 1 }, { unique: true }); // 1. Único
 
-    // 3. Índice de Texto para búsquedas rápidas (nombre + lugar)
-    await db.collection('eventos').createIndex({ nombre: 'text', lugar: 'text' });
+    // --- EVENTOS ---
+    await db.collection('eventos').createIndex({ codigo: 1 }, { unique: true }); // 2. Único
+    await db.collection('eventos').createIndex({ visibilidad: 1, estado: 1, fechaInicio: 1 }); // 3. Compuesto
+    await db.collection('eventos').createIndex({ nombre: 'text', lugar: 'text' }); // 4. Texto
 
-    console.log(' ¡Índices nativos creados en MongoDB Atlas!');
+    // --- ACTIVIDADES ---
+    await db.collection('actividades').createIndex({ eventoId: 1 }); // 5. Referencia
+    await db.collection('actividades').createIndex({ titulo: 'text', descripcion: 'text' }); // 6. Texto
+
+    // --- ORADORES ---
+    await db.collection('oradores').createIndex({ correo: 1 }, { unique: true }); // 7. Único
+
+    // --- STANDS ---
+    await db.collection('stands').createIndex({ eventoId: 1 }); // 8. Referencia
+    await db.collection('stands').createIndex({ numero: 1, anio: 1 }, { unique: true }); // 9. Compuesto Único
+
+    // --- PARTICIPANTES ---
+    await db.collection('participantes').createIndex({ idDocumento: 1 }); // 10. Documento
+    await db.collection('participantes').createIndex({ correo: 1, eventoId: 1 }, { unique: true }); // 11. Compuesto Único
+
+    console.log(' ¡Los 11 índices nativos han sido creados exitosamente!');
     process.exit(0);
   } catch (error) {
     console.error(' Error creando los índices:', error);
