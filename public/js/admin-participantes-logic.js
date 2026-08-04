@@ -1,97 +1,140 @@
-// Cierre de sesión (disponible desde el layout de admin)
+// ==========================================================================
+// LÓGICA DE PARTICIPANTES — public/js/admin-participantes-logic.js
+// Responsable: Kenner Gamboa (SW-30)
+//
+// Consume la API REST en lugar de window.db.
+// Endpoints usados:
+//   GET    /api/participantes        — listar con filtros
+//   GET    /api/inscripciones        — vista global de inscripciones
+//   PUT    /api/participantes/:id    — editar participante
+//   DELETE /api/participantes/:id    — eliminar (baja lógica)
+// ==========================================================================
+
+// ── Cierre de sesión ────────────────────────────────────────────────────
 window.cerrarSesion = function () {
-    localStorage.removeItem('sesionActiva');
-    localStorage.removeItem('sesionEmail');
-    localStorage.removeItem('sesionNombre');
-    localStorage.removeItem('sesionRol');
-    window.location.href = 'login.html';
+    fetch('/api/auth/logout', { method: 'POST' })
+        .finally(() => { window.location.href = 'login.html'; });
 };
 
+// ── Helpers HTTP ────────────────────────────────────────────────────────
 
-// RENDERIZAR TABLA
+async function apiGet(ruta) {
+    const res = await fetch(ruta);
+    if (!res.ok) throw await res.json();
+    return res.json();
+}
 
-const renderizarTablaParticipantes = () => {
-    const tbody       = document.getElementById('tbody-participantes');
-    const tablaVacia  = document.getElementById('tabla-vacia');
-    const textoBusqueda     = document.getElementById('searchInput').value.trim().toLowerCase();
-    const filtroEstado      = document.getElementById('filtro-estado').value;
-    const filtroFecha       = document.getElementById('filtro-fecha').value;
-
-    const participantes = window.db.participantes.filter(p => {
-        const coincideTexto = !textoBusqueda ||
-            p.nombreCompleto.toLowerCase().includes(textoBusqueda) ||
-            p.correo.toLowerCase().includes(textoBusqueda) ||
-            p.idDocumento.includes(textoBusqueda) ||
-            p.carrera.toLowerCase().includes(textoBusqueda);
-
-        const coincideEstado = !filtroEstado || p.estado === filtroEstado;
-        const coincideFecha = !filtroFecha || p.fechaInscripcion === filtroFecha;
-
-        return coincideTexto && coincideEstado && coincideFecha;
+async function apiPut(ruta, datos) {
+    const res = await fetch(ruta, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(datos)
     });
+    if (!res.ok) throw await res.json();
+    return res.json();
+}
 
-    tbody.innerHTML = '';
+async function apiDelete(ruta) {
+    const res = await fetch(ruta, { method: 'DELETE' });
+    if (!res.ok) throw await res.json();
+    return res.json();
+}
 
-    if (participantes.length === 0) {
-        tablaVacia.style.display = 'block';
-        return;
-    }
-    tablaVacia.style.display = 'none';
+// ── Renderizado de la tabla ─────────────────────────────────────────────
 
-    participantes.forEach(p => {
-        // Convertir los IDs de actividades a nombres legibles
-        const nombresActividades = p.actividades
-            .map(id => {
-                const act = window.db.actividades.find(a => a.id === id);
-                return act ? act.nombre : id;
-            })
-            .join(', ');
+async function renderizarTablaParticipantes() {
+    const tbody      = document.getElementById('tbody-participantes');
+    const tablaVacia = document.getElementById('tabla-vacia');
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
-            <td>${p.id}</td>
-            <td>${p.nombreCompleto}</td>
-            <td>${p.idDocumento}</td>
-            <td>${p.correo}</td>
-            <td>${p.telefono}</td>
-            <td>${p.edad}</td>
-            <td>${p.carrera}</td>
-            <td>${nombresActividades || '-'}</td>
-            <td>
-                <select class="tableSelectStatus" data-id="${p.id}">
-                    <option value="Activo" ${p.estado === 'Activo' ? 'selected' : ''}>Activo</option>
-                    <option value="Cancelado" ${p.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-                </select>
-            </td>
-            <td>${p.fechaInscripcion || '-'}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+    const textoBusqueda = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtroEstado  = document.getElementById('filtro-estado').value;
+    const filtroFecha   = document.getElementById('filtro-fecha').value;
 
-    // Select all reset
-    const selectAllCb = document.getElementById('selectAll');
-    if (selectAllCb) selectAllCb.checked = false;
+    // Construir query string para el filtro
+    const params = new URLSearchParams();
+    if (filtroEstado) params.append('estado', filtroEstado);
+    if (filtroFecha)  params.append('fecha',  filtroFecha);
 
-    // Estado change listener
-    tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
-        select.addEventListener('change', (e) => {
-            const id = e.target.dataset.id;
-            const participante = window.db.participantes.find(p => p.id === id);
-            if (participante) {
-                participante.estado = e.target.value;
-                validaciones.exito('Estado actualizado', `El participante se marcó como "${e.target.value}".`);
-            }
+    try {
+        const data = await apiGet(`/api/inscripciones?${params.toString()}`);
+        let participantes = data.inscripciones || [];
+
+        // Filtro de búsqueda local (texto libre)
+        if (textoBusqueda) {
+            participantes = participantes.filter(p =>
+                p.nombreCompleto?.toLowerCase().includes(textoBusqueda) ||
+                p.correo?.toLowerCase().includes(textoBusqueda) ||
+                p.idDocumento?.includes(textoBusqueda) ||
+                p.carrera?.toLowerCase().includes(textoBusqueda)
+            );
+        }
+
+        tbody.innerHTML = '';
+
+        if (participantes.length === 0) {
+            tablaVacia.classList.remove('oculto');
+            return;
+        }
+        tablaVacia.classList.add('oculto');
+
+        participantes.forEach(p => {
+            const actividades = (p.actividadesNombres || []).join(', ') || '—';
+            const fecha = p.fechaInscripcion
+                ? new Date(p.fechaInscripcion).toLocaleDateString('es-CR')
+                : '—';
+            const badgeClass = p.estado === 'Activo' ? 'badge-active' : 'badge-inactive';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="row-check" data-id="${p._id}"></td>
+                <td>${p.codigo || p._id}</td>
+                <td>${p.nombreCompleto}</td>
+                <td>${p.idDocumento}</td>
+                <td>${p.correo}</td>
+                <td>${p.telefono}</td>
+                <td>${p.edad}</td>
+                <td>${p.carrera || '—'}</td>
+                <td>${actividades}</td>
+                <td><span class="badge ${badgeClass}">${p.estado}</span></td>
+                <td>${fecha}</td>
+            `;
+            tbody.appendChild(tr);
         });
-    });
-};
 
+        document.getElementById('selectAll').checked = false;
 
+    } catch (err) {
+        console.error('Error cargando participantes:', err);
+        validaciones.alerta('Error', 'No se pudieron cargar los participantes.', 'error');
+    }
+}
 
-// INICIALIZADOR PRINCIPAL
+// ── Modal editar ────────────────────────────────────────────────────────
+
+function abrirModalEditarParticipante(id) {
+    // Buscar la fila en la tabla para obtener los datos actuales
+    const fila = document.querySelector(`.row-check[data-id="${id}"]`)?.closest('tr');
+    if (!fila) return;
+
+    const celdas = fila.querySelectorAll('td');
+    editandoPartId = id;
+
+    document.getElementById('edit-part-nombre').value   = celdas[2]?.textContent.trim() || '';
+    document.getElementById('edit-part-id').value       = celdas[3]?.textContent.trim() || '';
+    document.getElementById('edit-part-correo').value   = celdas[4]?.textContent.trim() || '';
+    document.getElementById('edit-part-telefono').value = celdas[5]?.textContent.trim() || '';
+    document.getElementById('edit-part-edad').value     = celdas[6]?.textContent.trim() || '';
+    document.getElementById('edit-part-carrera').value  = celdas[7]?.textContent.trim() || '';
+
+    validaciones.limpiarErrores();
+    document.getElementById('modalEditarParticipante').classList.add('modal-visible');
+}
+
+// ── INICIALIZADOR PRINCIPAL ─────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar sesión activa
+
+    // Verificar sesión
     if (localStorage.getItem('sesionActiva') !== 'true') {
         window.location.href = 'login.html';
         return;
@@ -105,23 +148,26 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
         if (!confirmar) return;
-        localStorage.removeItem('sesionActiva');
-        localStorage.removeItem('sesionEmail');
-        localStorage.removeItem('sesionNombre');
-        localStorage.removeItem('sesionRol');
-        window.location.href = 'login.html';
+        window.cerrarSesion();
     });
 
+    // Render inicial
     renderizarTablaParticipantes();
 
-    // Select all checkbox
+    // Select all
     document.getElementById('selectAll').addEventListener('change', (e) => {
         document.querySelectorAll('.row-check').forEach(cb => {
             cb.checked = e.target.checked;
         });
     });
 
-    // Toolbar: Editar participante
+    // Filtros en tiempo real
+    document.getElementById('searchInput').addEventListener('input', renderizarTablaParticipantes);
+    document.getElementById('buscar-participante')?.addEventListener('click', renderizarTablaParticipantes);
+    document.getElementById('filtro-estado').addEventListener('change', renderizarTablaParticipantes);
+    document.getElementById('filtro-fecha').addEventListener('change', renderizarTablaParticipantes);
+
+    // ── Editar participante ─────────────────────────────────────────────
     document.getElementById('btnEditarParticipante')?.addEventListener('click', () => {
         const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
@@ -135,28 +181,30 @@ document.addEventListener('DOMContentLoaded', () => {
         abrirModalEditarParticipante(seleccionados[0]);
     });
 
-    // Toolbar: Eliminar
+    // ── Eliminar participante ───────────────────────────────────────────
     document.getElementById('btnEliminarParticipante')?.addEventListener('click', async () => {
         const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
         if (seleccionados.length === 0) {
             validaciones.alerta('Seleccione participantes', 'Seleccione al menos un participante para eliminar.', 'warning');
             return;
         }
-        const confirmar = await validaciones.confirmar('¿Eliminar participante(s)?', `Se eliminarán ${seleccionados.length} participante(s). Esta acción no se puede deshacer.`);
+        const confirmar = await validaciones.confirmar(
+            '¿Eliminar participante(s)?',
+            `Se eliminarán ${seleccionados.length} participante(s). Esta acción no se puede deshacer.`
+        );
         if (!confirmar) return;
-        window.db.participantes = window.db.participantes.filter(p => !seleccionados.includes(p.id));
-        renderizarTablaParticipantes();
+
+        try {
+            await Promise.all(seleccionados.map(id => apiDelete(`/api/participantes/${id}`)));
+            validaciones.exito('Eliminado', 'Los participantes fueron eliminados correctamente.');
+            renderizarTablaParticipantes();
+        } catch (err) {
+            validaciones.alerta('Error', err.mensaje || 'No se pudo eliminar el participante.', 'error');
+        }
     });
 
-    // Filtros en tiempo real
-    document.getElementById('searchInput').addEventListener('input', renderizarTablaParticipantes);
-    document.getElementById('buscar-participante')?.addEventListener('click', renderizarTablaParticipantes);
-    document.getElementById('filtro-estado').addEventListener('change', renderizarTablaParticipantes);
-    document.getElementById('filtro-fecha').addEventListener('change', renderizarTablaParticipantes);
-
-    // ── Modal Editar Participante ───────────────────────────────────────────
+    // ── Modal editar — cerrar ───────────────────────────────────────────
     const modalEditar = document.getElementById('modalEditarParticipante');
-    let editandoPartId = null;
 
     const cerrarModalEditar = () => {
         modalEditar.classList.remove('modal-visible');
@@ -170,56 +218,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalEditar) cerrarModalEditar();
     });
 
-    function abrirModalEditarParticipante(id) {
-        const participante = window.db.participantes.find(p => p.id === id);
-        if (!participante) return;
-
-        editandoPartId = id;
-        validaciones.limpiarErrores();
-
-        document.getElementById('edit-part-nombre').value = participante.nombreCompleto;
-        document.getElementById('edit-part-id').value = participante.idDocumento;
-        document.getElementById('edit-part-correo').value = participante.correo;
-        document.getElementById('edit-part-telefono').value = participante.telefono;
-        document.getElementById('edit-part-edad').value = participante.edad;
-        document.getElementById('edit-part-carrera').value = participante.carrera;
-
-        modalEditar.classList.add('modal-visible');
-    }
-
-    document.getElementById('btnGuardarEditarPart')?.addEventListener('click', () => {
+    // ── Modal editar — guardar ──────────────────────────────────────────
+    document.getElementById('btnGuardarEditarPart')?.addEventListener('click', async () => {
         validaciones.limpiarErrores();
         let esValido = true;
 
-        const nombre = document.getElementById('edit-part-nombre').value.trim();
+        const nombre   = document.getElementById('edit-part-nombre').value.trim();
         const telefono = document.getElementById('edit-part-telefono').value.trim();
-        const edad = document.getElementById('edit-part-edad').value.trim();
-        const carrera = document.getElementById('edit-part-carrera').value.trim();
+        const edad     = document.getElementById('edit-part-edad').value.trim();
+        const carrera  = document.getElementById('edit-part-carrera').value.trim();
 
-        if (!validaciones.validarRequerido(nombre)) {
-            validaciones.mostrarError('edit-part-nombre', 'El nombre es obligatorio.');
-            esValido = false;
-        } else if (!validaciones.validarNombre(nombre)) {
+        if (!validaciones.validarNombre(nombre)) {
             validaciones.mostrarError('edit-part-nombre', 'El nombre debe tener al menos 3 caracteres.');
             esValido = false;
         }
-
-        if (!validaciones.validarRequerido(telefono)) {
-            validaciones.mostrarError('edit-part-telefono', 'El telefono es obligatorio.');
-            esValido = false;
-        } else if (!validaciones.validarTelefono(telefono)) {
-            validaciones.mostrarError('edit-part-telefono', 'Ingrese un telefono valido (8 digitos).');
+        if (!validaciones.validarTelefono(telefono)) {
+            validaciones.mostrarError('edit-part-telefono', 'Ingrese un teléfono válido (8 dígitos).');
             esValido = false;
         }
-
-        if (!validaciones.validarRequerido(edad)) {
-            validaciones.mostrarError('edit-part-edad', 'La edad es obligatoria.');
-            esValido = false;
-        } else if (!validaciones.validarEdad(edad)) {
-            validaciones.mostrarError('edit-part-edad', 'Ingrese una edad valida (15-120).');
+        if (!validaciones.validarEdad(edad)) {
+            validaciones.mostrarError('edit-part-edad', 'Ingrese una edad válida (15-120).');
             esValido = false;
         }
-
         if (!validaciones.validarRequerido(carrera)) {
             validaciones.mostrarError('edit-part-carrera', 'La carrera es obligatoria.');
             esValido = false;
@@ -227,16 +247,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!esValido) return;
 
-        const participante = window.db.participantes.find(p => p.id === editandoPartId);
-        if (participante) {
-            participante.nombreCompleto = nombre;
-            participante.telefono = telefono;
-            participante.edad = parseInt(edad, 10);
-            participante.carrera = carrera;
+        try {
+            await apiPut(`/api/participantes/${editandoPartId}`, {
+                nombreCompleto: nombre,
+                telefono,
+                edad:    parseInt(edad, 10),
+                carrera
+            });
+            cerrarModalEditar();
+            renderizarTablaParticipantes();
+            validaciones.exito('Actualizado', 'Los datos del participante fueron guardados.');
+        } catch (err) {
+            validaciones.alerta('Error', err.mensaje || 'No se pudo actualizar el participante.', 'error');
         }
-
-        cerrarModalEditar();
-        renderizarTablaParticipantes();
-        validaciones.exito('Participante actualizado', 'Los datos se guardaron correctamente.');
     });
 });
+
+// Variable global para el ID en edición
+let editandoPartId = null;
