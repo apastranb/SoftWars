@@ -39,13 +39,38 @@ npm install
 
 # Crear archivo de variables de entorno
 cp .env.example .env
-# (Editar .env con las credenciales de MongoDB)
+# Editar .env con las credenciales reales de MongoDB Atlas
 
 # Iniciar el servidor
 npm start
 ```
 
-El servidor se ejecuta en `http://localhost:3000`
+El servidor se ejecuta en `http://localhost:3000`.
+
+## Configuración de MongoDB Atlas
+
+1. Crear un clúster M0 en MongoDB Atlas.
+2. Crear un usuario de base de datos y agregar la IP `0.0.0.0/0.0.0` como acceso de red.
+3. Copiar la cadena de conexión del botón "Connect" y pegarla en `.env`:
+
+```env
+MONGODB_URI=mongodb+srv://<usuario>:<password>@<cluster>/<db>?retryWrites=true&w=majority
+DB_NAME=softwars_eventos
+PORT=3000
+SESSION_SECRET=...valor-secreto...
+```
+
+### Comandos de infraestructura
+
+```bash
+# Crear índices
+node -e "require('./utils/crearIndices')"
+
+# Poblar datos iniciales (seed)
+node -e "require('./utils/seed').seedDB()"
+```
+
+> Si la conexión de Atlas falla por SSL en este entorno, verificar que la versión de OpenSSL/Node sea compatible y que la IP de acceso en Atlas esté habilitada.
 
 ## Estructura del Proyecto
 

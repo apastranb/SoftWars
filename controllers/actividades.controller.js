@@ -23,6 +23,7 @@ const {
 } = require('../utils/respuestas');
 const v = require('../utils/validaciones.server');
 const { CATEGORIAS_ACTIVIDAD, ESTADOS_EVENTO } = require('../utils/catalogos');
+const { aplicarAuditoria, aplicarAuditoriaSet } = require('../utils/auditoria');
 
 const COLECCION = 'actividades';
 
@@ -145,7 +146,7 @@ async function crear(req, res, next) {
     const codigo = await siguienteCodigo('ACT', COLECCION);
     const categoriaNormalizada = v.normalizarCatalogo(body.categoria, CATEGORIAS_ACTIVIDAD);
 
-    const documento = {
+    const documento = aplicarAuditoria({
         codigo,
         eventoId: eventoPadre._id,
         nombre: v.limpiar(body.nombre),
@@ -161,12 +162,8 @@ async function crear(req, res, next) {
         estado: 'Disponible',
         visibilidad: v.limpiar(body.visibilidad).toLowerCase() || 'publica',
         entradaLibre,
-        incluyeRefrigerio: Boolean(body.incluyeRefrigerio),
-        // RF-29
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdBy: req.session?.usuario?._id || null
-    };
+        incluyeRefrigerio: Boolean(body.incluyeRefrigerio)
+    }, req, { esCreacion: true });
 
     const resultado = await db.collection(COLECCION).insertOne(documento);
     documento._id = resultado.insertedId;
@@ -215,7 +212,7 @@ async function actualizar(req, res, next) {
         'entradaLibre', 'incluyeRefrigerio'
     ];
 
-    const $set = { updatedAt: new Date() };
+    const $set = aplicarAuditoriaSet({}, req);
     camposPermitidos.forEach(campo => {
         if (body[campo] !== undefined) {
             if (campo === 'categoria') {

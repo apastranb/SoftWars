@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const { conectarDB, cerrarDB } = require('./config/db');
 
 // --- Middleware global ---
 app.use(express.json());
@@ -41,10 +42,21 @@ const { manejarError } = require('./middleware/errores');
 app.use(manejarError);
 
 // --- Arranque del servidor ---
-// TODO (Adonis - SW-5): Conectar a MongoDB antes de levantar el listener
-// Por ahora se arranca sin conexión a BD para no bloquear el desarrollo
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+async function iniciarServidor() {
+    try {
+        await conectarDB();
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('[db] No fue posible conectar a MongoDB:', error.message);
+        process.exit(1);
+    }
+}
+
+if (require.main === module) {
+    iniciarServidor();
+}
 
 module.exports = app;
+module.exports.cerrarDB = cerrarDB;
