@@ -180,8 +180,67 @@ function filtrarCampos(body, camposPermitidos) {
     return limpio;
 }
 
-// ── EXPORTAR ─────────────────────────────────────────────────────────────
+// (exports al final del archivo — ver bloque "Helpers de normalización")
 
+// ── HELPERS DE NORMALIZACIÓN ─────────────────────────────────────────────
+
+/**
+ * Normaliza un correo: minúsculas y sin espacios.
+ * @param {string} correo
+ * @returns {string}
+ */
+function normalizarCorreo(correo) {
+    return (correo || '').toLowerCase().trim();
+}
+
+/**
+ * Limpia un string: sin espacios al inicio/fin.
+ * @param {string} valor
+ * @returns {string}
+ */
+function limpiar(valor) {
+    if (typeof valor !== 'string') return '';
+    return valor.trim();
+}
+
+/**
+ * Normaliza un valor contra un catálogo, ignorando mayúsculas/tildes simples.
+ * Devuelve el valor del catálogo si hay coincidencia, o el fallback indicado.
+ * @param {string} valor
+ * @param {string[]} catalogo
+ * @param {string} [fallback='']
+ * @returns {string}
+ */
+function normalizarCatalogo(valor, catalogo, fallback = '') {
+    if (!valor) return fallback;
+    const limpio = limpiar(valor).toLowerCase();
+    const encontrado = catalogo.find(c => c.toLowerCase() === limpio);
+    return encontrado || fallback;
+}
+
+/**
+ * Extrae el arreglo de teléfonos válidos de un body de postulación.
+ * Acepta los campos `telefono`, `telefono2` y el arreglo `telefonos`.
+ * @param {object} body
+ * @returns {string[]} Arreglo con los teléfonos válidos (mínimo vacío).
+ */
+function extraerTelefonos(body) {
+    const resultado = [];
+    const candidatos = [
+        ...(Array.isArray(body.telefonos) ? body.telefonos : []),
+        body.telefono,
+        body.telefono2
+    ];
+    for (const t of candidatos) {
+        if (t && validarTelefono(String(t))) {
+            resultado.push(String(t).trim());
+        }
+    }
+    // Eliminar duplicados
+    return [...new Set(resultado)];
+}
+
+// Re-exportar todo junto
 module.exports = {
     validarRequerido,
     validarCorreo,
@@ -198,5 +257,10 @@ module.exports = {
     validarInscripcionDuplicada,
     esResponsableDeActividad,
     tieneCupoDisponible,
-    filtrarCampos
+    filtrarCampos,
+    // Helpers de normalización
+    normalizarCorreo,
+    limpiar,
+    normalizarCatalogo,
+    extraerTelefonos
 };
