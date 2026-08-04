@@ -15,6 +15,7 @@ const { manejarError }        = require('./middleware/errores');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+const { conectarDB, cerrarDB } = require('./config/db');
 
 // ── Middleware global ──────────────────────────────────────────────────────
 app.use(express.json());
@@ -54,6 +55,7 @@ app.use('/api/usuarios',      require('./routes/usuarios.routes'));
 // ── Manejo centralizado de errores ─────────────────────────────────────────
 app.use(manejarError);
 
+<<<<<<< HEAD
 // ── Arranque: conectar a MongoDB ANTES de escuchar peticiones ──────────────
 // Si la conexión falla, el proceso termina en lugar de arrancar sin BD.
 conectarDB()
@@ -66,5 +68,24 @@ conectarDB()
         console.error('[server] No se pudo conectar a MongoDB:', err.message);
         process.exit(1);
     });
+=======
+// --- Arranque del servidor ---
+async function iniciarServidor() {
+    try {
+        await conectarDB();
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('[db] No fue posible conectar a MongoDB:', error.message);
+        process.exit(1);
+    }
+}
+
+if (require.main === module) {
+    iniciarServidor();
+}
+>>>>>>> d5c3747916cd03dee894f50b02358aec40d3ddee
 
 module.exports = app;
+module.exports.cerrarDB = cerrarDB;
