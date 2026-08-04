@@ -1,4 +1,4 @@
-﻿// --- FUNCIONES DE UTILIDAD PARA ERRORES ---
+// --- FUNCIONES DE UTILIDAD PARA ERRORES ---
 const mostrarError = (idCampo, mensaje) => {
     validaciones.mostrarError(idCampo, mensaje);
 };
