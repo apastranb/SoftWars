@@ -83,7 +83,16 @@
           </section>
 
           <section class="eventAgenda">
-            <!-- Renderizado por JS (tabs + tablas) -->
+            <!-- RF-17 / SW-26: Agenda renderizada por JS desde GET /api/agenda/:eventoId -->
+            <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+              <h2 class="mb-0">Agenda del Evento</h2>
+              <button class="btn btn-outline-primary btn-sm" id="btnImprimirAgenda" onclick="window.print()">
+                <i class="bi bi-printer"></i> Exportar / Imprimir
+              </button>
+            </div>
+            <div id="agendaContenido">
+              <!-- Renderizado dinámicamente por detalle-evento-logic.js -->
+            </div>
           </section>
 
           <section class="eventParticipants">

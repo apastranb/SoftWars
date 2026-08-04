@@ -581,3 +581,105 @@ aside p {
     max-width: 100%;
   }
 }
+
+/* ===== AGENDA (SW-26) ===== */
+
+.agenda-fecha {
+    background-color: var(--blue-100, #e7f2ff);
+    color: var(--blue-800);
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.agenda-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.92rem;
+}
+
+.agenda-tabla th {
+    background-color: var(--blue-800);
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.agenda-tabla td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+}
+
+.agenda-tabla tbody tr:nth-child(even) {
+    background-color: var(--blue-150, #dbeafe);
+}
+
+.badge-refrigerio {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* ===== ESTILOS DE IMPRESIÓN (RF-18) ===== */
+
+@media print {
+    /* Ocultar todo excepto la agenda */
+    nav,
+    footer,
+    aside,
+    .no-print,
+    #inscripcion-section,
+    .eventActivities,
+    .eventParticipants,
+    .eventStands,
+    .eventSummary {
+        display: none !important;
+    }
+
+    /* La agenda ocupa toda la página */
+    .col-lg-8 {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .eventAgenda {
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    /* Encabezado con nombre del evento para el PDF */
+    .eventAgenda::before {
+        content: "Agenda del Evento";
+        display: block;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #000;
+        padding-bottom: 0.5rem;
+    }
+
+    .agenda-tabla th {
+        background-color: #000 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .agenda-tabla tbody tr:nth-child(even) {
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body {
+        font-size: 11pt;
+    }
+}

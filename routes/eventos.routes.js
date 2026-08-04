@@ -7,9 +7,13 @@ const router = require('express').Router();
 const { verificarSesion } = require('../middleware/auth');
 const { asyncHandler } = require('../utils/respuestas');
 const controller = require('../controllers/eventos.controller');
+const { obtenerAgenda } = require('../controllers/agenda.controller');
 
 // GET /api/eventos — listar con filtros (público)
 router.get('/', asyncHandler(controller.listar));
+
+// GET /api/agenda/:eventoId — agenda agrupada por fecha (público, SW-26)
+router.get('/agenda/:eventoId', asyncHandler(obtenerAgenda));
 
 // GET /api/eventos/:id — detalle con actividades, oradores y stands (público)
 router.get('/:id', asyncHandler(controller.obtener));
