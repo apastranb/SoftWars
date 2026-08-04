@@ -1,42 +1,44 @@
-require('dotenv').config();
-const { conectarDB, getDB } = require('../config/db');
+import { MongoClient } from 'mongodb';
 
-const crearIndices = async () => {
+
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:3000';
+const dbName = 'gestionEventos'; 
+
+async function crearIndices() {
+  const client = new MongoClient(uri);
+
   try {
-    await conectarDB();
-    const db = getDB();
+    await client.connect();
+    console.log('Conectado exitosamente a MongoDB para crear índices.');
+    const db = client.db(dbName);
 
-    console.log('Creando los 11 índices en MongoDB Atlas...');
+    // 1. Usuarios: Único por correo
+    await db.collection('usuarios').createIndex({ correo: 1 }, { unique: true });
 
-    // --- USUARIOS ---
-    await db.collection('usuarios').createIndex({ email: 1 }, { unique: true }); // 1. Único
+    // 2. Oradores: Único por código
+    await db.collection('oradores').createIndex({ codigo: 1 }, { unique: true });
 
-    // --- EVENTOS ---
-    await db.collection('eventos').createIndex({ codigo: 1 }, { unique: true }); // 2. Único
-    await db.collection('eventos').createIndex({ visibilidad: 1, estado: 1, fechaInicio: 1 }); // 3. Compuesto
-    await db.collection('eventos').createIndex({ nombre: 'text', lugar: 'text' }); // 4. Texto
+    // 3. Actividades: Búsqueda de texto por nombre y lugar (Corregido 'titulo' -> 'nombre')
+    await db.collection('actividades').createIndex({ nombre: 'text', lugar: 'text' });
 
-    // --- ACTIVIDADES ---
-    await db.collection('actividades').createIndex({ eventoId: 1 }); // 5. Referencia
-    await db.collection('actividades').createIndex({ titulo: 'text', descripcion: 'text' }); // 6. Texto
+    // 4. Actividades: Búsqueda por categoría y estado
+    await db.collection('actividades').createIndex({ categoria: 1, estado: 1 });
 
-    // --- ORADORES ---
-    await db.collection('oradores').createIndex({ correo: 1 }, { unique: true }); // 7. Único
+    // 5. Stands: Búsqueda por ubicación y estado
+    await db.collection('stands').createIndex({ ubicacion: 1, estado: 1 });
 
-    // --- STANDS ---
-    await db.collection('stands').createIndex({ eventoId: 1 }); // 8. Referencia
-    await db.collection('stands').createIndex({ numero: 1, anio: 1 }, { unique: true }); // 9. Compuesto Único
+    // 6. Participantes: Único por correo y actividad (Corregido 'eventoId' -> 'actividades' segun RF-25)
+    await db.collection('participantes').createIndex({ correo: 1, actividades: 1 }, { unique: true });
 
-    // --- PARTICIPANTES ---
-    await db.collection('participantes').createIndex({ idDocumento: 1 }); // 10. Documento
-    await db.collection('participantes').createIndex({ correo: 1, eventoId: 1 }, { unique: true }); // 11. Compuesto Único
+    // 7. Postulaciones: Único por correo y actividadId
+    await db.collection('postulaciones').createIndex({ correo: 1, actividadId: 1 }, { unique: true });
 
-    console.log(' ¡Los 11 índices nativos han sido creados exitosamente!');
-    process.exit(0);
+    console.log('Todos los índices fueron creados correctamente.');
   } catch (error) {
-    console.error(' Error creando los índices:', error);
-    process.exit(1);
+    console.error('Error al crear los índices:', error);
+  } finally {
+    await client.close();
   }
-};
+}
 
 crearIndices();
