@@ -1,0 +1,67 @@
+/* POSTULARSE COMO PRESENTADOR / ORADOR */
+
+.public-container {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    background-color: var(--gray-100);
+    min-height: calc(100vh - 160px);
+}
+
+.form-container {
+    background: var(--white);
+    padding: 2.5rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    max-width: 640px;
+    width: 100%;
+}
+
+.form-container h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.7rem;
+    text-align: center;
+}
+
+.form-container > section > p {
+    margin-bottom: 1.5rem;
+    color: var(--gray-600);
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.form-container h3 {
+    margin: 1.5rem 0 0.6rem;
+    font-size: 1.1rem;
+}
+
+/* ===== FORM GROUPS ===== */
+.form-group {
+    flex: 1;
+}
+
+.form-group-row {
+    margin-bottom: 0;
+}
+
+/* Select styling */
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23164a98' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* Textarea styling */
+.form-group textarea {
+    min-height: 80px;
+}
+
+/* ===== MENSAJES ===== */
+#error-general {
+    display: block;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}

@@ -1,0 +1,39 @@
+/* ADMIN ORADORES - page-specific styles */
+/* Toolbar, table, modal, badge, filter-select styles are all in admin-layout.css */
+
+/* Foto del orador en tabla */
+.orador-foto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--blue-200);
+}
+
+/* Sección de postulaciones */
+.postulaciones-header {
+    margin-top: 3rem;
+    border-top: 2px solid var(--blue-200);
+    padding-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.postulaciones-header h2 {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Tablas con scroll vertical para evitar que la segunda quede muy abajo */
+.admin-table-scroll {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.admin-table-scroll thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+

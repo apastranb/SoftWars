@@ -1,0 +1,11 @@
+/* ADMIN ACTIVIDADES - page-specific styles */
+/* Toolbar, table, modal, form, badge, filter-select styles are in admin-layout.css + styles.css */
+
+/* Modal visibility for actividades (uses .modal-hidden initially, .modal-visible to show) */
+.modal-overlay.modal-hidden {
+  display: none;
+}
+
+.modal-overlay.modal-visible {
+  display: flex;
+}

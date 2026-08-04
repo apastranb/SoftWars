@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Participantes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin-layout.css">
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
+</head>
+<body>
+
+    <!-- MENU LATERAL -->
+    <nav class="navSideMenu">
+        <div class="sideMenuHeader">
+            <div>
+                <img src="../img/eventos-cenfotec-icon-dark.png" alt="" />
+            </div>
+            <div>
+                <h2>Panel de Administrador</h2>
+                <p>Gestión Académica</p>
+            </div>
+        </div>
+
+        <hr class="menuSeparator" />
+
+        <div class="sideMenuLinks">
+            <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+            <a href="admin-actividades.html"><i class="bi bi-list-task"></i> Actividades</a>
+            <a href="admin-oradores.html"><i class="bi bi-people-fill"></i> Presentadores</a>
+            <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+            <a class="sideMenuActive" href="admin-participantes.html"><i class="bi bi-person-check"></i> Participantes</a>
+            <a href="admin-usuarios.html"><i class="bi bi-key"></i> Administradores</a>
+        </div>
+
+        <div class="sideMenuLinks">
+            <hr class="menuSeparator" />
+            <a href="../index.html" target="_blank"><i class="bi bi-house"></i> Sitio Público</a>
+            <a id="btnLogOut" href="login.html">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <div class="admin-main-content">
+        <header>
+            <div class="headerTitle">
+                <h1>Gestión de Participantes</h1>
+            </div>
+            <div class="headerActions">
+                <div class="headerSearchBar">
+                    <button type="button" id="buscar-participante"><i class="bi bi-search"></i></button>
+                    <input type="text" placeholder="Buscar participante..." id="searchInput">
+                </div>
+                <div class="headerAdminInfo">
+                    <p class="userName" id="headerUserName">Nombre Apellido</p>
+                    <p class="userRol" id="headerUserRol">Rol</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page-content">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filtro-estado">
+                        <option value="">Todos los estados</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                    <input type="date" class="filter-select" id="filtro-fecha" />
+                </div>
+                <div class="admin-toolbar__actions">
+                    <button type="button" class="eventsAdminBtnSecondary" id="btnEditarParticipante">Editar</button>
+                    <button type="button" class="eventsAdminBtnSecondary btnDelete" id="btnEliminarParticipante">Eliminar</button>
+                </div>
+            </section>
+
+            <section class="admin-table-wrapper">
+                <table class="admin-table" id="tabla-participantes">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Cédula / ID</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Edad</th>
+                            <th>Carrera</th>
+                            <th>Actividades</th>
+                            <th>Estado</th>
+                            <th>Fecha Inscripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-participantes">
+                        <!-- Renderizado por JS -->
+                    </tbody>
+                </table>
+                <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron participantes.</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Editar Participante -->
+    <div class="modal-overlay" id="modalEditarParticipante">
+        <div class="custom-modal">
+            <div class="custom-modal__header">
+                <h2>Editar Participante</h2>
+                <button class="custom-modal__close" id="btnCerrarEditarPart" type="button">&times;</button>
+            </div>
+            <div class="custom-modal__body">
+                <div class="modal-field">
+                    <label for="edit-part-nombre">Nombre Completo</label>
+                    <input type="text" id="edit-part-nombre">
+                    <span class="form__error-message" id="error-edit-part-nombre"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-id">Cedula / ID</label>
+                    <input type="text" id="edit-part-id" readonly>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-correo">Correo Electronico</label>
+                    <input type="email" id="edit-part-correo" readonly>
+                </div>
+                <p class="modal-hint">La cedula y el correo no se pueden modificar.</p>
+                <div class="modal-field">
+                    <label for="edit-part-telefono">Telefono</label>
+                    <input type="text" id="edit-part-telefono">
+                    <span class="form__error-message" id="error-edit-part-telefono"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-edad">Edad</label>
+                    <input type="number" id="edit-part-edad">
+                    <span class="form__error-message" id="error-edit-part-edad"></span>
+                </div>
+                <div class="modal-field">
+                    <label for="edit-part-carrera">Carrera / Profesion</label>
+                    <input type="text" id="edit-part-carrera">
+                    <span class="form__error-message" id="error-edit-part-carrera"></span>
+                </div>
+            </div>
+            <div class="custom-modal__footer">
+                <button class="modal-btn-cancelar" id="btnCancelarEditarPart" type="button">Cancelar</button>
+                <button class="modal-btn-registrar" id="btnGuardarEditarPart" type="button">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/data-store.js"></script>
+    <script src="../js/validaciones.js"></script>
+    <script src="../js/admin-participantes-logic.js"></script>
+</body>
+</html>

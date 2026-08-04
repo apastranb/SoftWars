@@ -1,0 +1,436 @@
+// ==========================================================================
+// DETALLE EVENTO: Renderiza dinamicamente desde URL param ?id=EV-XXX
+// ==========================================================================
+
+// Utilidades de error
+const mostrarError = (idCampo, mensaje) => { validaciones.mostrarError(idCampo, mensaje); };
+const limpiarErrores = () => { validaciones.limpiarErrores(); };
+
+// ── RENDERIZADO DEL EVENTO ──────────────────────────────────────────────
+
+const renderizarEvento = (evento) => {
+    document.querySelector('.eventTitle').textContent = evento.nombre;
+    document.querySelector('.eventDate').innerHTML = `<i class="bi bi-calendar"></i> ${evento.fechaInicio}${evento.fechaFin !== evento.fechaInicio ? ' al ' + evento.fechaFin : ''}`;
+    document.querySelector('.eventTime').innerHTML = `<i class="bi bi-alarm"></i> ${evento.horaInicio} - ${evento.horaFin}`;
+    document.querySelector('.eventLocation').innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${evento.lugar}`;
+    document.querySelector('.eventClass').innerHTML = `<i class="bi bi-ticket-perforated"></i> ${evento.tipoEntrada === 'libre' ? 'Entrada Libre' : 'De Pago'}`;
+    document.querySelector('.eventEntry').innerHTML = `<i class="bi bi-check-circle-fill"></i> ${evento.visibilidad === 'publico' ? 'Publico' : 'Privado'}`;
+    document.querySelector('.eventDescription').innerHTML = `<p>${evento.descripcion}</p>`;
+};
+
+// ── RENDERIZADO DE ACTIVIDADES ──────────────────────────────────────────
+
+const renderizarActividades = (actividades) => {
+    const container = document.querySelector('.eventActivities');
+    if (!container) return;
+
+    // Filtrar solo publicas
+    const publicas = actividades.filter(a => a.visibilidad === 'publica');
+
+    if (publicas.length === 0) {
+        container.innerHTML = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2><p>No hay actividades publicas para este evento.</p>';
+        return;
+    }
+
+    let html = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2>';
+    publicas.forEach(act => {
+        const cupoTexto = act.entradaLibre ? 'Entrada Libre' : `${act.cupoOcupado}/${act.cupoMaximo} cupos`;
+        html += `
+            <div class="eventActivityCard">
+                <span class="eventActivityHeader">
+                    <h3 class="eventActivityTitle">${act.nombre}</h3>
+                    <p class="eventActivityCategory">${act.categoria}</p>
+                </span>
+                <p class="eventActivityDescription">${act.descripcion || ''}</p>
+                <p class="eventActivityDateTime"><i class="bi bi-alarm"></i> ${act.fecha} | ${act.horaInicio} - ${act.horaFin} | ${act.lugar}</p>
+                <p class="eventActivityDateTime"><i class="bi bi-people"></i> ${cupoTexto}</p>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+};
+
+// ── RENDERIZADO DE AGENDA (con tabs por dia) ────────────────────────────
+
+const renderizarAgenda = (actividades) => {
+    const section = document.querySelector('.eventAgenda');
+    if (!section) return;
+
+    // Agrupar actividades por fecha
+    const porDia = {};
+    actividades.forEach(act => {
+        if (!porDia[act.fecha]) porDia[act.fecha] = [];
+        porDia[act.fecha].push(act);
+    });
+
+    const fechas = Object.keys(porDia).sort();
+
+    if (fechas.length === 0) {
+        section.innerHTML = `
+            <div class="eventAgendaHeader">
+                <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+            </div>
+            <p>No hay actividades programadas.</p>
+        `;
+        return;
+    }
+
+    // Header con boton exportar
+    let html = `
+        <div class="eventAgendaHeader">
+            <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+            <button class="btnExportAgenda" id="btnExportAgenda">
+                <i class="bi bi-download"></i> <span>Exportar Agenda</span>
+            </button>
+        </div>
+    `;
+
+    // Tabs
+    html += '<div class="eventAgendaDatesTab">';
+    fechas.forEach((fecha, i) => {
+        html += `<button class="eventAgendaDatesTabLinks ${i === 0 ? 'active' : ''}" data-day="agenda-${i}">${fecha}</button>`;
+    });
+    html += '</div>';
+
+    // Tablas por dia
+    fechas.forEach((fecha, i) => {
+        const actividadesDia = porDia[fecha].sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
+        html += `
+            <div id="agenda-${i}" class="eventAgendaTable ${i > 0 ? 'oculto' : ''}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Actividad</th>
+                            <th>Responsable</th>
+                            <th>Refrigerio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        actividadesDia.forEach(act => {
+            const orador = window.db.oradores.find(o => o.id === act.responsableId);
+            const nombreOrador = orador ? orador.nombre : '-';
+            html += `
+                <tr>
+                    <td>${act.horaInicio} - ${act.horaFin}</td>
+                    <td><strong>${act.nombre}</strong><br><small>${act.descripcion || ''}</small></td>
+                    <td>${nombreOrador}</td>
+                    <td>${act.incluyeRefrigerio ? '<i class="bi bi-cup-hot"></i> Si' : 'No'}</td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table></div>';
+    });
+
+    section.innerHTML = html;
+
+    // Inicializar tabs
+    section.querySelectorAll('.eventAgendaDatesTabLinks').forEach(btn => {
+        btn.addEventListener('click', (evt) => {
+            const day = evt.currentTarget.dataset.day;
+            section.querySelectorAll('.eventAgendaTable').forEach(t => t.classList.add('oculto'));
+            section.querySelectorAll('.eventAgendaDatesTabLinks').forEach(l => l.classList.remove('active'));
+            document.getElementById(day).classList.remove('oculto');
+            evt.currentTarget.classList.add('active');
+        });
+    });
+};
+
+// ── RENDERIZADO DE PRESENTADORES ────────────────────────────────────────
+
+const renderizarPresentadores = (actividades) => {
+    const section = document.querySelector('.eventParticipants');
+    if (!section) return;
+
+    const responsableIds = [...new Set(actividades.map(a => a.responsableId).filter(Boolean))];
+    const oradores = window.db.oradores.filter(o => responsableIds.includes(o.id));
+
+    let html = `
+        <div class="eventParticipantsHeader">
+            <h2><i class="bi bi-people-fill"></i> Presentadores</h2>
+            <a class="btnPostularse" target="_blank" href="postular-participante.html">Postularse como presentador</a>
+        </div>
+        <div class="eventParticipantsContainer">
+    `;
+
+    if (oradores.length === 0) {
+        html += '<p>No hay presentadores asignados.</p>';
+    } else {
+        oradores.forEach(o => {
+            html += `
+                <div class="eventParticipantsCard">
+                    <img src="${o.foto || '../img/img-placeholder.png'}" alt="${o.nombre}" />
+                    <h3 class="eventParticipantsName">${o.nombre}</h3>
+                    <p class="eventParticipantsSubTitle">${o.especialidad} - ${o.empresa}</p>
+                    <span class="eventParticipantsBio">${o.biografia || ''}</span>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    section.innerHTML = html;
+};
+
+// ── RENDERIZADO DE STANDS ───────────────────────────────────────────────
+
+const renderizarStands = (eventoId) => {
+    const section = document.querySelector('.eventStands');
+    if (!section) return;
+
+    const stands = window.db.stands.filter(s => s.eventoId === eventoId && s.estado === 'aprobado');
+
+    let html = '<h2><i class="bi bi-shop-window"></i> Stands</h2>';
+
+    if (stands.length === 0) {
+        html += '<p>No hay stands asignados a este evento.</p>';
+    } else {
+        stands.forEach(s => {
+            html += `
+                <div class="eventStandsCard">
+                    <div class="standCategoryIcon">
+                        <img src="../img/img-placeholder.png" alt="${s.nombre}" />
+                    </div>
+                    <div>
+                        <h3 class="standName">${s.nombre}</h3>
+                        <p class="standDescription">${s.descripcion} — ${s.encargado} (${s.empresa})</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    section.innerHTML = html;
+};
+
+// ── RENDERIZADO DE CHECKBOXES DE ACTIVIDADES (formulario inscripcion) ───
+
+const renderizarCheckboxesActividades = (actividades) => {
+    const container = document.getElementById('checkboxes-actividades');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const publicas = actividades.filter(a => a.visibilidad === 'publica');
+
+    publicas.forEach(act => {
+        if (act.entradaLibre) {
+            // Entrada libre — informativa, sin checkbox
+            const div = document.createElement('div');
+            div.className = 'checkboxActivity actividad-info';
+            div.innerHTML = `
+                <div class="box-visual"></div>
+                <div class="info-actividad">
+                    <span class="actividad-titulo">${act.nombre}</span>
+                    <span class="actividad-fecha"><i class="bi bi-clock"></i> ${act.fecha} | ${act.horaInicio} - ${act.horaFin}</span>
+                </div>
+                <span class="actividad-tag tag-libre">Entrada Libre</span>
+            `;
+            container.appendChild(div);
+        } else {
+            const lleno = act.cupoOcupado >= act.cupoMaximo;
+            const label = document.createElement('label');
+            label.className = 'checkboxActivity' + (lleno ? ' actividad-deshabilitada' : '');
+            label.innerHTML = `
+                <input type="checkbox" name="actividades_seleccionadas" value="${act.id}" data-hora="${act.horaInicio}" data-fecha="${act.fecha}" ${lleno ? 'disabled' : ''} />
+                <div class="box-visual"></div>
+                <div class="info-actividad">
+                    <span class="actividad-titulo">${act.nombre}</span>
+                    <span class="actividad-fecha"><i class="bi bi-clock"></i> ${act.fecha} | ${act.horaInicio} - ${act.horaFin}</span>
+                </div>
+                ${lleno ? '<span class="actividad-tag tag-lleno">Cupo lleno</span>' : '<span class="actividad-tag tag-disponible">' + act.cupoOcupado + '/' + act.cupoMaximo + ' cupos</span>'}
+            `;
+            container.appendChild(label);
+        }
+    });
+};
+
+// ── FILTROS DE ENTRADA ──────────────────────────────────────────────────
+
+const inicializarFiltrosEntrada = () => {
+    const cedulaInput = document.getElementById('cedulaVisitante');
+    const telefonoInput = document.getElementById('telefonoVisitante');
+
+    const bloquearLetras = (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    };
+
+    if (cedulaInput) cedulaInput.addEventListener('input', bloquearLetras);
+    if (telefonoInput) telefonoInput.addEventListener('input', bloquearLetras);
+};
+
+// ── VALIDACION DEL FORMULARIO ───────────────────────────────────────────
+
+const validarInscripcion = (e) => {
+    e.preventDefault();
+    limpiarErrores();
+    let esValido = true;
+
+    // Campos requeridos
+    const camposRequeridos = [
+        { id: 'nombreVisitante', mensaje: 'El nombre completo es requerido.' },
+        { id: 'carreraVisitante', mensaje: 'La carrera o profesion es requerida.' }
+    ];
+    camposRequeridos.forEach(campo => {
+        if (!validaciones.validarCampo(campo.id, validaciones.validarRequerido, campo.mensaje)) {
+            esValido = false;
+        }
+    });
+
+    // Nombre min 3
+    const nombreInput = document.getElementById('nombreVisitante');
+    if (nombreInput && validaciones.validarRequerido(nombreInput.value) && !validaciones.validarNombre(nombreInput.value)) {
+        mostrarError('nombreVisitante', 'El nombre debe tener al menos 3 caracteres.');
+        esValido = false;
+    }
+
+    // Cedula
+    const cedulaInput = document.getElementById('cedulaVisitante');
+    if (cedulaInput) {
+        if (!validaciones.validarRequerido(cedulaInput.value)) {
+            mostrarError('cedulaVisitante', 'La cedula es requerida.');
+            esValido = false;
+        } else if (!validaciones.validarCedula(cedulaInput.value)) {
+            mostrarError('cedulaVisitante', 'Ingrese una cedula valida (8-12 digitos).');
+            esValido = false;
+        }
+    }
+
+    // Telefono
+    const telefonoInput = document.getElementById('telefonoVisitante');
+    if (telefonoInput) {
+        if (!validaciones.validarRequerido(telefonoInput.value)) {
+            mostrarError('telefonoVisitante', 'El telefono es requerido.');
+            esValido = false;
+        } else if (!validaciones.validarTelefono(telefonoInput.value)) {
+            mostrarError('telefonoVisitante', 'Ingrese un telefono valido (8 digitos).');
+            esValido = false;
+        }
+    }
+
+    // Correo
+    const emailInput = document.getElementById('emailVisitante');
+    if (emailInput) {
+        if (!validaciones.validarRequerido(emailInput.value)) {
+            mostrarError('emailVisitante', 'El correo es requerido.');
+            esValido = false;
+        } else if (!validaciones.validarCorreo(emailInput.value)) {
+            mostrarError('emailVisitante', 'Ingrese un correo valido.');
+            esValido = false;
+        }
+    }
+
+    // Edad
+    const edadInput = document.getElementById('edadVisitante');
+    if (edadInput) {
+        if (!validaciones.validarRequerido(edadInput.value)) {
+            mostrarError('edadVisitante', 'La edad es requerida.');
+            esValido = false;
+        } else if (!validaciones.validarEdad(edadInput.value)) {
+            mostrarError('edadVisitante', 'Ingrese una edad valida (15-120).');
+            esValido = false;
+        }
+    }
+
+    // Actividades seleccionadas (solo si hay checkboxes disponibles)
+    const checkboxes = document.querySelectorAll('input[name="actividades_seleccionadas"]:checked');
+    const hayCheckboxesDisponibles = document.querySelectorAll('input[name="actividades_seleccionadas"]').length > 0;
+
+    if (hayCheckboxesDisponibles && checkboxes.length === 0) {
+        mostrarError('actividades', 'Debe seleccionar al menos una actividad.');
+        esValido = false;
+    } else if (hayCheckboxesDisponibles && checkboxes.length > 0) {
+        // Choque de horarios
+        const seleccionadas = Array.from(checkboxes).map(cb => {
+            return { fecha: cb.dataset.fecha, horaInicio: cb.dataset.hora, nombre: '' };
+        });
+        const conflictos = validaciones.detectarConflictosHorario(seleccionadas);
+        if (conflictos.length > 0) {
+            mostrarError('actividades', 'Tiene un choque de horarios en las actividades seleccionadas.');
+            esValido = false;
+        }
+    }
+
+    // Guardar inscripcion
+    if (esValido) {
+        const nombre = document.getElementById('nombreVisitante').value.trim();
+        const cedula = document.getElementById('cedulaVisitante').value.trim();
+        const email = document.getElementById('emailVisitante').value.trim();
+        const telefono = document.getElementById('telefonoVisitante').value.trim();
+        const edad = parseInt(document.getElementById('edadVisitante').value.trim());
+        const carrera = document.getElementById('carreraVisitante').value.trim();
+        const actividadesSeleccionadas = Array.from(
+            document.querySelectorAll('input[name="actividades_seleccionadas"]:checked')
+        ).map(cb => cb.value);
+
+        const inscripcionExistente = window.db.participantes.find(
+            p => p.estado === 'Activo' && p.correo.toLowerCase() === email.toLowerCase()
+        );
+
+        if (inscripcionExistente) {
+            actividadesSeleccionadas.forEach(actId => {
+                if (!inscripcionExistente.actividades.includes(actId)) {
+                    inscripcionExistente.actividades.push(actId);
+                }
+            });
+            validaciones.exito('Inscripción actualizada', 'Se agregaron las nuevas actividades a tu inscripción existente.');
+        } else {
+            const nuevoId = 'P-' + String(window.db.participantes.length + 1).padStart(3, '0');
+            window.db.participantes.push({
+                id: nuevoId,
+                idDocumento: cedula,
+                nombreCompleto: nombre,
+                correo: email,
+                telefono: telefono,
+                edad: edad,
+                carrera: carrera,
+                actividades: actividadesSeleccionadas,
+                estado: 'Activo',
+                fechaInscripcion: new Date().toISOString().slice(0, 10)
+            });
+            validaciones.exito('Inscripción exitosa', 'Te has inscrito correctamente al evento.');
+        }
+
+        document.getElementById('inscribirVisitante').reset();
+    }
+};
+
+// ── INICIALIZADOR PRINCIPAL ─────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Leer evento ID del URL
+    const params = new URLSearchParams(window.location.search);
+    const eventoId = params.get('id');
+
+    if (!eventoId) {
+        document.querySelector('.eventTitle').textContent = 'Evento no encontrado';
+        return;
+    }
+
+    const evento = window.db.eventos.find(e => e.id === eventoId);
+    if (!evento) {
+        document.querySelector('.eventTitle').textContent = 'Evento no encontrado';
+        return;
+    }
+
+    // Renderizar todas las secciones
+    const actividades = window.db.actividades.filter(a => a.eventoId === eventoId);
+
+    renderizarEvento(evento);
+    renderizarActividades(actividades);
+    renderizarAgenda(actividades);
+    renderizarPresentadores(actividades);
+    renderizarStands(eventoId);
+    renderizarCheckboxesActividades(actividades);
+
+    // Inicializar navbar search dropdown
+    validaciones.inicializarNavbarSearch('');
+
+    // Inicializar formulario
+    inicializarFiltrosEntrada();
+    const formInscripcion = document.getElementById('inscribirVisitante');
+    if (formInscripcion) {
+        formInscripcion.addEventListener('submit', validarInscripcion);
+    }
+});

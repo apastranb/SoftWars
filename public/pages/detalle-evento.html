@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Evento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/detalle-evento.css" />
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
+  </head>
+  <body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">
+          <img src="../img/eventos-cenfotec-logo-dark.svg" alt="Eventos CENFOTEC" height="55" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublico" aria-controls="navbarPublico" aria-expanded="false" aria-label="Menú de navegación">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarPublico">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">Eventos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="postular-participante.html">Postularse</a>
+            </li>
+            <li class="nav-item d-lg-none">
+              <a class="nav-link" href="login.html">Acceso Admin</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-3 navbar-right-section">
+            <div class="navbarSearch">
+              <button id="searchButtonIndex"><i class="bi bi-search"></i></button>
+              <input type="text" placeholder="Buscar eventos..." id="searchInput" />
+              <div class="navbar-search-results" id="navSearchResults"></div>
+            </div>
+            <a class="nav-link d-none d-lg-block" href="login.html">Acceso Admin</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container py-4">
+      <div class="row g-4">
+        <!-- COLUMNA PRINCIPAL -->
+        <div class="col-12 col-lg-8">
+
+          <section class="eventSummary">
+            <img class="eventCover" src="../img/img-placeholder.png" alt="Portada del evento" />
+            <h1 class="eventTitle">Cargando evento...</h1>
+
+            <div class="eventMetadata">
+              <p class="eventDate"></p>
+              <p class="eventTime"></p>
+              <p class="eventLocation"></p>
+            </div>
+
+            <div class="eventMetadata">
+              <p class="eventClass"></p>
+              <p class="eventEntry"></p>
+            </div>
+
+            <div class="eventDescription"></div>
+
+            <!-- Botón inscribirse visible solo en móvil -->
+            <a href="#inscripcion-section" class="btn btn-primary w-100 mt-3 d-lg-none">
+              Inscribirse <i class="bi bi-arrow-down"></i>
+            </a>
+
+            <hr>
+
+            <div class="eventActivities">
+              <!-- Renderizado por JS -->
+            </div>
+          </section>
+
+          <section class="eventAgenda">
+            <!-- Renderizado por JS (tabs + tablas) -->
+          </section>
+
+          <section class="eventParticipants">
+            <!-- Renderizado por JS -->
+          </section>
+
+          <section class="eventStands">
+            <!-- Renderizado por JS -->
+          </section>
+
+        </div>
+
+        <!-- SIDEBAR DE INSCRIPCIÓN -->
+        <div class="col-12 col-lg-4">
+          <aside id="inscripcion-section">
+            <h2>Inscripción</h2>
+            <p>Completa el formulario para asegurar tu lugar.</p>
+
+            <form id="inscribirVisitante" novalidate>
+              
+              <div class="input-group">
+                <label for="nombreVisitante">Nombre completo</label>
+                <input id="nombreVisitante" name="nombreVisitante" type="text" placeholder="Juan Pérez"/>
+                <span class="form__error-message" id="error-nombreVisitante"></span>
+              </div>
+
+              <div class="input-group">
+                <label for="cedulaVisitante">Cédula o ID</label>
+                <input id="cedulaVisitante" name="cedulaVisitante" type="text" placeholder="101230456"/>
+                <span class="form__error-message" id="error-cedulaVisitante"></span>
+              </div>
+
+              <div class="input-group">
+                <label for="emailVisitante">Correo electrónico</label>
+                <input id="emailVisitante" name="emailVisitante" type="email" placeholder="email@example.com"/>
+                <span class="form__error-message" id="error-emailVisitante"></span>
+              </div>
+
+              <div class="input-group">
+                <label for="telefonoVisitante">Teléfono</label>
+                <input id="telefonoVisitante" name="telefonoVisitante" type="text" placeholder="60106010"/>
+                <span class="form__error-message" id="error-telefonoVisitante"></span>
+              </div>
+
+              <div class="input-group">
+                <label for="edadVisitante">Edad</label>
+                <input id="edadVisitante" name="edadVisitante" type="number" placeholder="Ej. 25"/>
+                <span class="form__error-message" id="error-edadVisitante"></span>
+              </div>
+
+              <div class="input-group">
+                <label for="carreraVisitante">Carrera / Profesión</label>
+                <input id="carreraVisitante" name="carreraVisitante" type="text" placeholder="Ej. Ingeniería de Software"/>
+                <span class="form__error-message" id="error-carreraVisitante"></span>
+              </div>
+
+              <h3>Actividades a las que quiere estar inscrito</h3>
+              <span class="form__error-message" id="error-actividades"></span>
+
+              <div id="checkboxes-actividades">
+                <!-- Checkboxes renderizados por JS -->
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 mt-3">
+                Inscribirse al evento <i class="bi bi-arrow-right"></i>
+              </button>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-white text-center py-3 mt-auto">
+      <div class="container">
+        <p class="mb-0">&copy; 2026 Universidad CENFOTEC. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/data-store.js"></script>
+    <script src="../js/validaciones.js"></script>
+    <script src="../js/detalle-evento-logic.js"></script>
+  </body>
+</html>

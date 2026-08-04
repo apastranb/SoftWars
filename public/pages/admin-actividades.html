@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Actividades</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin-layout.css">
+    <link rel="stylesheet" href="../css/admin-actividades.css">
+    <link rel="icon" type="image/svg" href="../img/CENFOTEC-FAVICON.svg">
+</head>
+<body>
+
+    <nav class="navSideMenu">
+        <div class="sideMenuHeader">
+            <div>
+                <img src="../img/eventos-cenfotec-icon-dark.png" alt="Logo Cenfotec">
+            </div>    
+            <div>
+                <h2>Panel de Administrador</h2>
+                <p>Gestión Académica</p>
+            </div>
+        </div>
+
+        <hr class="menuSeparator">
+
+      <div class="sideMenuLinks">
+        <a href="admin-eventos.html"><i class="bi bi-calendar"></i> Eventos</a>
+        <a class="sideMenuActive" href="admin-actividades.html"
+          ><i class="bi bi-list-task"></i> Actividades</a
+        >
+        <a href="admin-oradores.html"
+          ><i class="bi bi-people-fill"></i> Presentadores</a
+        >
+        <a href="admin-stands.html"><i class="bi bi-shop-window"></i> Stands</a>
+        <a href="admin-participantes.html"><i class="bi bi-person-check"></i> Participantes</a>
+        <a href="admin-usuarios.html"
+          ><i class="bi bi-key"></i> Administradores</a
+        >
+        </div>
+
+      <div class="sideMenuLinks">
+        <hr class="menuSeparator" />
+        <a href="../index.html" target="_blank"><i class="bi bi-house"></i> Sitio Público</a>
+        <a id="btnLogOut" href="login.html"
+          ><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a
+        >
+      </div>
+    </nav>
+
+    <div class="admin-main-content">
+        
+        <header>
+            <div class="headerTitle">
+                <h1>Gestión de Actividades</h1>
+            </div>
+            <div class="headerActions">
+                <div class="headerSearchBar">
+                    <button><i class="bi bi-search"></i></button>
+                    <input type="text" id="buscar-actividad" placeholder="Buscar actividad...">
+                </div>
+                <div class="headerAdminInfo">
+                    <p class="userName" id="headerUserName">Nombre Admin</p>
+                    <p class="userRol" id="headerUserRol">Rol</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-page-content">
+            
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filterCategoriaActividad">
+                        <option value="">Todas las categorías</option>
+                        <option value="Culturales">Culturales</option>
+                        <option value="Deportivas">Deportivas</option>
+                        <option value="Tecnológicas">Tecnológicas</option>
+                        <option value="Artísticas">Artísticas</option>
+                        <option value="Voluntariado">Voluntariado</option>
+                        <option value="Recreación">Recreación</option>
+                    </select>
+                    <select class="filter-select" id="filterEstadoActividad">
+                        <option value="">Todos los estados</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Llena">Llena</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="Finalizada">Finalizada</option>
+                    </select>
+                    <input type="date" class="filter-select" id="filterFechaActividad" />
+                </div>
+                <div class="admin-toolbar__actions">
+                    <button id="btn-editar-actividad" class="eventsAdminBtnSecondary">Editar</button>
+                    <button id="btn-eliminar-actividad" class="eventsAdminBtnSecondary btnDelete">Eliminar</button>
+                    <button id="btn-abrir-crear" class="eventsAdminBtnPrimary"><i class="bi bi-plus-lg"></i> Crear Actividad</button>
+                </div>
+            </section>
+
+            <section class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
+                            <th>ID</th>
+                            <th>Actividad</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Lugar</th>
+                            <th>Cupo</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Visibilidad</th>
+                            <th>Entrada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-actividades-body">
+                        <!-- Renderizado dinámicamente por JS -->
+                    </tbody>
+                </table>
+                <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron actividades.</p>
+            </section>
+
+            <!-- Seccion de detalle (visible al seleccionar 1 actividad) -->
+            <div class="widgets-layout-grid oculto" id="actividad-detalle-panels">
+                <div class="group-style-card" id="panel-encargado">
+                    <div class="card-header-title">
+                        <i class="bi bi-person-badge"></i>
+                        <h3>Responsable de la Actividad</h3>
+                    </div>
+                    <div id="encargado-contenido">
+                        <p class="detalle-placeholder">Seleccione una actividad para ver su encargado.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL REGISTRAR / EDITAR ACTIVIDAD -->
+    <div id="modal-actividad" class="modal-overlay modal-hidden">
+        <div class="custom-modal">
+            <div class="custom-modal__header">
+                <h2 id="modal-titulo-accion">Registrar Actividad</h2>
+                <button id="btn-cerrar-modal" class="custom-modal__close" type="button">&times;</button>
+            </div>
+            
+            <div class="custom-modal__body">
+                <form id="form-actividad-modal" novalidate>
+                    <div class="input-group">
+                        <label for="modal-evento">Evento al que pertenece</label>
+                        <select id="modal-evento">
+                            <option value="">Seleccionar evento...</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-evento"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-nombre">Nombre de la Actividad</label>
+                        <input type="text" id="modal-nombre" placeholder="Ej. Conferencia de IA">
+                        <span class="form__error-message" id="error-modal-nombre"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-categoria">Categoría</label>
+                        <select id="modal-categoria">
+                            <option value="">Seleccione una categoría</option>
+                            <option value="Culturales">Culturales</option>
+                            <option value="Deportivas">Deportivas</option>
+                            <option value="Tecnológicas">Tecnológicas</option>
+                            <option value="Artísticas">Artísticas</option>
+                            <option value="Voluntariado">Voluntariado</option>
+                            <option value="Recreación">Recreación</option>
+                        </select>
+                        <span class="form__error-message" id="error-modal-categoria"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modal-descripcion">Descripción</label>
+                        <textarea id="modal-descripcion" rows="3" placeholder="Descripción de la actividad (máx. 200 caracteres)"></textarea>
+                        <span class="form__error-message" id="error-modal-descripcion"></span>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-fecha">Fecha</label>
+                            <input type="date" id="modal-fecha">
+                            <span class="form__error-message" id="error-modal-fecha"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-lugar">Lugar / Sala</label>
+                            <input type="text" id="modal-lugar" placeholder="Ej. Auditorio Bloque A">
+                            <span class="form__error-message" id="error-modal-lugar"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-hora-inicio">Hora de Inicio</label>
+                            <input type="time" id="modal-hora-inicio">
+                            <span class="form__error-message" id="error-modal-hora-inicio"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-hora-fin">Hora de Finalización</label>
+                            <input type="time" id="modal-hora-fin">
+                            <span class="form__error-message" id="error-modal-hora-fin"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-cupo">Cupo Máximo</label>
+                            <input type="number" id="modal-cupo" placeholder="Ej. 100" min="1">
+                            <span class="form__error-message" id="error-modal-cupo"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-responsable">Responsable</label>
+                            <select id="modal-responsable">
+                                <option value="">Seleccione un responsable</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-responsable"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-columns">
+                        <div class="input-group">
+                            <label for="modal-visibilidad">Visibilidad</label>
+                            <select id="modal-visibilidad">
+                                <option value="">Seleccione visibilidad</option>
+                                <option value="publica">Pública</option>
+                                <option value="privada">Privada</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-visibilidad"></span>
+                        </div>
+                        <div class="input-group">
+                            <label for="modal-entrada-libre">Tipo de Entrada</label>
+                            <select id="modal-entrada-libre">
+                                <option value="libre">Entrada Libre</option>
+                                <option value="pago">De Pago</option>
+                            </select>
+                            <span class="form__error-message" id="error-modal-entrada-libre"></span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="modal-refrigerio">
+                            Incluye refrigerio
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="custom-modal__footer">
+                <button type="button" id="btn-cancelar-modal" class="modal-btn-cancelar">Cancelar</button>
+                <button type="submit" id="btn-guardar-modal" form="form-actividad-modal" class="modal-btn-registrar">Registrar</button>
+            </div>
+        </div>
+    </div>    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/data-store.js"></script>
+    <script src="../js/validaciones.js"></script>
+    <script src="../js/admin-actividades-logic.js"></script>
+</body>
+</html>
