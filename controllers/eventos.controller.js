@@ -22,6 +22,7 @@ const {
 } = require('../utils/respuestas');
 const v = require('../utils/validaciones.server');
 const { CATEGORIAS_ACTIVIDAD, ESTADOS_EVENTO, VISIBILIDAD_EVENTO, TIPO_ENTRADA } = require('../utils/catalogos');
+const { aplicarAuditoria, aplicarAuditoriaSet } = require('../utils/auditoria');
 
 const COLECCION = 'eventos';
 
@@ -140,7 +141,7 @@ async function crear(req, res, next) {
     const categoriaNormalizada = v.normalizarCatalogo(body.categoria, CATEGORIAS_ACTIVIDAD);
     const visibilidad = v.limpiar(body.visibilidad).toLowerCase() || 'publico';
 
-    const documento = {
+    const documento = aplicarAuditoria({
         codigo,
         nombre: v.limpiar(body.nombre),
         categoria: categoriaNormalizada,
@@ -158,12 +159,8 @@ async function crear(req, res, next) {
         entradaLibre: tipoEntrada === 'libre' || Boolean(body.entradaLibre),
         visibilidad,
         estado: 'Disponible',
-        imagen: v.limpiar(body.imagen) || '',
-        // RF-29: Auditoría
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdBy: req.session?.usuario?._id || null
-    };
+        imagen: v.limpiar(body.imagen) || ''
+    }, req, { esCreacion: true });
 
     const resultado = await db.collection(COLECCION).insertOne(documento);
     documento._id = resultado.insertedId;
@@ -205,7 +202,7 @@ async function actualizar(req, res, next) {
         'estado', 'imagen'
     ];
 
-    const $set = { updatedAt: new Date() };
+    const $set = aplicarAuditoriaSet({}, req);
     camposPermitidos.forEach(campo => {
         if (body[campo] !== undefined) {
             if (campo === 'categoria') {
@@ -258,13 +255,13 @@ async function eliminar(req, res, next) {
     if (actividades > 0 || stands > 0 || oradores > 0) {
         // Baja lógica
         await db.collection(COLECCION).updateOne(filtro, {
-            $set: { estado: 'Cancelada', updatedAt: new Date() }
+            $set: aplicarAuditoriaSet({ estado: 'Cancelada' }, req)
         });
         // Cerrar stands asociados
         if (stands > 0) {
             await db.collection('stands').updateMany(
                 { eventoId: existente._id },
-                { $set: { estado: 'Cerrado', updatedAt: new Date() } }
+                { $set: aplicarAuditoriaSet({ estado: 'Cerrado' }, req) }
             );
         }
         return res.json({ mensaje: 'Evento cancelado (tiene registros asociados).' });

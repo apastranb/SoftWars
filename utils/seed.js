@@ -1,147 +1,178 @@
-import { MongoClient, ObjectId } from 'mongodb';
-
-const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const dbName = 'gestionEventos';
+const { MongoClient, ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
 
 async function seedDB() {
+  const uri = process.env.MONGODB_URI;
+  const dbName = process.env.DB_NAME || 'softwars_eventos';
+
+  if (!uri) {
+    throw new Error('Falta MONGODB_URI. Copie .env.example como .env y complete los valores.');
+  }
+
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
-    console.log('Conectado a la base de datos para ejecutar el Seed...');
+    console.log('[db] Ejecutando seed inicial...');
     const db = client.db(dbName);
 
-    // Limpiar colecciones previas
     await db.collection('usuarios').deleteMany({});
     await db.collection('oradores').deleteMany({});
     await db.collection('actividades').deleteMany({});
     await db.collection('stands').deleteMany({});
     await db.collection('participantes').deleteMany({});
     await db.collection('postulaciones').deleteMany({});
+    await db.collection('eventos').deleteMany({});
+    await db.collection('contadores').deleteMany({});
 
-    // ID de evento simulado para vincular referencias
-    const eventoIdSimulado = new ObjectId();
+    const eventoId = new ObjectId();
+    const oradorId = new ObjectId();
+    const actividadId = new ObjectId();
 
-    // 1. USUARIOS (Roles oficiales: Administrador, Super Administrador, Editor, Moderador)
-    const usuarios = [
+    await db.collection('eventos').insertOne({
+      _id: eventoId,
+      codigo: 'EV-001',
+      nombre: 'Seminario de IA',
+      categoria: 'Tecnológicas',
+      descripcion: 'Evento de apertura del ciclo académico.',
+      fechaInicio: '2026-11-15',
+      fechaFin: '2026-11-16',
+      horaInicio: '08:00',
+      horaFin: '17:00',
+      lugar: 'Auditorio Principal',
+      cupoMax: 150,
+      cupoActual: 0,
+      responsable: 'María Gómez',
+      tipoEntrada: 'libre',
+      entradaLibre: true,
+      visibilidad: 'publico',
+      estado: 'Disponible',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdBy: null
+    });
+
+    const passwordHash = await bcrypt.hash('SoftWars2026!', 10);
+    await db.collection('usuarios').insertMany([
       {
-        nombreCompleto: 'Ana García',
-        correo: 'ana.admin@evento.com',
-        contrasenia: '$2b$10$HASHED_PASSWORD_HERE', // Recordar cifrar en prod
-        rol: 'Super Administrador',
+        nombre: 'Adonis Pastrana',
+        correo: 'apastranb@ucenfotec.ac.cr',
+        passwordHash,
+        rol: 'Administrador',
         estado: 'Activo',
-        fechaCreacion: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
-        nombreCompleto: 'Carlos López',
-        correo: 'carlos.editor@evento.com',
-        contrasenia: '$2b$10$HASHED_PASSWORD_HERE',
-        rol: 'Editor',
+        nombre: 'Josué Arroyo',
+        correo: 'jarroyor@ucenfotec.ac.cr',
+        passwordHash,
+        rol: 'Administrador',
         estado: 'Activo',
-        fechaCreacion: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
-    ];
-    await db.collection('usuarios').insertMany(usuarios);
+    ]);
 
-    // 2. ORADORES (Código oficial: OR-XXX, campos completados)
-    const oradorId = new ObjectId();
-    const oradores = [
-      {
-        _id: oradorId,
-        codigo: 'OR-001',
-        nombreCompleto: 'Dra. Elena Rostova',
-        correo: 'elena.rostova@tech.org',
-        telefonos: ['8888-0001', '2222-0001'],
-        empresa: 'AI Research Lab',
-        biografia: 'Especialista en Inteligencia Artificial y Machine Learning con 10 años de experiencia.',
-        foto: 'https://ejemplo.com/fotos/or-001.jpg',
-        eventoId: eventoIdSimulado,
-        fechaRegistro: new Date()
-      }
-    ];
-    await db.collection('oradores').insertMany(oradores);
+    await db.collection('oradores').insertOne({
+      _id: oradorId,
+      codigo: 'OR-001',
+      nombre: 'Dra. Elena Rostova',
+      correo: 'elena.rostova@tech.org',
+      telefonos: ['8888-0001'],
+      telefono: '8888-0001',
+      especialidad: 'Inteligencia Artificial',
+      empresa: 'AI Research Lab',
+      biografia: 'Experta en IA y aprendizaje automático.',
+      foto: null,
+      eventoId,
+      estado: 'Activo',
+      fechaRegistro: new Date()
+    });
 
-    // 3. ACTIVIDADES (Campos oficiales: nombre, responsableId, estado: 'Disponible')
-    const actividadId = new ObjectId();
-    const actividades = [
-      {
-        _id: actividadId,
-        codigo: 'ACT-001',
-        nombre: 'Conferencia: El Futuro de la IA',
-        descripcion: 'Una mirada profunda a la evolución de los modelos de lenguaje.',
-        fecha: new Date('2026-10-15T10:00:00Z'),
-        lugar: 'Auditorio Principal',
-        cupoMaximo: 100,
-        cupoOcupado: 0,
-        categoria: 'Conferencia',
-        estado: 'Disponible', // Valores oficiales: Disponible, Llena, Cancelada, Finalizada
-        visibilidad: 'Pública',
-        entradaLibre: true,
-        incluyeRefrigerio: true,
-        responsableId: oradorId,
-        eventoId: eventoIdSimulado
-      }
-    ];
-    await db.collection('actividades').insertMany(actividades);
+    await db.collection('actividades').insertOne({
+      _id: actividadId,
+      codigo: 'ACT-001',
+      nombre: 'Conferencia: El Futuro de la IA',
+      descripcion: 'Una mirada profunda a la evolución de los modelos de lenguaje.',
+      eventoId,
+      fecha: '2026-10-15',
+      horaInicio: '10:00',
+      horaFin: '12:00',
+      lugar: 'Auditorio Principal',
+      cupoMaximo: 100,
+      cupoOcupado: 0,
+      categoria: 'Tecnológicas',
+      estado: 'Disponible',
+      visibilidad: 'publica',
+      entradaLibre: true,
+      incluyeRefrigerio: true,
+      responsableId: oradorId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdBy: null
+    });
 
-    // 4. STANDS (Estados oficiales: Aprobado, Cerrado; Tipo categoria: empresa/personal)
-    const stands = [
-      {
-        codigo: 'ST-001',
-        nombre: 'Tech Innovators Stand',
-        encargado: 'Roberto Gómez',
-        correo: 'contacto@techinnovators.com',
-        telefono: '8765-4321',
-        descripcion: 'Exposición de gadgets de última generación.',
-        ubicacion: 'Pabellón A - Stand 12',
-        categoria: 'empresa',
-        estado: 'Aprobado', // Valores oficiales: Aprobado, Cerrado
-        eventoId: eventoIdSimulado
-      }
-    ];
-    await db.collection('stands').insertMany(stands);
+    await db.collection('stands').insertOne({
+      codigo: 'S-2026-001',
+      numero: 1,
+      anio: new Date().getFullYear(),
+      eventoId,
+      nombre: 'Tech Innovators Stand',
+      categoria: 'empresa',
+      descripcion: 'Exposición de proyectos tecnológicos.',
+      encargado: 'Roberto Gómez',
+      empresa: 'Tech Innovators',
+      correo: 'contacto@techinnovators.com',
+      telefono: '8765-4321',
+      estado: 'Aprobado',
+      fechaRegistro: new Date()
+    });
 
-    // 5. PARTICIPANTES (Campos oficiales: nombreCompleto, estado: 'Activo', actividades)
-    const participantes = [
-      {
-        codigo: 'P-001',
-        nombreCompleto: 'María Rodríguez',
-        correo: 'maria.rod@mail.com',
-        telefono: '7000-1122',
-        edad: 22,
-        carrera: 'Ingeniería en Sistemas',
-        actividades: [actividadId],
-        estado: 'Activo', // Valores oficiales: Activo, Cancelado
-        fechaInscripcion: new Date(),
-        metodoPago: 'Gratuito'
-      }
-    ];
-    await db.collection('participantes').insertMany(participantes);
+    await db.collection('participantes').insertOne({
+      codigo: 'P-001',
+      nombreCompleto: 'María Rodríguez',
+      correo: 'maria.rod@mail.com',
+      telefono: '7000-1122',
+      edad: 22,
+      carrera: 'Ingeniería en Sistemas',
+      actividades: [actividadId],
+      estado: 'Activo',
+      fechaInscripcion: new Date(),
+      metodoPago: 'Gratuito'
+    });
 
-    // 6. POSTULACIONES (Campos según especificación, sin 'propuesta')
-    const postulaciones = [
-      {
-        nombre: 'Ing. Javier Martínez',
-        correo: 'javier.martinez@dev.com',
-        telefonos: ['8999-3344'],
-        especialidad: 'Ciberseguridad',
-        biografia: 'Experto en ethical hacking y seguridad en la nube.',
-        empresa: 'CyberShield',
-        foto: 'https://ejemplo.com/fotos/post-001.jpg',
-        actividadId: actividadId,
-        aceptaTerminos: true,
-        estado: 'Pendiente', // Pendiente, Aprobada, Rechazada
-        fechaPostulacion: new Date()
-      }
-    ];
-    await db.collection('postulaciones').insertMany(postulaciones);
+    await db.collection('postulaciones').insertOne({
+      codigo: 'PT-001',
+      nombre: 'Ing. Javier Martínez',
+      correo: 'javier.martinez@dev.com',
+      telefonos: ['8999-3344'],
+      especialidad: 'Ciberseguridad',
+      biografia: 'Experto en ethical hacking y seguridad en la nube.',
+      organizacion: 'CyberShield',
+      empresa: 'CyberShield',
+      foto: null,
+      actividadId,
+      eventoId,
+      estado: 'Pendiente',
+      fechaPostulacion: new Date()
+    });
 
-    console.log(' ¡Seed ejecutado con éxito! Datos insertados alineados al Documento de Diseño 2.');
+    await db.collection('contadores').insertMany([
+      { _id: 'eventos', valor: 1 },
+      { _id: 'actividades', valor: 1 },
+      { _id: 'oradores', valor: 1 },
+      { _id: 'postulaciones', valor: 1 },
+      { _id: 'stands-2026', valor: 1 }
+    ]);
+
+    console.log('[db] Seed ejecutado con éxito.');
   } catch (error) {
-    console.error(' Error al poblar la base de datos:', error);
+    console.error('[db] Error al poblar la base de datos:', error.message);
+    throw error;
   } finally {
     await client.close();
   }
 }
 
-seedDB();
+module.exports = { seedDB };
