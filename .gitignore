@@ -1,11 +1,20 @@
-# Kiro IDE configuration
-.kiro/
+# Node.js dependencies
+node_modules/
+
+# Variables de entorno (credenciales — NUNCA versionar)
+.env
 
 # VS Code local settings
 .vscode/
 
-# Node.js dependencies
-node_modules/
+# Kiro IDE configuration
+.kiro/
 
-# Variables de entorno (credenciales)
-.env
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
