@@ -294,8 +294,7 @@ header {
   border-bottom: 2px solid var(--blue-200);
   white-space: nowrap;
   font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .admin-table td {
