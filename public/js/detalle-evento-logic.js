@@ -50,71 +50,100 @@ const renderizarActividades = (actividades) => {
     container.innerHTML = html;
 };
 
-// ── RENDERIZADO DE AGENDA — SW-26 (consume GET /api/agenda/:eventoId) ──
+// ── RENDERIZADO DE AGENDA (tabs por día, consume GET /api/eventos/agenda/:eventoId) ──
 
 const renderizarAgenda = async (eventoId) => {
-    const contenedor = document.getElementById('agendaContenido');
-    if (!contenedor) return;
+    const section = document.querySelector('.eventAgenda');
+    if (!section) return;
 
     try {
-        const res  = await fetch(`/api/agenda/${eventoId}`);
+        const res = await fetch(`/api/eventos/agenda/${eventoId}`);
         const data = await res.json();
 
-        if (!res.ok || data.error) {
-            contenedor.innerHTML = '<p class="text-muted">No se pudo cargar la agenda.</p>';
+        if (!res.ok || data.error || !data.agenda || data.agenda.length === 0) {
+            section.innerHTML = `
+                <div class="eventAgendaHeader">
+                    <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+                </div>
+                <p>No hay actividades programadas.</p>
+            `;
             return;
         }
 
         const { agenda } = data;
 
-        if (!agenda || agenda.length === 0) {
-            contenedor.innerHTML = '<p class="text-muted">No hay actividades programadas para este evento.</p>';
-            return;
-        }
+        // Header con botón exportar
+        let html = `
+            <div class="eventAgendaHeader">
+                <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+                <button class="btnExportAgenda" id="btnExportAgenda">
+                    <i class="bi bi-download"></i> <span>Exportar Agenda</span>
+                </button>
+            </div>
+        `;
 
-        let html = '';
-        agenda.forEach(dia => {
-            html += `<p class="agenda-fecha"><i class="bi bi-calendar-event"></i> ${dia.fecha}</p>`;
+        // Tabs por día
+        html += '<div class="eventAgendaDatesTab">';
+        agenda.forEach((dia, i) => {
+            html += `<button class="eventAgendaDatesTabLinks ${i === 0 ? 'active' : ''}" data-day="agenda-${i}">${dia.fecha}</button>`;
+        });
+        html += '</div>';
+
+        // Tablas por día
+        agenda.forEach((dia, i) => {
             html += `
-                <table class="agenda-tabla table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Actividad</th>
-                            <th>Responsable</th>
-                            <th>Refrigerio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div id="agenda-${i}" class="eventAgendaTable ${i > 0 ? 'oculto' : ''}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Actividad</th>
+                                <th>Responsable</th>
+                                <th>Refrigerio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
             dia.actividades.forEach(act => {
                 html += `
                     <tr>
-                        <td class="text-nowrap">${act.horaInicio} – ${act.horaFin}</td>
-                        <td>
-                            <strong>${act.nombre}</strong>
-                            ${act.descripcion ? `<br><small class="text-muted">${act.descripcion}</small>` : ''}
-                        </td>
-                        <td>
-                            ${act.responsableNombre}<br>
-                            <small class="text-muted">${act.responsableEmpresa}</small>
-                        </td>
-                        <td class="text-center">
-                            ${act.incluyeRefrigerio
-                                ? '<span class="badge-refrigerio"><i class="bi bi-cup-hot"></i> Sí</span>'
-                                : '<span class="text-muted">No</span>'}
-                        </td>
+                        <td>${act.horaInicio} - ${act.horaFin}</td>
+                        <td><strong>${act.nombre}</strong><br><small>${act.descripcion || ''}</small></td>
+                        <td>${act.responsableNombre}</td>
+                        <td>${act.incluyeRefrigerio ? '<i class="bi bi-cup-hot"></i> Sí' : 'No'}</td>
                     </tr>
                 `;
             });
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
         });
 
-        contenedor.innerHTML = html;
+        section.innerHTML = html;
+
+        // Inicializar tabs
+        section.querySelectorAll('.eventAgendaDatesTabLinks').forEach(btn => {
+            btn.addEventListener('click', (evt) => {
+                const day = evt.currentTarget.dataset.day;
+                section.querySelectorAll('.eventAgendaTable').forEach(t => t.classList.add('oculto'));
+                section.querySelectorAll('.eventAgendaDatesTabLinks').forEach(l => l.classList.remove('active'));
+                document.getElementById(day).classList.remove('oculto');
+                evt.currentTarget.classList.add('active');
+            });
+        });
+
+        // Botón exportar
+        const btnExport = document.getElementById('btnExportAgenda');
+        if (btnExport) {
+            btnExport.addEventListener('click', () => window.print());
+        }
 
     } catch (err) {
         console.error('Error cargando agenda:', err);
-        contenedor.innerHTML = '<p class="text-danger">Error al cargar la agenda.</p>';
+        section.innerHTML = `
+            <div class="eventAgendaHeader">
+                <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
+            </div>
+            <p>Error al cargar la agenda.</p>
+        `;
     }
 };
 
