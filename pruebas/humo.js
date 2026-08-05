@@ -82,7 +82,7 @@ function check(nombre, condicion, detalle='') {
 
     r = await api.get('/api/oradores');
     check('GET lista los 2 oradores', Array.isArray(r.body) && r.body.length === 2, `n=${r.body.length}`);
-    check('Lista incluye puedeEditarse', r.body[0].puedeEditarse === true, JSON.stringify(r.body[0].puedeEditarse));
+    check('Lista incluye puedeEliminarse', r.body[0].puedeEliminarse === true, JSON.stringify(r.body[0].puedeEliminarse));
 
     r = await api.get('/api/oradores?q=rodriguez');
     check('Búsqueda por texto (RF-20)', r.body.length === 1 && r.body[0].nombre === 'Ana Rodríguez', `n=${r.body.length}`);
@@ -94,6 +94,10 @@ function check(nombre, condicion, detalle='') {
     check('GET por código legible', r.status === 200 && r.body.codigo === 'OR-006', `status=${r.status}`);
 
     // --- RF-13: eliminación condicional ---
+    // El ERS (pág. 16) redacta RF-13 como "Edición y Eliminación Condicional" y
+    // deniega ambas acciones. El equipo acordó el 5/08 implementar solo el
+    // bloqueo de borrado (commit b1b8921 de Carlos), así que editar un orador
+    // con actividades vigentes ahora devuelve 200 y no 409.
     r = await api.put(`/api/oradores/${oradorId}`).send({ especialidad: 'Arquitectura de Software' });
     check('PUT sin actividades activas → 200', r.status === 200, `status=${r.status}`);
     check('PUT conserva los teléfonos', JSON.stringify(r.body.telefonos) === '["8888-0001","8888-9999"]', JSON.stringify(r.body.telefonos));
@@ -105,7 +109,8 @@ function check(nombre, condicion, detalle='') {
     });
 
     r = await api.put(`/api/oradores/${oradorId}`).send({ nombre: 'Ana R. Mora' });
-    check('RF-13 · PUT con actividad activa → 409', r.status === 409, `status=${r.status}`);
+    check('RF-13 · PUT con actividad activa sí se permite → 200', r.status === 200, `status=${r.status}`);
+    check('RF-13 · el nombre se actualizó', r.body.nombre === 'Ana R. Mora', r.body.nombre);
     r = await api.delete(`/api/oradores/${oradorId}`);
     check('RF-13 · DELETE con actividad activa → 409', r.status === 409, `status=${r.status}`);
     check('409 informa cuántas actividades', /1 actividad/.test(r.body.mensaje || ''), r.body.mensaje);

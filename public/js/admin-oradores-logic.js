@@ -7,10 +7,15 @@
 // carga data-store.js (SW-22).
 //
 // Reglas del ERS que la interfaz refleja:
-//   RF-13  Editar y eliminar quedan bloqueados si el presentador es
-//          responsable de actividades vigentes. El servidor responde 409; el
-//          panel además deshabilita la fila usando `puedeEditarse`, que la
-//          API entrega en el listado para no consultar fila por fila.
+//   RF-13  Eliminar queda bloqueado si el presentador es responsable de
+//          actividades vigentes; editar siempre se permite. El servidor
+//          responde 409 al intentar eliminarlo, y el listado trae
+//          `puedeEliminarse` para marcar la fila sin una petición extra.
+//
+//          Nota: el ERS (pág. 16) redacta RF-13 como "Edición y Eliminación
+//          Condicional" y su criterio de aceptación deniega ambas acciones.
+//          El equipo decidió el 5/08 implementar solo el bloqueo de borrado,
+//          por acuerdo con Carlos Carballo (commit b1b8921).
 //   RF-20  La búsqueda y los filtros se resuelven en el servidor (?q=,
 //          ?estado=, ?fechaRegistro=), no filtrando un arreglo en memoria.
 //   HU-10  Las postulaciones se aprueban o rechazan contra

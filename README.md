@@ -182,7 +182,7 @@ Las rutas marcadas con 🔒 exigen sesión de administrador (`middleware/auth.js
 | Presentadores | `GET /api/oradores` | Listado (RF-20) |
 | | `GET /api/oradores/:id` | Detalle por `_id` o código `OR-001` |
 | | `POST /api/oradores` 🔒 | Registro (RF-12) |
-| | `PUT /api/oradores/:id` 🔒 | Edición condicional (RF-13) |
+| | `PUT /api/oradores/:id` 🔒 | Edición del perfil |
 | | `PATCH /api/oradores/:id/estado` 🔒 | Activar / desactivar |
 | | `DELETE /api/oradores/:id` 🔒 | Eliminación condicional (RF-13) |
 | Stands | `GET /api/stands` | Listado y filtros (RF-22) |
@@ -203,10 +203,18 @@ Las rutas marcadas con 🔒 exigen sesión de administrador (`middleware/auth.js
 
 | Regla | Comportamiento |
 |---|---|
-| **RF-13** | Editar o eliminar un presentador con actividades vigentes devuelve `409`. Desactivarlo sí se permite. |
+| **RF-13** | Eliminar un presentador con actividades vigentes devuelve `409`. Editarlo y desactivarlo sí se permiten (ver nota abajo). |
 | **RF-15** | El ID de stand lo asigna la base de datos con un contador atómico por año: `S-2026-001`, y vuelve a `001` cada enero. |
 | **RF-16** | Cambiar el correo o el ID de un stand devuelve `400`. |
 | **RF-25** | Un mismo correo no puede postularse dos veces a la misma actividad, pero sí a actividades distintas. |
+
+> **Nota sobre RF-13.** El ERS (pág. 16) titula el requerimiento *"Edición y Eliminación
+> Condicional de Responsables"* y su criterio de aceptación deniega **ambas** acciones
+> cuando el responsable tiene actividades activas. La implementación actual bloquea solo
+> la eliminación: editar el perfil siempre se permite, por decisión del equipo del 5 de
+> agosto (commit `b1b8921`). El listado expone `puedeEliminarse` para que el panel marque
+> las filas afectadas. Queda registrada la diferencia entre el ERS y el comportamiento
+> implementado.
 
 ---
 
@@ -281,17 +289,17 @@ Las contraseñas de los usuarios de prueba se generan y almacenan cifradas con b
 
 > Corte: 5 de agosto de 2026 · Seguimiento: Josué Arroyo (Coordinador)
 
-**El hito "la aplicación funciona sin `data-store.js`" todavía no se cumple.** De los
-doce módulos del frontend, cuatro consumen la API REST y ocho siguen leyendo y
-escribiendo en `window.db` (el `localStorage` de la iteración 1).
+**El hito "la aplicación funciona sin `data-store.js`" está a dos módulos de cumplirse.**
+De los doce módulos del frontend, **diez ya consumen la API REST** y solo dos siguen
+leyendo de `window.db` (el `localStorage` de la iteración 1).
 
-El backend, en cambio, está completo: las siete colecciones tienen controllers, rutas,
-validación de servidor, índices y seed. Lo que falta no es API, es **cablear las
-pantallas** que todavía apuntan a `data-store.js`.
+El backend está completo: las siete colecciones tienen controllers, rutas, validación de
+servidor, índices y seed. Lo que falta no es API, es **cablear las dos pantallas** que
+todavía apuntan a `data-store.js`.
 
-El bloqueante principal ya está resuelto: `login` autentica contra la API, así que las
-pantallas migradas por fin obtienen una sesión de servidor. Antes de eso, cualquier
-pantalla migrada rebotaba al login aunque el usuario hubiera entrado bien.
+El bloqueante que frenaba todo ya se resolvió: `login` autentica contra la API, así que
+las pantallas migradas obtienen una sesión de servidor. Antes de eso, cualquier pantalla
+migrada rebotaba al login aunque el usuario hubiera entrado bien.
 
 ### Estado por módulo
 
@@ -301,14 +309,14 @@ pantalla migrada rebotaba al login aunque el usuario hubiera entrado bien.
 | `admin-oradores` | API REST | Josué (SW-12 / SW-27) | ✅ Migrado |
 | `admin-stands` | API REST | Josué (SW-14 / SW-27) | ✅ Migrado |
 | `admin-participantes` | API REST | Kenner (SW-16) | ✅ Migrado |
-| `detalle-evento` | `window.db` ×7 | Carlos (SW-23) | ⚠️ Mixto |
-| `admin-crear-evento` | `window.db` ×2 | Carlos (SW-9) | ⚠️ Mixto — solo el asistente de IA usa la API |
-| `admin-actividades` | `window.db` ×27 | Carlos (SW-13) | ⛔ Pendiente — el más grande |
-| `admin-usuarios` | `window.db` ×10 | Kenner | ⛔ Pendiente |
-| `admin-eventos` | `window.db` ×5 | Carlos (SW-9) | ⛔ Pendiente |
-| `postular-participante` | `window.db` ×5 | Kenner (SW-28) | ⛔ Pendiente |
-| `pago` | `window.db` ×2 | Kenner (SW-28) | ⛔ Pendiente |
-| `index` | `window.db` ×1 | Carlos (SW-23) | ⛔ Pendiente |
+| `admin-eventos` | API REST | Carlos (SW-9) | ✅ Migrado |
+| `admin-crear-evento` | API REST | Carlos (SW-9) | ✅ Migrado |
+| `admin-actividades` | API REST | Carlos (SW-13) | ✅ Migrado |
+| `detalle-evento` | API REST | Carlos (SW-23) | ✅ Migrado |
+| `index` | API REST | Carlos (SW-23) | ✅ Migrado |
+| `postular-participante` | API REST | Kenner (SW-28) | ✅ Migrado |
+| `admin-usuarios` | `window.db` | Kenner | ⛔ Pendiente |
+| `pago` | `window.db` | Kenner (SW-28) | ⛔ Pendiente |
 
 Para reproducir el conteo:
 
@@ -316,8 +324,10 @@ Para reproducir el conteo:
 grep -c "window.db" public/js/*-logic.js
 ```
 
-El hito se cierra cuando `grep -r "data-store" public/` no devuelve nada y el archivo
-`public/js/data-store.js` se puede borrar. Hoy nueve páginas todavía lo cargan.
+El hito se cierra cuando `grep -r "data-store" public/` no devuelve nada y
+`public/js/data-store.js` se puede borrar. Hoy lo cargan tres páginas:
+`admin-participantes.html` (cuya lógica ya está migrada, solo falta quitar el
+`<script>`), `admin-usuarios.html` y `pago.html`.
 
 ### Puente temporal de sesión
 
@@ -362,7 +372,7 @@ respondía HTTP 500, porque cuatro controllers llamaban a funciones que ya no se
 exportaban. Se restauraron y las pruebas volvieron a verde. **Lección para SW-41:** ese
 archivo lo usan los cuatro integrantes; correr `npm test` antes de cada push.
 
-**3. Cobertura de pruebas desigual.** `pruebas/humo.js` cubre 68 casos, todos de
+**3. Cobertura de pruebas desigual.** `pruebas/humo.js` cubre 71 casos, todos de
 oradores, stands, postulaciones y el asistente de IA. Eventos, actividades,
 participantes, inscripciones y autenticación no tienen red de seguridad automática. Es
 el alcance de SW-34.
@@ -370,12 +380,12 @@ el alcance de SW-34.
 ### Orden de trabajo pendiente
 
 1. ~~`login` — migrar a `POST /api/auth/login`.~~ ✅ Hecho el 4/08.
-2. `admin-eventos` + `admin-crear-evento` (Carlos) — sin eventos no hay actividades ni stands.
-3. `admin-actividades` (Carlos) — el módulo más grande, 27 referencias.
-4. `index` + `detalle-evento` (Carlos) — portal público, es lo que se ve en la defensa.
-5. `postular-participante` + `pago` (Kenner).
-6. `admin-usuarios` (Kenner).
-7. Quitar `data-store.js` de las páginas restantes y borrar el archivo.
+2. ~~`admin-eventos`, `admin-crear-evento`, `admin-actividades`, `index`, `detalle-evento`, `postular-participante`.~~ ✅ Hechos el 5/08.
+3. `admin-usuarios` (Kenner) — último módulo del panel administrativo.
+4. `pago` (Kenner) — último módulo del portal público.
+5. Quitar el `<script>` de `data-store.js` de `admin-participantes.html` (su lógica ya
+   está migrada), `admin-usuarios.html` y `pago.html`.
+6. Borrar `public/js/data-store.js` y cerrar el hito.
 
 ## Licencia
 
