@@ -220,8 +220,6 @@ SoftWars/
 │   ├── humo.js                → Pruebas de humo de las APIs (npm test)
 │   ├── mongo-en-memoria.js    → Doble del driver de MongoDB para pruebas
 │   └── servidor-demo.js       → App completa sin Atlas (npm run demo)
-├── docs/
-│   └── ESTADO-SW-22.md        → Estado del hito y riesgos de integración
 └── public/                    → Frontend servido como estático
     ├── index.html
     ├── css/
@@ -258,12 +256,105 @@ Las contraseñas de los usuarios de prueba se generan y almacenan cifradas con b
 - **Administradores** — Gestión de cuentas con acceso al panel
 - **Asistente de IA** — Mejora de descripciones de eventos con Gemini
 
-## Estado de la migración a la API
+## Estado de la migración a la API (hito SW-22)
 
-El backend está completo, pero parte del frontend todavía lee de `data-store.js`
-(localStorage de la iteración 1). El detalle por módulo, los riesgos de integración
-abiertos y el orden de trabajo pendiente están en
-[`docs/ESTADO-SW-22.md`](docs/ESTADO-SW-22.md).
+> Corte: 5 de agosto de 2026 · Seguimiento: Josué Arroyo (Coordinador)
+
+**El hito "la aplicación funciona sin `data-store.js`" todavía no se cumple.** De los
+doce módulos del frontend, cuatro consumen la API REST y ocho siguen leyendo y
+escribiendo en `window.db` (el `localStorage` de la iteración 1).
+
+El backend, en cambio, está completo: las siete colecciones tienen controllers, rutas,
+validación de servidor, índices y seed. Lo que falta no es API, es **cablear las
+pantallas** que todavía apuntan a `data-store.js`.
+
+El bloqueante principal ya está resuelto: `login` autentica contra la API, así que las
+pantallas migradas por fin obtienen una sesión de servidor. Antes de eso, cualquier
+pantalla migrada rebotaba al login aunque el usuario hubiera entrado bien.
+
+### Estado por módulo
+
+| Módulo | Fuente de datos | Responsable | Estado |
+|---|---|---|---|
+| `login` | API REST | Kenner (SW-10), migrado por Josué | ✅ Migrado |
+| `admin-oradores` | API REST | Josué (SW-12 / SW-27) | ✅ Migrado |
+| `admin-stands` | API REST | Josué (SW-14 / SW-27) | ✅ Migrado |
+| `admin-participantes` | API REST | Kenner (SW-16) | ✅ Migrado |
+| `detalle-evento` | `window.db` ×7 | Carlos (SW-23) | ⚠️ Mixto |
+| `admin-crear-evento` | `window.db` ×2 | Carlos (SW-9) | ⚠️ Mixto — solo el asistente de IA usa la API |
+| `admin-actividades` | `window.db` ×27 | Carlos (SW-13) | ⛔ Pendiente — el más grande |
+| `admin-usuarios` | `window.db` ×10 | Kenner | ⛔ Pendiente |
+| `admin-eventos` | `window.db` ×5 | Carlos (SW-9) | ⛔ Pendiente |
+| `postular-participante` | `window.db` ×5 | Kenner (SW-28) | ⛔ Pendiente |
+| `pago` | `window.db` ×2 | Kenner (SW-28) | ⛔ Pendiente |
+| `index` | `window.db` ×1 | Carlos (SW-23) | ⛔ Pendiente |
+
+Para reproducir el conteo:
+
+```bash
+grep -c "window.db" public/js/*-logic.js
+```
+
+El hito se cierra cuando `grep -r "data-store" public/` no devuelve nada y el archivo
+`public/js/data-store.js` se puede borrar. Hoy nueve páginas todavía lo cargan.
+
+### Puente temporal de sesión
+
+`login.html` autentica contra `POST /api/auth/login` con bcrypt, y la sesión vive en una
+cookie httpOnly del servidor. **Esa es la sesión real.**
+
+Pero cinco pantallas (`admin-eventos`, `admin-actividades`, `admin-crear-evento`,
+`admin-participantes`, `admin-usuarios`) todavía se guardan con
+`localStorage.getItem('sesionActiva')`. Sin esa bandera rebotarían al login en un bucle
+infinito, así que `login-logic.js` la escribe además de crear la sesión de servidor.
+No es una credencial: quien decide si hay sesión es siempre `GET /api/auth/sesion`.
+
+Al migrar cada una de esas cinco pantallas, cambiar su guardia por `await apiSesion()`
+(ver `admin-oradores-logic.js` como referencia). Cuando las cinco estén migradas, borrar
+las cuatro líneas marcadas con `PUENTE TEMPORAL (SW-22)` en `login-logic.js`.
+
+**Hueco conocido:** el botón "Cerrar Sesión" de esas cinco pantallas solo borra el
+`localStorage`; no llama a `POST /api/auth/logout`, así que la cookie del servidor
+sobrevive hasta expirar (8 horas). Se cierra solo al migrar cada pantalla.
+
+### Riesgos de integración abiertos
+
+**1. Tres formatos de respuesta conviviendo (alto).** Los listados no devuelven la misma
+forma según quién escribió el controller:
+
+| Recurso | Forma de la respuesta |
+|---|---|
+| `eventos`, `actividades` | `{ data: [...] }` |
+| `oradores`, `stands`, `postulaciones` | `[...]` (arreglo plano) |
+| `participantes`, `inscripciones` | `{ error: false, participantes: [...] }` |
+
+Esto era lo que SW-4 debía dejar acordado. Cada pantalla que se migre tiene que adivinar
+la forma correcta. **Mitigación:** `public/js/api.js` incorpora el helper
+`listaDe(respuesta)`, que acepta las tres y siempre devuelve un arreglo; las pantallas
+pendientes deben usarlo en vez de asumir una forma. Unificar los controllers queda como
+deuda técnica para después de la defensa.
+
+**2. Funciones compartidas borradas en un merge (resuelto).**
+`utils/validaciones.server.js` perdió `validarEnCatalogo()` y `normalizarTelefono()` en
+los commits del 3 de agosto. Consecuencia: crear un evento, una actividad o un stand
+respondía HTTP 500, porque cuatro controllers llamaban a funciones que ya no se
+exportaban. Se restauraron y las pruebas volvieron a verde. **Lección para SW-41:** ese
+archivo lo usan los cuatro integrantes; correr `npm test` antes de cada push.
+
+**3. Cobertura de pruebas desigual.** `pruebas/humo.js` cubre 68 casos, todos de
+oradores, stands, postulaciones y el asistente de IA. Eventos, actividades,
+participantes, inscripciones y autenticación no tienen red de seguridad automática. Es
+el alcance de SW-34.
+
+### Orden de trabajo pendiente
+
+1. ~~`login` — migrar a `POST /api/auth/login`.~~ ✅ Hecho el 4/08.
+2. `admin-eventos` + `admin-crear-evento` (Carlos) — sin eventos no hay actividades ni stands.
+3. `admin-actividades` (Carlos) — el módulo más grande, 27 referencias.
+4. `index` + `detalle-evento` (Carlos) — portal público, es lo que se ve en la defensa.
+5. `postular-participante` + `pago` (Kenner).
+6. `admin-usuarios` (Kenner).
+7. Quitar `data-store.js` de las páginas restantes y borrar el archivo.
 
 ## Licencia
 
