@@ -1,12 +1,14 @@
 // ==========================================================================
 // MÓDULO: POSTULACIÓN PÚBLICA DE ORADOR / PRESENTADOR (RF-24)
-// Formulario público de libre acceso para solicitar ser responsable de actividad.
+// Consume POST /api/postulaciones y GET /api/actividades
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
     // Inicializar navbar search dropdown
-    validaciones.inicializarNavbarSearch('');
+    if (validaciones && validaciones.inicializarNavbarSearch) {
+        validaciones.inicializarNavbarSearch('');
+    }
 
     // ── Referencias al DOM ──────────────────────────────────────────────────
     const form = document.getElementById('form-postulacion');
@@ -23,20 +25,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let fotoDataUrl = null;
 
-    // ── Poblar select de actividades ────────────────────────────────────────
-    const poblarActividades = () => {
-        if (!campoActividad || !window.db || !window.db.actividades) return;
+    // ── Poblar select de actividades desde la API ───────────────────────────
+    const poblarActividades = async () => {
+        if (!campoActividad) return;
         campoActividad.innerHTML = '<option value="">Seleccionar actividad...</option>';
-        window.db.actividades.forEach(act => {
-            if (act.visibilidad === 'privada') return; // Solo mostrar públicas
-            const opt = document.createElement('option');
-            opt.value = act.id;
-            opt.textContent = `${act.nombre} — ${act.fecha}`;
-            campoActividad.appendChild(opt);
-        });
+        try {
+            const respuesta = await apiGet('actividades');
+            const actividades = Array.isArray(respuesta) ? respuesta : (respuesta.data || []);
+            actividades.forEach(act => {
+                if (act.visibilidad === 'privada') return;
+                const actId = act._id || act.id || act.codigo;
+                const opt = document.createElement('option');
+                opt.value = actId;
+                opt.textContent = `${act.nombre} — ${act.fecha}`;
+                campoActividad.appendChild(opt);
+            });
+        } catch (error) {
+            console.error('Error cargando actividades:', error);
+        }
     };
 
-    poblarActividades();
+    await poblarActividades();
 
     // ── Vista previa de foto ────────────────────────────────────────────────
     if (campoFoto) {
@@ -87,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const validarTelefono2 = () => {
         const valor = campoTelefono2.value.trim();
-        if (!valor) { validaciones.limpiarError('telefono2'); return true; } // Opcional
+        if (!valor) { validaciones.limpiarError('telefono2'); return true; }
         if (!validaciones.validarTelefono(valor)) { validaciones.mostrarError('telefono2', 'Ingrese un número de teléfono válido (8 dígitos).'); return false; }
         validaciones.limpiarError('telefono2');
         return true;
@@ -134,10 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Envío del formulario ────────────────────────────────────────────────
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         validaciones.limpiarErrores();
-        validaciones.ocultarResultado('resultado-postulacion');
 
         const esValido = [
             validarNombre(),
@@ -158,27 +166,25 @@ document.addEventListener('DOMContentLoaded', () => {
             telefonos.push(campoTelefono2.value.trim());
         }
 
-        // Registrar postulación en data-store
-        if (!window.db.postulaciones) window.db.postulaciones = [];
-
-        const nuevoId = `POST-${String(window.db.postulaciones.length + 1).padStart(3, '0')}`;
-        window.db.postulaciones.push({
-            id: nuevoId,
+        const datos = {
             nombre: campoNombre.value.trim(),
             correo: campoCorreo.value.trim(),
             telefonos: telefonos,
             especialidad: campoEspecialidad.value.trim(),
-            organizacion: campoOrganizacion.value.trim(),
+            empresa: campoOrganizacion.value.trim(),
             biografia: campoBiografia.value.trim(),
             foto: fotoDataUrl,
-            actividadId: campoActividad.value,
-            estado: 'pendiente'
-        });
+            actividadId: campoActividad.value
+        };
 
-        form.reset();
-        fotoDataUrl = null;
-        if (fotoPreview) fotoPreview.src = '../img/img-placeholder.png';
-
-        validaciones.exito('Postulación enviada', 'Un administrador revisará tu solicitud.');
+        try {
+            await apiPost('postulaciones', datos);
+            form.reset();
+            fotoDataUrl = null;
+            if (fotoPreview) fotoPreview.src = '../img/img-placeholder.png';
+            validaciones.exito('Postulación enviada', 'Un administrador revisará tu solicitud.');
+        } catch (error) {
+            // apiPost ya muestra el error con SweetAlert2
+        }
     });
 });
