@@ -205,7 +205,19 @@ async function listar(req, res) {
     }
     if (estado) filtro.estado = v.normalizarCatalogo(estado, ESTADOS_ORADOR, estado);
     if (especialidad) filtro.especialidad = busquedaTexto(especialidad);
-    if (fechaRegistro) filtro.fechaRegistro = fechaRegistro;
+
+    // `fechaRegistro` se guarda como Date, pero el <input type="date"> del panel
+    // envía "YYYY-MM-DD". Comparar ambos directamente nunca coincide, así que se
+    // filtra por el rango que cubre ese día completo.
+    if (fechaRegistro) {
+        const inicio = new Date(`${fechaRegistro}T00:00:00`);
+        if (!isNaN(inicio.getTime())) {
+            const fin = new Date(inicio);
+            fin.setDate(fin.getDate() + 1);
+            filtro.fechaRegistro = { $gte: inicio, $lt: fin };
+        }
+    }
+
     if (eventoId) filtro.eventoId = aObjectId(eventoId) || eventoId;
 
     const oradores = await getDB().collection(COLECCION)

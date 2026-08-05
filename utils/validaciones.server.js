@@ -67,6 +67,19 @@ function validarNombre(nombre) {
 }
 
 /**
+ * Valida que un valor pertenezca a un catálogo cerrado, ignorando
+ * mayúsculas y espacios. La usan los controllers de eventos, actividades,
+ * oradores y stands para rechazar categorías o estados fuera de catálogo.
+ * @param {string} valor
+ * @param {string[]} catalogo
+ * @returns {boolean}
+ */
+function validarEnCatalogo(valor, catalogo) {
+    if (typeof valor !== 'string') return false;
+    return catalogo.some(opcion => opcion.toLowerCase() === valor.trim().toLowerCase());
+}
+
+/**
  * Valida que una fecha sea futura (posterior a hoy).
  * @param {string} fechaStr - Fecha en formato YYYY-MM-DD.
  */
@@ -219,25 +232,35 @@ function normalizarCatalogo(valor, catalogo, fallback = '') {
 }
 
 /**
- * Extrae el arreglo de teléfonos válidos de un body de postulación.
- * Acepta los campos `telefono`, `telefono2` y el arreglo `telefonos`.
- * @param {object} body
- * @returns {string[]} Arreglo con los teléfonos válidos (mínimo vacío).
+ * Deja el teléfono en el formato 0000-0000 que muestra el panel.
+ * Devuelve cadena vacía si no son 8 dígitos, para que el llamador lo descarte.
+ * @param {string} telefono
+ * @returns {string}
  */
-function extraerTelefonos(body) {
-    const resultado = [];
-    const candidatos = [
-        ...(Array.isArray(body.telefonos) ? body.telefonos : []),
-        body.telefono,
-        body.telefono2
-    ];
-    for (const t of candidatos) {
-        if (t && validarTelefono(String(t))) {
-            resultado.push(String(t).trim());
-        }
-    }
-    // Eliminar duplicados
-    return [...new Set(resultado)];
+function normalizarTelefono(telefono) {
+    const digitos = limpiar(telefono).replace(/-/g, '');
+    if (!/^[0-9]{8}$/.test(digitos)) return '';
+    return `${digitos.slice(0, 4)}-${digitos.slice(4)}`;
+}
+
+/**
+ * Acepta el teléfono en cualquiera de las formas que envía el frontend
+ * (un string, `telefono` + `telefono2`, o un arreglo `telefonos`) y devuelve
+ * siempre un arreglo normalizado sin vacíos ni repetidos.
+ * RF-12 y RF-24 hablan de "teléfonos" en plural.
+ * @param {object} cuerpo - req.body
+ * @returns {string[]}
+ */
+function extraerTelefonos(cuerpo) {
+    const candidatos = Array.isArray(cuerpo.telefonos)
+        ? cuerpo.telefonos
+        : [cuerpo.telefono, cuerpo.telefono2, cuerpo.telefonoSecundario];
+
+    const normalizados = candidatos
+        .map(normalizarTelefono)
+        .filter(Boolean);
+
+    return [...new Set(normalizados)];
 }
 
 // Re-exportar todo junto
@@ -248,6 +271,7 @@ module.exports = {
     validarTelefono,
     validarCedula,
     validarNombre,
+    validarEnCatalogo,
     validarFechaFutura,
     validarDescripcion,
     validarEdad,
@@ -262,5 +286,6 @@ module.exports = {
     normalizarCorreo,
     limpiar,
     normalizarCatalogo,
+    normalizarTelefono,
     extraerTelefonos
 };

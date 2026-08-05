@@ -46,7 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================
     // HU-01: Iniciar Sesion
     // ==========================================================
-    formLogin.addEventListener('submit', (e) => {
+    // La autenticacion la resuelve el servidor con bcrypt (SW-10) y la sesion
+    // viaja en una cookie httpOnly. Ya no se guarda nada en localStorage: las
+    // paginas del panel preguntan por la sesion con GET /api/auth/sesion, asi
+    // que una bandera en el navegador no serviria para entrar.
+    formLogin.addEventListener('submit', async (e) => {
         e.preventDefault();
         limpiarErrores('login', 'email', 'password');
 
@@ -59,40 +63,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!esValido) return;
 
-        // Validacion contra la base de datos compartida (window.db.usuarios)
-        const usuario = window.db.usuarios.find(
-            u => u.email.toLowerCase() === email.toLowerCase()
-        );
+        const btnEnviar = formLogin.querySelector('button[type="submit"]');
+        if (btnEnviar) btnEnviar.disabled = true;
 
-        if (!usuario || usuario.password !== password) {
-            mostrarError('login', 'Correo o contraseña incorrectos.');
-            return;
+        try {
+            const respuesta = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+
+            const datos = await respuesta.json().catch(() => null);
+
+            if (!respuesta.ok) {
+                // El servidor devuelve el mismo mensaje para correo inexistente
+                // y contrasena incorrecta, para no revelar que cuentas existen.
+                mostrarError('login', (datos && datos.mensaje) || 'Correo o contraseña incorrectos.');
+                return;
+            }
+
+            // PUENTE TEMPORAL (SW-22)
+            // La sesion real es la cookie del servidor. Pero admin-eventos,
+            // admin-actividades, admin-crear-evento, admin-participantes y
+            // admin-usuarios todavia se guardan con
+            // `localStorage.getItem('sesionActiva')`, asi que sin estas banderas
+            // rebotarian al login en un bucle. Se escriben con los datos que
+            // devuelve el servidor, NO como credencial: quien decide si hay
+            // sesion es siempre /api/auth/sesion.
+            // Eliminar estas cuatro lineas cuando esas cinco pantallas migren.
+            const usuario = (datos && datos.usuario) || {};
+            localStorage.setItem('sesionActiva', 'true');
+            localStorage.setItem('sesionEmail', usuario.email || email);
+            localStorage.setItem('sesionNombre', usuario.nombre || '');
+            localStorage.setItem('sesionRol', usuario.rol || '');
+
+            window.location.href = 'admin-eventos.html';
+
+        } catch (error) {
+            mostrarError('login', 'No se pudo contactar el servidor. Verifique que la aplicación esté corriendo.');
+        } finally {
+            if (btnEnviar) btnEnviar.disabled = false;
         }
-
-        if (usuario.estado !== 'Activo') {
-            mostrarError('login', 'Esta cuenta se encuentra inactiva. Contacta a un administrador.');
-            return;
-        }
-
-        // Sesion guardada para que las paginas de administracion puedan
-        // reconocer al usuario (data-store.js se reinicia en cada pagina
-        // porque el proyecto todavia no tiene backend/persistencia real).
-        localStorage.setItem('sesionActiva', 'true');
-        localStorage.setItem('sesionEmail', usuario.email);
-        localStorage.setItem('sesionNombre', usuario.nombre);
-        localStorage.setItem('sesionRol', usuario.rol);
-
-        window.location.href = 'admin-eventos.html';
     });
 
     // ==========================================================
     // HU-02: Cerrar Sesion (invocado desde el layout de admin)
     // ==========================================================
-    window.cerrarSesion = function () {
-        localStorage.removeItem('sesionActiva');
-        localStorage.removeItem('sesionEmail');
-        localStorage.removeItem('sesionNombre');
-        localStorage.removeItem('sesionRol');
+    window.cerrarSesion = async function () {
+        // Destruye la sesion en el servidor; borrar algo en el navegador
+        // no bastaria porque la sesion vive en la cookie.
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            // Si el servidor no responde, igual se sale de la pantalla.
+        }
+        // Se limpian tambien las banderas del puente temporal (ver el submit).
+        ['sesionActiva', 'sesionEmail', 'sesionNombre', 'sesionRol']
+            .forEach(clave => localStorage.removeItem(clave));
         window.location.href = 'login.html';
     };
 
@@ -181,7 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cpNuevaInput.addEventListener('blur', validarCpNueva);
     cpConfirmarInput.addEventListener('blur', validarCpConfirmar);
 
-    document.querySelector('#btnCambiarPass').addEventListener('click', () => {
+    const btnCambiarPass = document.querySelector('#btnCambiarPass');
+
+    btnCambiarPass.addEventListener('click', async () => {
         const email = cpEmailInput.value.trim();
         const actual = cpActualInput.value;
         const nueva = cpNuevaInput.value;
@@ -193,23 +222,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const esValido = emailValido && actualValido && nuevaValida && confirmarValido;
         if (!esValido) return;
 
-        const usuario = window.db.usuarios.find(
-            u => u.email.toLowerCase() === email.toLowerCase()
-        );
+        btnCambiarPass.disabled = true;
 
-        if (!usuario) {
-            mostrarError('cp-email', 'No existe ninguna cuenta registrada con ese correo.');
-            return;
+        try {
+            // El servidor vuelve a cifrar con bcrypt; la contrasena en claro
+            // solo existe durante esta peticion.
+            const respuesta = await fetch('/api/auth/contrasena', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email:          email,
+                    passwordActual: actual,
+                    passwordNueva:  nueva
+                })
+            });
+
+            const datos = await respuesta.json().catch(() => null);
+
+            if (!respuesta.ok) {
+                // 404 → el correo no existe; 401 → la contrasena actual no
+                // coincide; 400 → la nueva no cumple RF-02. Cada uno se muestra
+                // junto al campo que lo causo.
+                if (respuesta.status === 404) {
+                    mostrarError('cp-email', (datos && datos.mensaje) || 'No existe ninguna cuenta registrada con ese correo.');
+                } else if (respuesta.status === 401) {
+                    mostrarError('cp-actual', (datos && datos.mensaje) || 'La contraseña actual es incorrecta.');
+                } else if (datos && Array.isArray(datos.errores)) {
+                    mostrarError('cp-nueva', datos.errores.join(' '));
+                } else {
+                    mostrarResultado('resultado-cambiar-pass', (datos && datos.mensaje) || 'No se pudo actualizar la contraseña.', 'error');
+                }
+                return;
+            }
+
+            mostrarResultado('resultado-cambiar-pass', 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.', 'success');
+
+        } catch (error) {
+            mostrarResultado('resultado-cambiar-pass', 'No se pudo contactar el servidor.', 'error');
+        } finally {
+            btnCambiarPass.disabled = false;
         }
-
-        if (usuario.password !== actual) {
-            mostrarError('cp-actual', 'La contraseña actual es incorrecta.');
-            return;
-        }
-
-        // Actualiza la contrasena en la base de datos simulada
-        usuario.password = nueva;
-
-        mostrarResultado('resultado-cambiar-pass', 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.', 'success');
     });
 });

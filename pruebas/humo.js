@@ -28,14 +28,36 @@ function check(nombre, condicion, detalle='') {
         eventoId, estado: 'Inactivo', fechaRegistro: new Date()
     });
 
+    // Usuario administrador. Desde que Kenner cerró SW-11, verificarSesion
+    // bloquea toda ruta de escritura, así que las pruebas deben autenticarse
+    // igual que lo hace el panel administrativo.
+    const bcrypt = require('bcryptjs');
+    await db.collection('usuarios').insertOne({
+        nombre: 'Josué Arroyo', email: 'admin@ucenfotec.ac.cr',
+        passwordHash: await bcrypt.hash('Admin123!', 4),
+        rol: 'Administrador', estado: 'Activo'
+    });
+
     const request = require('supertest');
     const app = require('../server');
-    const api = request(app);
+    // agent() conserva la cookie de sesión entre peticiones; request() no.
+    const api = request.agent(app);
+
+    // =====================================================================
+    console.log('\n== Sesión previa (SW-10 / SW-11) ==');
+
+    let r = await api.post('/api/auth/login')
+        .send({ email: 'admin@ucenfotec.ac.cr', password: 'Admin123!' });
+    check('Login de administrador → 200', r.status === 200, `status=${r.status} ${JSON.stringify(r.body)}`);
+    if (r.status !== 200) {
+        console.error('\nSin sesión no tiene sentido seguir: las rutas de escritura responderían 401.');
+        process.exit(1);
+    }
 
     // =====================================================================
     console.log('\n== SW-12 · API de oradores ==');
 
-    let r = await api.post('/api/oradores').send({
+    r = await api.post('/api/oradores').send({
         nombre: 'Ana Rodríguez', correo: 'ANA.Rodriguez@techcorp.cr',
         telefono: '88880001', telefono2: '8888-9999',
         especialidad: 'Ingeniería de Software', empresa: 'Tech Corp',
@@ -219,6 +241,73 @@ function check(nombre, condicion, detalle='') {
 
     r = await api.get('/api/postulaciones?estado=Aprobada');
     check('Filtro por estado en la bandeja', r.body.length === 2, `n=${r.body.length}`);
+
+    // =====================================================================
+    console.log('\n== SW-25 · Asistente de IA (Gemini) ==');
+
+    // Sin GEMINI_API_KEY el asistente debe degradar con un aviso claro,
+    // no reventar: el proyecto tiene que poder clonarse y correr sin cuenta.
+    const claveOriginal = process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+
+    r = await api.post('/api/asistente/descripcion').send({ texto: 'evento de tecnologia' });
+    check('Sin clave configurada → 503', r.status === 503, `status=${r.status}`);
+    check('503 explica cómo habilitarlo', /GEMINI_API_KEY/.test(r.body.mensaje || ''), r.body.mensaje);
+
+    r = await api.post('/api/asistente/descripcion').send({ texto: '   ' });
+    check('Texto vacío → 400', r.status === 400, `status=${r.status}`);
+
+    // Ruta feliz: se sustituye fetch para no gastar cuota real de Gemini
+    // ni depender de la red durante las pruebas.
+    process.env.GEMINI_API_KEY = 'clave-de-prueba';
+    const fetchReal = global.fetch;
+    let urlLlamada = '';
+    let cuerpoEnviado = null;
+
+    global.fetch = async (url, opciones) => {
+        urlLlamada = String(url);
+        cuerpoEnviado = JSON.parse(opciones.body);
+        return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+                candidates: [{ content: { parts: [{ text: 'Vive la Semana de la Innovación 2026 en UCenfotec: tres días de charlas, talleres y proyectos estudiantiles abiertos a toda la comunidad universitaria.' }] } }]
+            })
+        };
+    };
+
+    r = await api.post('/api/asistente/descripcion').send({
+        texto: 'evento de tecnologia con charlas',
+        nombre: 'Semana de la Innovación 2026',
+        categoria: 'Tecnológicas'
+    });
+    check('Con clave → 200', r.status === 200, `status=${r.status} ${JSON.stringify(r.body)}`);
+    check('Devuelve la descripción generada', /Semana de la Innovación/.test(r.body.descripcion || ''), r.body.descripcion);
+    check('Respeta el límite de 200 caracteres del ERS', (r.body.descripcion || '').length <= 200, `largo=${(r.body.descripcion || '').length}`);
+    check('Conserva el texto original', r.body.original === 'evento de tecnologia con charlas', r.body.original);
+    check('Llama al endpoint de Gemini', /generativelanguage\.googleapis\.com/.test(urlLlamada), urlLlamada);
+    check('El prompt incluye el contexto del evento',
+        /Semana de la Innovación 2026/.test(cuerpoEnviado.contents[0].parts[0].text), 'sin contexto');
+
+    // La IA a veces ignora el límite: el servidor debe recortar igual.
+    global.fetch = async () => ({
+        ok: true, status: 200,
+        json: async () => ({ candidates: [{ content: { parts: [{ text: 'palabra '.repeat(60) }] } }] })
+    });
+    r = await api.post('/api/asistente/descripcion').send({ texto: 'texto largo' });
+    check('Recorta si el modelo se pasa del límite', r.body.descripcion.length <= 200, `largo=${r.body.descripcion.length}`);
+
+    // Cuota agotada en Google → 502 con mensaje entendible, no un 500 crudo.
+    global.fetch = async () => ({
+        ok: false, status: 429,
+        json: async () => ({ error: { message: 'Quota exceeded' } })
+    });
+    r = await api.post('/api/asistente/descripcion').send({ texto: 'otro texto' });
+    check('Cuota agotada → 502 entendible', r.status === 502 && /cuota/i.test(r.body.mensaje || ''), `${r.status} ${r.body.mensaje}`);
+
+    global.fetch = fetchReal;
+    if (claveOriginal === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = claveOriginal;
 
     // =====================================================================
     console.log(`\n${pasos} pruebas correctas, ${fallos} fallidas.`);

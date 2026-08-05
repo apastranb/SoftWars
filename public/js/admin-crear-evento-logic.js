@@ -86,16 +86,71 @@ const inicializarPreviewImagen = () => {
     });
 };
 
+// SW-25 — Asistente de IA (Gemini).
+// La clave de Gemini vive solo en el servidor: el navegador llama a
+// /api/asistente/descripcion y es Express quien habla con Google.
 const inicializarAsistenteIA = () => {
     const btnMejorarDesc = document.getElementById('btnMejorarDesc');
     const descEvento = document.getElementById('descEvento');
 
     if (!btnMejorarDesc || !descEvento) return;
 
-    btnMejorarDesc.addEventListener('click', () => {
+    const textoBoton = btnMejorarDesc.innerHTML;
+
+    btnMejorarDesc.addEventListener('click', async () => {
         if (descEvento.value.trim() === '') {
             mostrarError('descEvento', 'Escribe algo primero para que la IA lo mejore.');
             return;
+        }
+
+        btnMejorarDesc.disabled = true;
+        btnMejorarDesc.innerHTML = '<i class="bi bi-hourglass-split"></i> Mejorando...';
+
+        try {
+            const respuesta = await fetch('/api/asistente/descripcion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    texto:     descEvento.value.trim(),
+                    nombre:    (document.getElementById('nombreEvento') || {}).value || '',
+                    categoria: (document.getElementById('categoriaEvento') || {}).value || ''
+                })
+            });
+
+            const datos = await respuesta.json().catch(() => null);
+
+            if (!respuesta.ok) {
+                const mensaje = (datos && datos.mensaje) || 'El asistente de IA no está disponible.';
+                if (typeof validaciones !== 'undefined' && validaciones.alerta) {
+                    validaciones.alerta('Asistente de IA', mensaje, 'warning');
+                } else {
+                    mostrarError('descEvento', mensaje);
+                }
+                return;
+            }
+
+            // Se deja la versión anterior a un clic de distancia: la IA puede
+            // devolver algo peor que lo que el administrador ya había escrito.
+            const anterior = descEvento.value;
+            descEvento.value = datos.descripcion;
+
+            const resultado = await Swal.fire({
+                title: 'Descripción mejorada',
+                text: datos.descripcion,
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Conservar',
+                cancelButtonText: 'Deshacer',
+                confirmButtonColor: '#164a98'
+            });
+
+            if (!resultado.isConfirmed) descEvento.value = anterior;
+
+        } catch (error) {
+            mostrarError('descEvento', 'No se pudo contactar el asistente de IA.');
+        } finally {
+            btnMejorarDesc.disabled = false;
+            btnMejorarDesc.innerHTML = textoBoton;
         }
     });
 };
