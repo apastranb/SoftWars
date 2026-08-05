@@ -134,11 +134,32 @@ y agregarla al `.env`:
 
 ```env
 GEMINI_API_KEY=tu_clave_aqui
-GEMINI_MODEL=gemini-2.0-flash
+GEMINI_MODEL=gemini-flash-latest
 ```
 
 Si la variable queda vacía, el endpoint responde `503` con un aviso entendible y **el
 resto del sistema funciona con normalidad**.
+
+> **Recordar:** el `.env` real está en `.gitignore`. Nunca escribir la clave en
+> `.env.example`, que sí se sube a GitHub.
+
+### Dos cosas que costaron encontrar
+
+**Usar el alias `gemini-flash-latest`, no una versión fija.** Con `gemini-2.0-flash` la
+API devuelve `429 RESOURCE_EXHAUSTED` con `limit: 0`, aunque la clave sea válida y no se
+haya gastado ninguna petición: ese modelo concreto no tiene asignación en el nivel
+gratuito del proyecto. El alias sí responde. Si aparece ese error, el problema es el
+nombre del modelo, no la clave.
+
+**El presupuesto de tokens tiene que ser holgado.** Los modelos flash actuales razonan
+antes de responder, y esos tokens de razonamiento consumen el mismo `maxOutputTokens`
+que la respuesta. Con 256, el modelo gastaba unos 241 pensando y devolvía la frase
+cortada a media palabra. Está fijado en 2048; la descripción final ocupa unos 30 tokens
+y el resto es margen. Si aun así llega truncada, el servidor lo detecta por
+`finishReason: MAX_TOKENS` y responde 502 en vez de entregar una frase incompleta.
+
+Para diagnosticar la clave sin pasar por la aplicación, `npm test` cubre los casos de
+error (sin clave, cuota agotada, respuesta truncada) con la respuesta de Google simulada.
 
 ---
 
