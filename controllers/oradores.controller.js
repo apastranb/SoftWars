@@ -176,7 +176,7 @@ async function exigirSinActividadesActivas(orador, accion) {
     const cantidad = await contarActividadesActivas(orador._id);
     if (cantidad > 0) {
         throw errorConflicto(
-            `No se puede ${accion} a "${orador.nombre}" porque es responsable de ${cantidad} actividad(es) activa(s). ` +
+            `No se puede eliminar a "${orador.nombre}" porque es responsable de ${cantidad} actividad(es) activa(s). ` +
             'Reasigne o cancele esas actividades primero.',
             { actividadesActivas: cantidad }
         );
@@ -225,13 +225,13 @@ async function listar(req, res) {
         .sort({ codigo: 1 })
         .toArray();
 
-    // Se adjunta el indicador de RF-13 para que el panel pueda deshabilitar
-    // los botones de editar y eliminar sin hacer una petición extra por fila.
+    // Se adjunta el indicador para que el panel pueda deshabilitar
+    // el botón de eliminar sin hacer una petición extra por fila.
     const bloqueados = await idsConActividadesActivas();
     const resultado = conAliasLista(oradores).map(orador => ({
         ...orador,
         tieneActividadesActivas: bloqueados.has(String(orador._id)),
-        puedeEditarse: !bloqueados.has(String(orador._id))
+        puedeEliminarse: !bloqueados.has(String(orador._id))
     }));
 
     res.json(resultado);
@@ -248,7 +248,7 @@ async function obtener(req, res) {
         ...conAlias(orador),
         actividadesActivas: actividadesActivas,
         tieneActividadesActivas: actividadesActivas > 0,
-        puedeEditarse: actividadesActivas === 0
+        puedeEliminarse: actividadesActivas === 0
     });
 }
 
@@ -280,15 +280,13 @@ async function crear(req, res) {
 }
 
 /**
- * PUT /api/oradores/:id — RF-13.
- * Denegado si el orador tiene actividades activas asignadas.
+ * PUT /api/oradores/:id
+ * Editar datos del orador. Siempre permitido (RF-13 solo bloquea eliminación).
  */
 async function actualizar(req, res) {
     const coleccion = getDB().collection(COLECCION);
     const orador = await coleccion.findOne(filtroPorId(req.params.id));
     if (!orador) throw errorNoEncontrado('El orador solicitado no existe.');
-
-    await exigirSinActividadesActivas(orador, 'editar');
 
     const errores = validarOrador(req.body, true);
     if (Object.keys(errores).length > 0) throw errorValidacion(errores);
@@ -354,7 +352,7 @@ async function eliminar(req, res) {
     const orador = await coleccion.findOne(filtroPorId(req.params.id));
     if (!orador) throw errorNoEncontrado('El orador solicitado no existe.');
 
-    await exigirSinActividadesActivas(orador, 'eliminar');
+    await exigirSinActividadesActivas(orador);
 
     await coleccion.deleteOne({ _id: orador._id });
 

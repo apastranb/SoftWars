@@ -205,10 +205,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const activo = esEstado(o.estado, 'activo');
             const tr = document.createElement('tr');
 
-            // RF-13: si tiene actividades vigentes se marca la fila y se avisa
-            // en el propio <td>, para que el bloqueo no sorprenda al confirmar.
-            const avisoRf13 = o.puedeEditarse === false
-                ? ' <i class="bi bi-lock-fill" title="Tiene actividades activas: no se puede editar ni eliminar (RF-13)"></i>'
+            // Si tiene actividades vigentes, no se puede eliminar (solo eliminar, editar sí)
+            const avisoBloqueo = o.puedeEliminarse === false
+                ? ' <i class="bi bi-lock-fill" title="No se puede eliminar: tiene actividades activas asignadas"></i>'
                 : '';
 
             // estado-activo / estado-inactivo las colorea admin-layout.css.
@@ -217,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             tr.innerHTML = `
                 <td><input type="checkbox" class="row-check" data-id="${escaparHtml(o._id)}"></td>
                 <td>${formatearFecha(o.fechaRegistro)}</td>
-                <td>${escaparHtml(o.nombre)}${avisoRf13}</td>
+                <td>${escaparHtml(o.nombre)}${avisoBloqueo}</td>
                 <td>${escaparHtml(o.correo)}</td>
                 <td>${escaparHtml((o.telefonos || []).join(' / ') || o.telefono || '')}</td>
                 <td>${escaparHtml(o.especialidad)}</td>
@@ -288,7 +287,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             modalOrador.hide();
             cargarOradores();
         } catch (error) {
-            // 409 (correo duplicado o RF-13) y 400 los muestra api.js;
+            // 409 (correo duplicado o actividades activas) y 400 los muestra api.js;
             // el modal se queda abierto para poder corregir.
         } finally {
             btnGuardar.disabled = false;
@@ -298,15 +297,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function abrirModalEditar(id) {
         const orador = oradores.find(o => String(o._id) === String(id));
         if (!orador) return;
-
-        if (orador.puedeEditarse === false) {
-            validaciones.alerta(
-                'Presentador bloqueado',
-                `"${orador.nombre}" es responsable de actividades activas. Reasigne o cancele esas actividades antes de editarlo (RF-13).`,
-                'warning'
-            );
-            return;
-        }
 
         editandoId = orador._id;
         modalTitulo.textContent = 'Editar Presentador';
@@ -412,11 +402,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const confirmar = await validaciones.confirmar(
             '¿Eliminar presentador(es)?',
-            `Se eliminarán ${seleccionados.length} presentador(es). Los que tengan actividades activas serán rechazados por el servidor (RF-13).`
+            `Se eliminarán ${seleccionados.length} presentador(es). Los que tengan actividades activas serán rechazados por el servidor.`
         );
         if (!confirmar) return;
 
-        // Se envían en serie para poder contar cuáles bloqueó RF-13.
+        // Se envían en serie para poder contar cuáles bloqueó el servidor.
         let eliminados = 0;
         for (const id of seleccionados) {
             try {
