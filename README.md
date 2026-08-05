@@ -80,54 +80,114 @@ npm install
 
 # 3. Crear el archivo de variables de entorno
 cp .env.example .env
-<<<<<<< HEAD
 # Abrir .env y completar MONGODB_URI con la cadena de conexión real
 # y SESSION_SECRET con una cadena aleatoria larga
-=======
-# Editar .env con las credenciales reales de MongoDB Atlas
->>>>>>> d5c3747916cd03dee894f50b02358aec40d3ddee
 
-# 4. Poblar la base de datos con datos de prueba (solo la primera vez)
+# 4. Crear los índices de las siete colecciones (solo la primera vez)
+node -e "require('./utils/crearIndices')"
+
+# 5. Poblar la base de datos con datos de prueba (solo la primera vez)
 node utils/seed.js
 
-# 5. Iniciar el servidor
+# 6. Iniciar el servidor
 npm start
 ```
 
-<<<<<<< HEAD
 El servidor queda disponible en `http://localhost:3000`.
 
 > **Importante:** el archivo `.env` contiene credenciales reales y **nunca** debe subirse al repositorio. El `.gitignore` ya lo excluye.
 
+> Si la conexión con Atlas falla por SSL, verificar que la versión de Node sea compatible y que la IP del equipo esté habilitada en **Network Access**.
+
 ---
-=======
-El servidor se ejecuta en `http://localhost:3000`.
 
-## Configuración de MongoDB Atlas
+## Ejecutar sin MongoDB Atlas (modo demostración)
 
-1. Crear un clúster M0 en MongoDB Atlas.
-2. Crear un usuario de base de datos y agregar la IP `0.0.0.0/0.0.0` como acceso de red.
-3. Copiar la cadena de conexión del botón "Connect" y pegarla en `.env`:
-
-```env
-MONGODB_URI=mongodb+srv://<usuario>:<password>@<cluster>/<db>?retryWrites=true&w=majority
-DB_NAME=softwars_eventos
-PORT=3000
-SESSION_SECRET=...valor-secreto...
-```
-
-### Comandos de infraestructura
+Levanta la aplicación completa contra un doble de MongoDB **en memoria**, con datos de
+ejemplo ya cargados. No necesita credenciales, ni red, ni clúster:
 
 ```bash
-# Crear índices
-node -e "require('./utils/crearIndices')"
-
-# Poblar datos iniciales (seed)
-node -e "require('./utils/seed').seedDB()"
+npm run demo
 ```
 
-> Si la conexión de Atlas falla por SSL en este entorno, verificar que la versión de OpenSSL/Node sea compatible y que la IP de acceso en Atlas esté habilitada.
->>>>>>> d5c3747916cd03dee894f50b02358aec40d3ddee
+| | |
+|---|---|
+| URL | <http://localhost:3001> |
+| Usuario | `admin@ucenfotec.ac.cr` |
+| Contraseña | `Admin123!` |
+
+Sirve para revisar pantallas durante el desarrollo y como plan B si la red del
+laboratorio bloquea la salida hacia Atlas. Los datos viven en memoria y se pierden al
+detener el proceso: **no sustituye a `npm start` contra Atlas**.
+
+---
+
+## Asistente de IA (SW-25)
+
+El botón **"Mejorar con IA"** del formulario de eventos reescribe la descripción usando
+la API de Gemini. La clave vive **solo en el servidor**: el navegador llama a
+`POST /api/asistente/descripcion` y es Express quien contacta a Google, de modo que la
+credencial nunca viaja al cliente.
+
+Para habilitarlo, obtener una clave en [Google AI Studio](https://aistudio.google.com/apikey)
+y agregarla al `.env`:
+
+```env
+GEMINI_API_KEY=tu_clave_aqui
+GEMINI_MODEL=gemini-2.0-flash
+```
+
+Si la variable queda vacía, el endpoint responde `503` con un aviso entendible y **el
+resto del sistema funciona con normalidad**.
+
+---
+
+## Endpoints de la API
+
+Las rutas marcadas con 🔒 exigen sesión de administrador (`middleware/auth.js`).
+
+| Recurso | Método y ruta | Descripción |
+|---|---|---|
+| Autenticación | `POST /api/auth/login` | Iniciar sesión (bcrypt) |
+| | `POST /api/auth/logout` 🔒 | Cerrar sesión |
+| | `GET /api/auth/sesion` | Consultar la sesión activa |
+| | `PUT /api/auth/contrasena` | Modificar contraseña |
+| Eventos | `GET /api/eventos` | Listado con búsqueda y filtros |
+| | `GET /api/eventos/:id` | Detalle por `_id` o código |
+| | `GET /api/eventos/agenda/:eventoId` | Agenda del evento |
+| | `POST · PUT · DELETE` 🔒 | Alta, edición y baja |
+| Actividades | `GET /api/actividades` | Listado con filtros |
+| | `POST · PUT · DELETE` 🔒 | Alta, edición y baja |
+| Presentadores | `GET /api/oradores` | Listado (RF-20) |
+| | `GET /api/oradores/:id` | Detalle por `_id` o código `OR-001` |
+| | `POST /api/oradores` 🔒 | Registro (RF-12) |
+| | `PUT /api/oradores/:id` 🔒 | Edición condicional (RF-13) |
+| | `PATCH /api/oradores/:id/estado` 🔒 | Activar / desactivar |
+| | `DELETE /api/oradores/:id` 🔒 | Eliminación condicional (RF-13) |
+| Stands | `GET /api/stands` | Listado y filtros (RF-22) |
+| | `POST /api/stands` 🔒 | Registro con numeración anual (RF-15) |
+| | `PUT /api/stands/:id` 🔒 | Edición limitada (RF-16) |
+| | `PATCH /api/stands/:id/estado` 🔒 | Aprobado / Cerrado |
+| | `DELETE /api/stands/:id` 🔒 | Baja |
+| Postulaciones | `POST /api/postulaciones` | Solicitud pública (RF-24, RF-25) |
+| | `GET /api/postulaciones` 🔒 | Bandeja del panel |
+| | `PATCH /api/postulaciones/:id/aprobar` 🔒 | Aprobar y crear el orador (HU-10) |
+| | `PATCH /api/postulaciones/:id/rechazar` 🔒 | Rechazar con motivo (HU-10) |
+| | `DELETE /api/postulaciones/:id` 🔒 | Descartar |
+| Participantes | `GET · POST /api/participantes` | Inscripciones desde el portal |
+| Inscripciones | `GET /api/inscripciones` 🔒 | Vista global |
+| Asistente IA | `POST /api/asistente/descripcion` 🔒 | Mejora la descripción con Gemini |
+
+### Reglas de negocio que hace cumplir el servidor
+
+| Regla | Comportamiento |
+|---|---|
+| **RF-13** | Editar o eliminar un presentador con actividades vigentes devuelve `409`. Desactivarlo sí se permite. |
+| **RF-15** | El ID de stand lo asigna la base de datos con un contador atómico por año: `S-2026-001`, y vuelve a `001` cada enero. |
+| **RF-16** | Cambiar el correo o el ID de un stand devuelve `400`. |
+| **RF-25** | Un mismo correo no puede postularse dos veces a la misma actividad, pero sí a actividades distintas. |
+
+---
 
 ## Estructura del Proyecto
 
@@ -156,6 +216,12 @@ SoftWars/
 │   ├── respuestas.js          → Helpers de respuesta HTTP
 │   ├── seed.js                → Carga inicial de datos de prueba
 │   └── validaciones.server.js → Reglas de validación del servidor
+├── pruebas/
+│   ├── humo.js                → Pruebas de humo de las APIs (npm test)
+│   ├── mongo-en-memoria.js    → Doble del driver de MongoDB para pruebas
+│   └── servidor-demo.js       → App completa sin Atlas (npm run demo)
+├── docs/
+│   └── ESTADO-SW-22.md        → Estado del hito y riesgos de integración
 └── public/                    → Frontend servido como estático
     ├── index.html
     ├── css/
@@ -169,9 +235,12 @@ SoftWars/
 
 | Comando | Descripción |
 |---|---|
-| `npm start` | Inicia el servidor en el puerto 3000 |
 | `npm install` | Instala las dependencias del proyecto |
+| `npm start` | Inicia el servidor contra MongoDB Atlas en el puerto 3000 |
+| `npm run demo` | Levanta la app con MongoDB en memoria y datos de ejemplo (puerto 3001) |
+| `npm test` | Ejecuta las pruebas de humo de las APIs (68 casos, no requiere Atlas) |
 | `node utils/seed.js` | Carga datos de prueba en MongoDB (requiere `.env` configurado) |
+| `node -e "require('./utils/crearIndices')"` | Crea los índices de las siete colecciones |
 
 ## Credenciales de prueba (desarrollo)
 
@@ -187,6 +256,14 @@ Las contraseñas de los usuarios de prueba se generan y almacenan cifradas con b
 - **Stands** — Espacios de promoción dentro de eventos
 - **Participantes** — Asistentes inscritos desde el portal público
 - **Administradores** — Gestión de cuentas con acceso al panel
+- **Asistente de IA** — Mejora de descripciones de eventos con Gemini
+
+## Estado de la migración a la API
+
+El backend está completo, pero parte del frontend todavía lee de `data-store.js`
+(localStorage de la iteración 1). El detalle por módulo, los riesgos de integración
+abiertos y el orden de trabajo pendiente están en
+[`docs/ESTADO-SW-22.md`](docs/ESTADO-SW-22.md).
 
 ## Licencia
 

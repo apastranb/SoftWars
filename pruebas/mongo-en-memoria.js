@@ -24,6 +24,10 @@ function coincideCondicion(valor, cond) {
                     }
                     case '$options': return true;
                     case '$exists': return (valor !== undefined) === cond.$exists;
+                    case '$gte': return valor !== undefined && valor >= cond.$gte;
+                    case '$gt':  return valor !== undefined && valor >  cond.$gt;
+                    case '$lte': return valor !== undefined && valor <= cond.$lte;
+                    case '$lt':  return valor !== undefined && valor <  cond.$lt;
                     default: throw new Error(`Operador no soportado por el doble: ${op}`);
                 }
             });

@@ -65,6 +65,64 @@ async function apiPut(recurso, id, datos) {
 }
 
 /**
+ * Devuelve siempre un arreglo a partir de la respuesta de un listado.
+ *
+ * Los módulos del equipo terminaron con tres envoltorios distintos:
+ *   eventos y actividades  →  { data: [...] }
+ *   oradores, stands, postulaciones  →  [...]  (arreglo plano)
+ *   participantes e inscripciones  →  { error: false, participantes: [...] }
+ *
+ * Unificar los controllers a cuatro días de la entrega rompería el trabajo en
+ * curso de los compañeros, así que el cliente tolera las tres formas. Queda
+ * anotado como deuda técnica para cerrar después de la defensa (ver SW-4).
+ *
+ * @param {*} respuesta - Lo que devolvió apiGet.
+ * @param {string} [nombre] - Clave alterna donde puede venir la lista.
+ * @returns {object[]}
+ */
+function listaDe(respuesta, nombre) {
+    if (Array.isArray(respuesta)) return respuesta;
+    if (!respuesta || typeof respuesta !== 'object') return [];
+    if (Array.isArray(respuesta.data)) return respuesta.data;
+    if (nombre && Array.isArray(respuesta[nombre])) return respuesta[nombre];
+    return Object.values(respuesta).find(Array.isArray) || [];
+}
+
+/**
+ * Ejecuta un PATCH sobre una sub-ruta del recurso.
+ * Lo usan las acciones que cambian un solo aspecto del documento:
+ * `oradores/:id/estado`, `stands/:id/estado`, `postulaciones/:id/aprobar`.
+ * @param {string} ruta - Ruta relativa completa (ej: 'oradores/OR-001/estado')
+ * @param {object} [datos] - Cuerpo de la petición
+ * @returns {Promise<object>} Respuesta parseada del servidor
+ */
+async function apiPatch(ruta, datos = {}) {
+    const respuesta = await fetch(`${API_BASE}/${ruta}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+    });
+    return await _procesarRespuesta(respuesta);
+}
+
+/**
+ * Comprueba si hay una sesión activa SIN mostrar la alerta de error.
+ * Las páginas del panel la usan como guardia de entrada: un 401 aquí es una
+ * respuesta esperada (visitante sin sesión), no un fallo que reportar.
+ * @returns {Promise<object|null>} Usuario de la sesión, o null si no hay.
+ */
+async function apiSesion() {
+    try {
+        const respuesta = await fetch(`${API_BASE}/auth/sesion`);
+        if (!respuesta.ok) return null;
+        const datos = await respuesta.json();
+        return datos.usuario || null;
+    } catch (error) {
+        return null;
+    }
+}
+
+/**
  * Ejecuta un DELETE para eliminar un documento.
  * @param {string} recurso - Nombre del recurso
  * @param {string} id - ID del documento a eliminar

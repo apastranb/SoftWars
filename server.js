@@ -53,6 +53,7 @@ app.use('/api/participantes', require('./routes/participantes.routes'));
 app.use('/api/inscripciones', require('./routes/inscripciones.routes'));
 app.use('/api/postulaciones', require('./routes/postulaciones.routes'));
 app.use('/api/usuarios',      require('./routes/usuarios.routes'));
+app.use('/api/asistente',     require('./routes/asistente.routes'));
 
 // ── Manejo centralizado de errores ─────────────────────────────────────────
 app.use(manejarError);
