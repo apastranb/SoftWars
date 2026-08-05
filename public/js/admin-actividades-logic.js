@@ -1,39 +1,62 @@
 // ==========================================================================
-// MÓDULO: GESTIÓN DE ACTIVIDADES
-// Usa window.db.actividades de data-store.js como fuente de datos.
-// Validaciones centralizadas en validaciones.js
+// MÓDULO: GESTIÓN DE ACTIVIDADES — admin-actividades-logic.js
+// Consume GET/POST/PUT/DELETE /api/actividades, GET /api/eventos, GET /api/oradores
 // ==========================================================================
 
 let actividadEditandoId = null;
+let actividadesCache = [];
+let eventosCache = [];
+let oradoresCache = [];
+
+// ── CARGA DE DATOS ──────────────────────────────────────────────────────
+
+const cargarActividades = async () => {
+    try {
+        const resp = await apiGet('actividades');
+        actividadesCache = Array.isArray(resp) ? resp : (resp.data || []);
+    } catch (e) { actividadesCache = []; }
+};
+
+const cargarEventos = async () => {
+    try {
+        const resp = await apiGet('eventos');
+        eventosCache = Array.isArray(resp) ? resp : (resp.data || []);
+    } catch (e) { eventosCache = []; }
+};
+
+const cargarOradores = async () => {
+    try {
+        const resp = await apiGet('oradores');
+        oradoresCache = Array.isArray(resp) ? resp : (resp.data || []);
+    } catch (e) { oradoresCache = []; }
+};
 
 // ── RENDERIZADO DE TABLA ────────────────────────────────────────────────
 
-const renderizarTablaActividades = (datosAFiltrar) => {
-    const datos = datosAFiltrar || window.db.actividades;
+const renderizarTablaActividades = (datos) => {
+    const lista = datos || actividadesCache;
     const tablaBody = document.getElementById('tabla-actividades-body');
     if (!tablaBody) return;
 
     tablaBody.innerHTML = '';
+    const tablaVacia = document.getElementById('tabla-vacia');
 
-    if (datos.length === 0) {
-        tablaBody.innerHTML = '';
-        const tablaVacia = document.getElementById('tabla-vacia');
+    if (lista.length === 0) {
         if (tablaVacia) tablaVacia.classList.remove('oculto');
         return;
     }
+    if (tablaVacia) tablaVacia.classList.add('oculto');
 
-    const tablaVaciaEl = document.getElementById('tabla-vacia');
-    if (tablaVaciaEl) tablaVaciaEl.classList.add('oculto');
-
-    datos.forEach(actividad => {
+    lista.forEach(actividad => {
+        const actId = actividad._id || actividad.id || actividad.codigo;
         const cupoTexto = actividad.entradaLibre
             ? 'Entrada libre'
             : `${actividad.cupoOcupado || 0} / ${actividad.cupoMaximo}`;
 
         const fila = document.createElement('tr');
         fila.innerHTML = `
-            <td><input type="checkbox" class="row-check" data-id="${actividad.id}"></td>
-            <td>${actividad.id}</td>
+            <td><input type="checkbox" class="row-check" data-id="${actId}"></td>
+            <td>${actividad.codigo || actId}</td>
             <td>${actividad.nombre}</td>
             <td>${actividad.categoria}</td>
             <td>${actividad.fecha}</td>
@@ -43,8 +66,8 @@ const renderizarTablaActividades = (datosAFiltrar) => {
             <td>${cupoTexto}</td>
             <td>${obtenerNombreResponsable(actividad.responsableId)}</td>
             <td>
-                <select class="tableSelectStatus" data-id="${actividad.id}">
-                    <option value="Disponible" ${(actividad.estado || 'Disponible') === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                <select class="tableSelectStatus" data-id="${actId}">
+                    <option value="Disponible" ${actividad.estado === 'Disponible' ? 'selected' : ''}>Disponible</option>
                     <option value="Llena" ${actividad.estado === 'Llena' ? 'selected' : ''}>Llena</option>
                     <option value="Cancelada" ${actividad.estado === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
                     <option value="Finalizada" ${actividad.estado === 'Finalizada' ? 'selected' : ''}>Finalizada</option>
@@ -53,30 +76,32 @@ const renderizarTablaActividades = (datosAFiltrar) => {
             <td>${actividad.visibilidad || '-'}</td>
             <td>${actividad.entradaLibre ? 'Libre' : 'De Pago'}</td>
         `;
-
         tablaBody.appendChild(fila);
     });
 
-    // Reset select all
     const selectAllCb = document.getElementById('selectAll');
     if (selectAllCb) selectAllCb.checked = false;
 
-    // Estado change listener
+    // Cambio de estado via API
     tablaBody.querySelectorAll('.tableSelectStatus').forEach(select => {
-        select.addEventListener('change', (e) => {
+        select.addEventListener('change', async (e) => {
             const id = e.target.dataset.id;
-            const actividad = window.db.actividades.find(a => a.id === id);
-            if (actividad) {
-                actividad.estado = e.target.value;
+            try {
+                await apiPut('actividades', id, { estado: e.target.value });
+                const act = actividadesCache.find(a => (a._id || a.id || a.codigo) === id);
+                if (act) act.estado = e.target.value;
                 validaciones.exito('Estado actualizado', `La actividad se marcó como "${e.target.value}".`);
-            }
+            } catch (error) { /* apiPut ya muestra el error */ }
         });
     });
 };
 
 const obtenerNombreResponsable = (responsableId) => {
     if (!responsableId) return '—';
-    const orador = window.db.oradores.find(o => o.id === responsableId);
+    const orador = oradoresCache.find(o =>
+        (o._id || o.id || o.codigo) === String(responsableId) ||
+        String(o._id) === String(responsableId)
+    );
     return orador ? orador.nombre : '—';
 };
 
@@ -101,13 +126,12 @@ const cerrarModal = () => {
     validaciones.limpiarErrores();
 };
 
-// ── VALIDACIÓN DEL FORMULARIO ───────────────────────────────────────────
+// ── VALIDACIÓN ──────────────────────────────────────────────────────────
 
 const validarFormularioActividad = () => {
     validaciones.limpiarErrores();
     let esValido = true;
 
-    // Campos requeridos simples
     const camposRequeridos = [
         { id: 'modal-evento', mensaje: 'Debe seleccionar un evento padre.' },
         { id: 'modal-nombre', mensaje: 'El nombre de la actividad es obligatorio.' },
@@ -126,21 +150,18 @@ const validarFormularioActividad = () => {
         }
     });
 
-    // Nombre mínimo 3 caracteres
     const nombre = document.getElementById('modal-nombre').value;
     if (nombre.trim() !== '' && !validaciones.validarNombre(nombre)) {
         validaciones.mostrarError('modal-nombre', 'El nombre debe tener al menos 3 caracteres.');
         esValido = false;
     }
 
-    // Descripción (opcional, max 200)
     const descripcion = document.getElementById('modal-descripcion').value;
     if (!validaciones.validarDescripcion(descripcion, false)) {
         validaciones.mostrarError('modal-descripcion', 'La descripción no puede superar los 200 caracteres.');
         esValido = false;
     }
 
-    // Cupo (requerido solo si no es entrada libre)
     const esEntradaLibre = document.getElementById('modal-entrada-libre').value === 'libre';
     const cupoInput = document.getElementById('modal-cupo');
     if (!esEntradaLibre) {
@@ -153,14 +174,12 @@ const validarFormularioActividad = () => {
         }
     }
 
-    // Fecha futura
     const fecha = document.getElementById('modal-fecha').value;
     if (fecha && !validaciones.validarFechaFutura(fecha)) {
         validaciones.mostrarError('modal-fecha', 'Seleccione una fecha posterior a hoy.');
         esValido = false;
     }
 
-    // Hora fin > hora inicio
     const horaInicio = document.getElementById('modal-hora-inicio').value;
     const horaFin = document.getElementById('modal-hora-fin').value;
     if (horaInicio && horaFin && !validaciones.validarHorasOrden(horaInicio, horaFin)) {
@@ -171,15 +190,15 @@ const validarFormularioActividad = () => {
     return esValido;
 };
 
-// ── CONTROLADORES ───────────────────────────────────────────────────────
+// ── EDITAR ACTIVIDAD ────────────────────────────────────────────────────
 
 const controladorEditarActividad = (id) => {
-    const actividad = window.db.actividades.find(act => act.id === id);
+    const actividad = actividadesCache.find(a => (a._id || a.id || a.codigo) === id);
     if (!actividad) return;
 
     actividadEditandoId = id;
 
-    document.getElementById('modal-titulo-accion').textContent = `Editar Actividad: ${id}`;
+    document.getElementById('modal-titulo-accion').textContent = `Editar Actividad: ${actividad.codigo || id}`;
     document.getElementById('btn-guardar-modal').textContent = 'Guardar Cambios';
 
     document.getElementById('modal-evento').value = actividad.eventoId || '';
@@ -196,27 +215,24 @@ const controladorEditarActividad = (id) => {
     document.getElementById('modal-entrada-libre').value = actividad.entradaLibre ? 'libre' : 'pago';
     document.getElementById('modal-refrigerio').checked = actividad.incluyeRefrigerio || false;
 
+    poblarSelectEventos();
+    poblarSelectResponsables();
     abrirModal();
 };
 
-const controladorEliminarActividad = async (id) => {
-    const confirmado = await validaciones.confirmar('¿Eliminar actividad?', `Se eliminará la actividad ${id}. Esta acción no se puede deshacer.`);
-    if (confirmado) {
-        window.db.actividades = window.db.actividades.filter(act => act.id !== id);
-        renderizarTablaActividades();
-    }
-};
-
-// ── POBLAR SELECTS DINÁMICOS ────────────────────────────────────────────
+// ── POBLAR SELECTS ──────────────────────────────────────────────────────
 
 const poblarSelectEventos = () => {
     const select = document.getElementById('modal-evento');
     if (!select) return;
+    const valorActual = select.value;
     select.innerHTML = '<option value="">Seleccione un evento</option>';
-    window.db.eventos.forEach(ev => {
+    eventosCache.forEach(ev => {
+        const evId = ev._id || ev.id || ev.codigo;
         const opt = document.createElement('option');
-        opt.value = ev.id;
+        opt.value = evId;
         opt.textContent = ev.nombre;
+        if (evId === valorActual) opt.selected = true;
         select.appendChild(opt);
     });
 };
@@ -224,23 +240,25 @@ const poblarSelectEventos = () => {
 const poblarSelectResponsables = () => {
     const select = document.getElementById('modal-responsable');
     if (!select) return;
+    const valorActual = select.value;
     select.innerHTML = '<option value="">Seleccione un responsable</option>';
-    window.db.oradores.forEach(o => {
+    oradoresCache.forEach(o => {
+        const oId = o._id || o.id || o.codigo;
         const opt = document.createElement('option');
-        opt.value = o.id;
-        opt.textContent = `${o.nombre} — ${o.especialidad}`;
+        opt.value = oId;
+        opt.textContent = `${o.nombre} — ${o.especialidad || ''}`;
+        if (oId === valorActual || String(o._id) === valorActual) opt.selected = true;
         select.appendChild(opt);
     });
 };
 
-// ── PANEL DE DETALLE (encargado de la actividad seleccionada) ────────────
+// ── PANEL DE DETALLE (encargado) ────────────────────────────────────────
 
 const actualizarPanelEncargado = () => {
     const panel = document.getElementById('actividad-detalle-panels');
     const contenido = document.getElementById('encargado-contenido');
     const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
 
-    // 0 seleccionados: ocultar panel
     if (seleccionados.length === 0) {
         panel.classList.add('oculto');
         return;
@@ -248,21 +266,22 @@ const actualizarPanelEncargado = () => {
 
     panel.classList.remove('oculto');
 
-    // 2+ seleccionados: mostrar mensaje
     if (seleccionados.length > 1) {
         contenido.innerHTML = '<p class="detalle-placeholder">Seleccione una sola actividad para ver detalles.</p>';
         return;
     }
 
-    // Exactamente 1 seleccionado: mostrar encargado
-    const actividad = window.db.actividades.find(a => a.id === seleccionados[0]);
-
+    const actividad = actividadesCache.find(a => (a._id || a.id || a.codigo) === seleccionados[0]);
     if (!actividad || !actividad.responsableId) {
         contenido.innerHTML = '<p class="detalle-placeholder">Esta actividad no tiene un encargado asignado.</p>';
         return;
     }
 
-    const orador = window.db.oradores.find(o => o.id === actividad.responsableId);
+    const orador = oradoresCache.find(o =>
+        String(o._id) === String(actividad.responsableId) ||
+        (o.id || o.codigo) === String(actividad.responsableId)
+    );
+
     if (!orador) {
         contenido.innerHTML = '<p class="detalle-placeholder">Encargado no encontrado.</p>';
         return;
@@ -273,14 +292,14 @@ const actualizarPanelEncargado = () => {
             <div class="user-avatar-circle"></div>
             <div class="user-metadata">
                 <strong>${orador.nombre}</strong>
-                <p>${orador.especialidad} · ${orador.empresa}</p>
-                <p>${orador.correo} · ${orador.telefono}</p>
+                <p>${orador.especialidad || ''} · ${orador.empresa || ''}</p>
+                <p>${orador.correo || ''} · ${orador.telefonos ? orador.telefonos[0] : ''}</p>
             </div>
         </div>
     `;
 };
 
-// ── BUSCADOR ────────────────────────────────────────────────────────────
+// ── FILTROS ─────────────────────────────────────────────────────────────
 
 const aplicarFiltrosActividades = () => {
     const termino = document.getElementById('buscar-actividad').value.toLowerCase().trim();
@@ -288,10 +307,10 @@ const aplicarFiltrosActividades = () => {
     const estado = document.getElementById('filterEstadoActividad').value;
     const fecha = document.getElementById('filterFechaActividad').value;
 
-    const filtrados = window.db.actividades.filter(act => {
+    const filtrados = actividadesCache.filter(act => {
         const coincideTexto = !termino ||
             act.nombre.toLowerCase().includes(termino) ||
-            act.id.toLowerCase().includes(termino) ||
+            (act.codigo && act.codigo.toLowerCase().includes(termino)) ||
             act.lugar.toLowerCase().includes(termino) ||
             act.categoria.toLowerCase().includes(termino);
 
@@ -305,16 +324,44 @@ const aplicarFiltrosActividades = () => {
     renderizarTablaActividades(filtrados);
 };
 
-const inicializarBuscadorActividades = () => {
+// ── INICIALIZADOR ───────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Verificar sesión
+    const usuario = await apiSesion();
+    if (!usuario) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Cerrar sesión
+    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
+        if (!confirmar) return;
+        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (err) {}
+        localStorage.clear();
+        window.location.href = 'login.html';
+    });
+
+    // Header
+    document.getElementById('headerUserName').textContent = usuario.nombre || 'Administrador';
+    document.getElementById('headerUserRol').textContent = usuario.rol || '';
+
+    // Cargar datos
+    await Promise.all([cargarActividades(), cargarEventos(), cargarOradores()]);
+    poblarSelectEventos();
+    poblarSelectResponsables();
+
+    renderizarTablaActividades();
+
+    // Filtros
     document.getElementById('buscar-actividad')?.addEventListener('input', aplicarFiltrosActividades);
     document.getElementById('filterCategoriaActividad')?.addEventListener('change', aplicarFiltrosActividades);
     document.getElementById('filterEstadoActividad')?.addEventListener('change', aplicarFiltrosActividades);
     document.getElementById('filterFechaActividad')?.addEventListener('change', aplicarFiltrosActividades);
-};
 
-// ── TOOLBAR ─────────────────────────────────────────────────────────────
-
-const inicializarToolbarActividades = () => {
+    // Toolbar
     const btnAbrirCrear = document.getElementById('btn-abrir-crear');
     const btnCerrarX = document.getElementById('btn-cerrar-modal');
     const btnCancelar = document.getElementById('btn-cancelar-modal');
@@ -332,7 +379,6 @@ const inicializarToolbarActividades = () => {
         });
     }
 
-    // Editar desde toolbar (solo 1 seleccionado)
     if (btnEditar) {
         btnEditar.addEventListener('click', () => {
             const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
@@ -348,7 +394,6 @@ const inicializarToolbarActividades = () => {
         });
     }
 
-    // Eliminar desde toolbar (1 o mas seleccionados)
     if (btnEliminar) {
         btnEliminar.addEventListener('click', async () => {
             const seleccionados = [...document.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
@@ -356,118 +401,74 @@ const inicializarToolbarActividades = () => {
                 validaciones.alerta('Seleccione actividades', 'Seleccione al menos una actividad para eliminar.', 'warning');
                 return;
             }
-            const confirmar = await validaciones.confirmar('¿Eliminar actividad(es)?', `Se eliminarán ${seleccionados.length} actividad(es). Esta acción no se puede deshacer.`);
+            const confirmar = await validaciones.confirmar('¿Eliminar actividad(es)?', `Se eliminarán ${seleccionados.length} actividad(es).`);
             if (!confirmar) return;
-            window.db.actividades = window.db.actividades.filter(a => !seleccionados.includes(a.id));
-            renderizarTablaActividades();
+
+            let eliminados = 0;
+            for (const id of seleccionados) {
+                try {
+                    await apiDelete('actividades', id);
+                    eliminados++;
+                } catch (error) { /* apiDelete ya muestra el error */ }
+            }
+            if (eliminados > 0) {
+                await cargarActividades();
+                renderizarTablaActividades();
+                validaciones.exito('Eliminadas', `${eliminados} actividad(es) eliminada(s).`);
+            }
         });
     }
 
-    // Select all checkbox
     if (selectAllCb) {
         selectAllCb.addEventListener('change', (e) => {
-            document.querySelectorAll('.row-check').forEach(cb => {
-                cb.checked = e.target.checked;
-            });
+            document.querySelectorAll('.row-check').forEach(cb => { cb.checked = e.target.checked; });
             actualizarPanelEncargado();
         });
     }
 
-    // Detectar cambios en checkboxes individuales
     document.getElementById('tabla-actividades-body')?.addEventListener('change', (e) => {
-        if (e.target.classList.contains('row-check')) {
-            actualizarPanelEncargado();
-        }
+        if (e.target.classList.contains('row-check')) actualizarPanelEncargado();
     });
 
     btnCerrarX?.addEventListener('click', cerrarModal);
     btnCancelar?.addEventListener('click', cerrarModal);
-};
 
-// ==========================================================================
-// INICIALIZADOR PRINCIPAL
-// ==========================================================================
-document.addEventListener('DOMContentLoaded', () => {
-    // Verificar sesión activa
-    if (localStorage.getItem('sesionActiva') !== 'true') {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    // Cerrar sesión
-    document.getElementById('btnLogOut').addEventListener('click', async (e) => {
+    // Submit del formulario modal (crear o editar)
+    document.getElementById('form-actividad-modal')?.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
-        if (!confirmar) return;
-        localStorage.removeItem('sesionActiva');
-        localStorage.removeItem('sesionEmail');
-        localStorage.removeItem('sesionNombre');
-        localStorage.removeItem('sesionRol');
-        window.location.href = 'login.html';
-    });
-
-    // Nombre y rol en el header
-    document.getElementById('headerUserName').textContent = localStorage.getItem('sesionNombre') || 'Administrador';
-    document.getElementById('headerUserRol').textContent = localStorage.getItem('sesionRol') || '';
-
-    // Poblar selects al inicio
-    poblarSelectEventos();
-    poblarSelectResponsables();
-
-    renderizarTablaActividades();
-    inicializarBuscadorActividades();
-    inicializarToolbarActividades();
-
-    // Submit del formulario del modal
-    document.getElementById('form-actividad-modal')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-
         if (!validarFormularioActividad()) return;
 
         const entradaLibre = document.getElementById('modal-entrada-libre').value === 'libre';
 
-        if (actividadEditandoId) {
-            const index = window.db.actividades.findIndex(act => act.id === actividadEditandoId);
-            if (index !== -1) {
-                window.db.actividades[index].eventoId = document.getElementById('modal-evento').value;
-                window.db.actividades[index].nombre = document.getElementById('modal-nombre').value.trim();
-                window.db.actividades[index].categoria = document.getElementById('modal-categoria').value;
-                window.db.actividades[index].descripcion = document.getElementById('modal-descripcion').value.trim();
-                window.db.actividades[index].fecha = document.getElementById('modal-fecha').value;
-                window.db.actividades[index].horaInicio = document.getElementById('modal-hora-inicio').value;
-                window.db.actividades[index].horaFin = document.getElementById('modal-hora-fin').value;
-                window.db.actividades[index].lugar = document.getElementById('modal-lugar').value.trim();
-                window.db.actividades[index].cupoMaximo = entradaLibre ? 0 : parseInt(document.getElementById('modal-cupo').value, 10);
-                window.db.actividades[index].responsableId = document.getElementById('modal-responsable').value;
-                window.db.actividades[index].visibilidad = document.getElementById('modal-visibilidad').value;
-                window.db.actividades[index].entradaLibre = entradaLibre;
-                window.db.actividades[index].incluyeRefrigerio = document.getElementById('modal-refrigerio').checked;
-            }
-            validaciones.exito('Actividad actualizada', 'La actividad se actualizó con éxito.');
-        } else {
-            const nuevoId = `ACT-${String(window.db.actividades.length + 1).padStart(3, '0')}`;
-            window.db.actividades.push({
-                id: nuevoId,
-                eventoId: document.getElementById('modal-evento').value,
-                nombre: document.getElementById('modal-nombre').value.trim(),
-                categoria: document.getElementById('modal-categoria').value,
-                descripcion: document.getElementById('modal-descripcion').value.trim(),
-                fecha: document.getElementById('modal-fecha').value,
-                horaInicio: document.getElementById('modal-hora-inicio').value,
-                horaFin: document.getElementById('modal-hora-fin').value,
-                lugar: document.getElementById('modal-lugar').value.trim(),
-                cupoMaximo: entradaLibre ? 0 : parseInt(document.getElementById('modal-cupo').value, 10),
-                cupoOcupado: 0,
-                responsableId: document.getElementById('modal-responsable').value,
-                estado: 'Disponible',
-                visibilidad: document.getElementById('modal-visibilidad').value,
-                entradaLibre: entradaLibre,
-                incluyeRefrigerio: document.getElementById('modal-refrigerio').checked
-            });
-            validaciones.exito('Actividad registrada', 'La actividad se registró con éxito.');
-        }
+        const datos = {
+            eventoId: document.getElementById('modal-evento').value,
+            nombre: document.getElementById('modal-nombre').value.trim(),
+            categoria: document.getElementById('modal-categoria').value,
+            descripcion: document.getElementById('modal-descripcion').value.trim(),
+            fecha: document.getElementById('modal-fecha').value,
+            horaInicio: document.getElementById('modal-hora-inicio').value,
+            horaFin: document.getElementById('modal-hora-fin').value,
+            lugar: document.getElementById('modal-lugar').value.trim(),
+            cupoMaximo: entradaLibre ? 0 : parseInt(document.getElementById('modal-cupo').value, 10),
+            responsableId: document.getElementById('modal-responsable').value,
+            visibilidad: document.getElementById('modal-visibilidad').value,
+            entradaLibre: entradaLibre,
+            incluyeRefrigerio: document.getElementById('modal-refrigerio').checked
+        };
 
-        renderizarTablaActividades();
-        cerrarModal();
+        try {
+            if (actividadEditandoId) {
+                await apiPut('actividades', actividadEditandoId, datos);
+                validaciones.exito('Actividad actualizada', 'La actividad se actualizó con éxito.');
+            } else {
+                await apiPost('actividades', datos);
+                validaciones.exito('Actividad registrada', 'La actividad se registró con éxito.');
+            }
+            await cargarActividades();
+            renderizarTablaActividades();
+            cerrarModal();
+        } catch (error) {
+            // apiPost/apiPut ya muestra el error (409 conflicto horario, 400 validación, etc.)
+        }
     });
 });
