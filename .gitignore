@@ -10,6 +10,12 @@ node_modules/
 # Kiro IDE configuration
 .kiro/
 
+# Claude Code configuration
+.claude/
+
+# Documentos internos del equipo (no entregables)
+docs/
+
 # Logs
 logs/
 *.log
