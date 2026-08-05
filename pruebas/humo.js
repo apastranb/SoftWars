@@ -297,6 +297,23 @@ function check(nombre, condicion, detalle='') {
     r = await api.post('/api/asistente/descripcion').send({ texto: 'texto largo' });
     check('Recorta si el modelo se pasa del límite', r.body.descripcion.length <= 200, `largo=${r.body.descripcion.length}`);
 
+    // Los modelos flash razonan antes de responder y esos "thoughts" gastan el
+    // mismo presupuesto de tokens. Si se agota, Google devuelve la frase cortada
+    // a media palabra con finishReason MAX_TOKENS: hay que rechazarla, no
+    // entregarla como si fuera una descripción buena.
+    global.fetch = async () => ({
+        ok: true, status: 200,
+        json: async () => ({
+            candidates: [{
+                finishReason: 'MAX_TOKENS',
+                content: { parts: [{ text: 'El campus universitario acogerá una feria de empleo especializada' }] }
+            }]
+        })
+    });
+    r = await api.post('/api/asistente/descripcion').send({ texto: 'texto de prueba' });
+    check('Respuesta truncada (MAX_TOKENS) → 502', r.status === 502, `status=${r.status}`);
+    check('No entrega la frase incompleta', !/feria de empleo especializada/.test(JSON.stringify(r.body)), JSON.stringify(r.body));
+
     // Cuota agotada en Google → 502 con mensaje entendible, no un 500 crudo.
     global.fetch = async () => ({
         ok: false, status: 429,

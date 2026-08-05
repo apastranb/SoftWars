@@ -21,7 +21,11 @@ const { errorValidacion } = require('../utils/respuestas');
 const { CATEGORIAS_ACTIVIDAD } = require('../utils/catalogos');
 const v = require('../utils/validaciones.server');
 
-const MODELO = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+// `gemini-flash-latest` es un alias que Google resuelve al modelo flash vigente.
+// Se prefiere sobre una versión fija como `gemini-2.0-flash` porque los modelos
+// con número concreto pueden quedar con cuota 0 en el nivel gratuito, mientras
+// que el alias sigue apuntando a uno con asignación disponible.
+const MODELO = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 const URL_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 /** Límite del ERS para descripciones: la IA no puede devolver algo más largo. */
@@ -135,7 +139,13 @@ async function mejorarDescripcion(req, res) {
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
                     temperature: 0.7,
-                    maxOutputTokens: 256
+                    // Los modelos flash actuales razonan antes de responder, y esos
+                    // "thoughts" consumen el mismo presupuesto que la respuesta.
+                    // Con 256 el modelo gastaba ~241 tokens pensando y devolvía la
+                    // frase cortada a media palabra (finishReason MAX_TOKENS).
+                    // La descripción final ocupa ~30 tokens; el resto es margen
+                    // para el razonamiento.
+                    maxOutputTokens: 2048
                 }
             }),
             signal: control.signal
@@ -173,6 +183,19 @@ async function mejorarDescripcion(req, res) {
         return res.status(502).json({
             error: true,
             mensaje: 'El asistente no devolvió una descripción utilizable. Intente reformular el texto.',
+            codigo: 502
+        });
+    }
+
+    // Si el modelo se quedó sin presupuesto de tokens, la frase llega cortada a
+    // media palabra. Es preferible avisar que ofrecer un texto incompleto como si
+    // fuera bueno: el administrador lo pegaría en el evento sin darse cuenta.
+    const razonFin = datos.candidates && datos.candidates[0] && datos.candidates[0].finishReason;
+    if (razonFin === 'MAX_TOKENS') {
+        console.error('[asistente] Respuesta truncada por MAX_TOKENS. Subir maxOutputTokens.');
+        return res.status(502).json({
+            error: true,
+            mensaje: 'El asistente devolvió una respuesta incompleta. Intente de nuevo con un texto más corto.',
             codigo: 502
         });
     }
