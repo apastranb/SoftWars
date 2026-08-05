@@ -64,169 +64,184 @@
 
         <main class="admin-page-content">
 
-            <!-- Barra de herramientas de presentadores -->
-            <section class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <div class="d-flex flex-wrap gap-2">
-                    <select class="form-select form-select-sm w-auto" id="filterEstado">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filterEstado">
                         <option value="">Estado</option>
                         <option value="Activo">Activo</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
-                    <input type="date" class="form-control form-control-sm w-auto" id="filterFechaOrador" />
+                    <input type="date" class="filter-select" id="filterFechaOrador" />
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <button class="btn btn-outline-secondary btn-sm" id="btnEditarOrador">
-                        <i class="bi bi-pencil"></i> Editar
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm" id="btnEliminarOrador">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </button>
-                    <button class="btn btn-primary btn-sm" id="btnCrearOrador">
+                <div class="admin-toolbar__actions">
+                    <button class="eventsAdminBtnSecondary" id="btnEditarOrador">Editar</button>
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarOrador">Eliminar</button>
+                    <button class="eventsAdminBtnPrimary" id="btnCrearOrador">
                         <i class="bi bi-plus-lg"></i> Crear Presentador
                     </button>
                 </div>
             </section>
 
-            <section class="table-responsive mb-4">
-                <table class="table table-hover table-sm align-middle" id="tabla-oradores">
-                    <thead class="table-light">
+            <section class="admin-table-wrapper admin-table-scroll">
+                <table class="admin-table" id="tabla-oradores">
+                    <thead>
                         <tr>
-                            <th scope="col"><input type="checkbox" class="form-check-input" id="selectAll" title="Seleccionar todos"></th>
-                            <th scope="col">Fecha Registro</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Teléfonos</th>
-                            <th scope="col">Especialidad</th>
-                            <th scope="col">Organización</th>
-                            <th scope="col">Estado</th>
+                            <th><input type="checkbox" id="selectAll" title="Seleccionar todos"></th>
+                            <th>Fecha Registro</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfonos</th>
+                            <th>Especialidad</th>
+                            <th>Organización</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="adminOradoresTableBody">
                         <!-- Renderizado por admin-oradores-logic.js desde /api/oradores -->
                     </tbody>
                 </table>
-                <p class="text-center text-muted py-3 d-none" id="tabla-vacia">No se encontraron presentadores.</p>
+                <p class="tabla-vacia oculto" id="tabla-vacia">No se encontraron presentadores.</p>
             </section>
 
             <!-- POSTULACIONES DE PRESENTADORES (HU-10) -->
-            <div class="postulaciones-header mb-3">
-                <h2 class="h5 mb-0"><i class="bi bi-person-raised-hand"></i> Postulaciones de presentadores</h2>
+            <div class="postulaciones-header">
+                <h2><i class="bi bi-person-raised-hand"></i> Postulaciones de presentadores</h2>
             </div>
 
-            <section class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <div class="d-flex flex-wrap gap-2">
-                    <select class="form-select form-select-sm w-auto" id="filterEstadoPostulacion">
+            <section class="admin-toolbar">
+                <div class="admin-toolbar__filters">
+                    <select class="filter-select" id="filterEstadoPostulacion">
                         <option value="">Estado</option>
                         <option value="Pendiente">Pendiente</option>
                         <option value="Aprobada">Aprobada</option>
                         <option value="Rechazada">Rechazada</option>
                     </select>
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <button class="btn btn-outline-danger btn-sm" id="btnEliminarPostulacion">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </button>
-                    <button class="btn btn-outline-warning btn-sm" id="btnRechazarPostulacion">
-                        <i class="bi bi-x-lg"></i> Rechazar
-                    </button>
-                    <button class="btn btn-success btn-sm" id="btnAprobarPostulacion">
+                <div class="admin-toolbar__actions">
+                    <button class="eventsAdminBtnSecondary btnDelete" id="btnEliminarPostulacion">Eliminar</button>
+                    <button class="eventsAdminBtnSecondary" id="btnRechazarPostulacion">Rechazar</button>
+                    <button class="eventsAdminBtnPrimary" id="btnAprobarPostulacion">
                         <i class="bi bi-check-lg"></i> Aprobar
                     </button>
                 </div>
             </section>
 
-            <section class="table-responsive">
-                <table class="table table-hover table-sm align-middle" id="tabla-postulaciones">
-                    <thead class="table-light">
+            <section class="admin-table-wrapper admin-table-scroll">
+                <table class="admin-table" id="tabla-postulaciones">
+                    <thead>
                         <tr>
-                            <th scope="col"><input type="checkbox" class="form-check-input" id="selectAllPostulaciones" title="Seleccionar todos"></th>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Especialidad</th>
-                            <th scope="col">Actividad</th>
-                            <th scope="col">Estado</th>
+                            <th><input type="checkbox" id="selectAllPostulaciones" title="Seleccionar todos"></th>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Especialidad</th>
+                            <th>Actividad</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="adminPostulacionesTableBody">
                         <!-- Renderizado por admin-oradores-logic.js desde /api/postulaciones -->
                     </tbody>
                 </table>
-                <p class="text-center text-muted py-3 d-none" id="tabla-vacia-postulaciones">No hay postulaciones registradas.</p>
+                <p class="tabla-vacia oculto" id="tabla-vacia-postulaciones">No hay postulaciones registradas.</p>
             </section>
 
         </main>
     </div>
 
-    <!-- MODAL REGISTRAR / EDITAR PRESENTADOR -->
+    <!-- MODAL REGISTRAR / EDITAR PRESENTADOR
+         Se conserva el chasis de Bootstrap (fondo, cierre con Escape, foco
+         atrapado, scroll interno) porque es una mejora funcional sobre el modal
+         casero. Los campos de adentro usan las clases propias del proyecto
+         (.modal-field, .filter-select, .modal-btn-*) para que se vea igual que
+         el resto del panel. -->
     <div class="modal fade" id="modalCrearOrador" tabindex="-1" aria-labelledby="modalOradorTitulo" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title h5" id="modalOradorTitulo">Registrar Presentador</h2>
+                    <h2 class="modal-title" id="modalOradorTitulo">Registrar Presentador</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Rejilla de Bootstrap: dos columnas en escritorio, una en móvil -->
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label" for="inputEventoOrador">Evento al que pertenece</label>
-                            <select id="inputEventoOrador" class="form-select">
-                                <option value="">Seleccionar evento...</option>
-                            </select>
-                            <span class="form__error-message" id="error-inputEventoOrador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputNombreOrador">Nombre Completo</label>
-                            <input type="text" class="form-control" id="inputNombreOrador" placeholder="Nombre del presentador">
-                            <span class="form__error-message" id="error-inputNombreOrador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputCorreoOrador">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="inputCorreoOrador" placeholder="correo@ejemplo.com">
-                            <span class="form__error-message" id="error-inputCorreoOrador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputTelefonoOrador">Teléfono Principal</label>
-                            <input type="text" class="form-control" id="inputTelefonoOrador" placeholder="8888-8888">
-                            <span class="form__error-message" id="error-inputTelefonoOrador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputTelefono2Orador">
-                                Teléfono Secundario <span class="text-muted small">(opcional)</span>
-                            </label>
-                            <input type="text" class="form-control" id="inputTelefono2Orador" placeholder="7777-7777">
-                            <span class="form__error-message" id="error-inputTelefono2Orador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputEspecialidadOrador">Área / Especialidad</label>
-                            <input type="text" class="form-control" id="inputEspecialidadOrador" placeholder="Ej. Ingeniería de Software">
-                            <span class="form__error-message" id="error-inputEspecialidadOrador"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="inputEmpresaOrador">Institución u Organización</label>
-                            <input type="text" class="form-control" id="inputEmpresaOrador" placeholder="Nombre de la institución o empresa">
-                            <span class="form__error-message" id="error-inputEmpresaOrador"></span>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label" for="inputBiografiaOrador">Biografía</label>
-                            <textarea class="form-control" id="inputBiografiaOrador" rows="3" maxlength="200"
-                                      placeholder="Breve descripción del presentador (máx. 200 caracteres)"></textarea>
-                            <span class="form__error-message" id="error-inputBiografiaOrador"></span>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Fotografía</label>
-                            <div class="d-flex align-items-center gap-3">
-                                <img id="fotoPreview" src="../img/img-placeholder.png" alt="Vista previa"
-                                     class="rounded border" width="72" height="72" style="object-fit: cover;">
-                                <input type="file" class="form-control" id="inputFotoOrador" accept="image/*">
+                            <div class="modal-field">
+                                <label for="inputEventoOrador">Evento al que pertenece</label>
+                                <select id="inputEventoOrador" class="filter-select modal-select-full">
+                                    <option value="">Seleccionar evento...</option>
+                                </select>
+                                <span class="form__error-message" id="error-inputEventoOrador"></span>
                             </div>
-                            <span class="form__error-message" id="error-inputFotoOrador"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputNombreOrador">Nombre Completo</label>
+                                <input type="text" id="inputNombreOrador" placeholder="Nombre del presentador">
+                                <span class="form__error-message" id="error-inputNombreOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputCorreoOrador">Correo Electrónico</label>
+                                <input type="email" id="inputCorreoOrador" placeholder="correo@ejemplo.com">
+                                <span class="form__error-message" id="error-inputCorreoOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputTelefonoOrador">Teléfono Principal</label>
+                                <input type="text" id="inputTelefonoOrador" placeholder="8888-8888">
+                                <span class="form__error-message" id="error-inputTelefonoOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputTelefono2Orador">Teléfono Secundario <span class="field-hint">(opcional)</span></label>
+                                <input type="text" id="inputTelefono2Orador" placeholder="7777-7777">
+                                <span class="form__error-message" id="error-inputTelefono2Orador"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputEspecialidadOrador">Área / Especialidad</label>
+                                <input type="text" id="inputEspecialidadOrador" placeholder="Ej. Ingeniería de Software">
+                                <span class="form__error-message" id="error-inputEspecialidadOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="modal-field">
+                                <label for="inputEmpresaOrador">Institución u Organización</label>
+                                <input type="text" id="inputEmpresaOrador" placeholder="Nombre de la institución o empresa">
+                                <span class="form__error-message" id="error-inputEmpresaOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="modal-field">
+                                <label for="inputBiografiaOrador">Biografía</label>
+                                <textarea id="inputBiografiaOrador" rows="3" maxlength="200"
+                                          placeholder="Breve descripción del presentador (máx. 200 caracteres)"></textarea>
+                                <span class="form__error-message" id="error-inputBiografiaOrador"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="modal-field">
+                                <label>Fotografía</label>
+                                <div class="foto-upload-area" id="fotoUploadArea">
+                                    <img id="fotoPreview" src="../img/img-placeholder.png" alt="Vista previa" class="orador-foto-preview">
+                                    <label for="inputFotoOrador" class="btn-upload-foto">
+                                        <i class="bi bi-upload"></i> Subir fotografía
+                                    </label>
+                                    <input type="file" id="inputFotoOrador" accept="image/*" class="file-input-hidden">
+                                </div>
+                                <span class="form__error-message" id="error-inputFotoOrador"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnGuardarOrador">Registrar</button>
+                    <button type="button" class="modal-btn-cancelar" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="modal-btn-registrar" id="btnGuardarOrador">Registrar</button>
                 </div>
             </div>
         </div>

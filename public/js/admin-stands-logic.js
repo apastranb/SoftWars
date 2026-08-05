@@ -174,22 +174,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderTabla() {
         tbody.innerHTML = '';
-        tablaVacia.classList.toggle('d-none', stands.length > 0);
+        tablaVacia.classList.toggle('oculto', stands.length > 0);
 
         stands.forEach(s => {
             const aprobado = esValor(s.estado, 'aprobado');
+            // estado-aprobado / estado-cerrado las colorea admin-layout.css.
+            const claseEstado = aprobado ? 'estado-aprobado' : 'estado-cerrado';
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="checkbox" class="form-check-input row-check" data-id="${escaparHtml(s._id)}"></td>
-                <td><span class="badge text-bg-secondary">${escaparHtml(s.codigo)}</span></td>
+                <td><input type="checkbox" class="row-check" data-id="${escaparHtml(s._id)}"></td>
+                <td>${escaparHtml(s.codigo)}</td>
                 <td>${escaparHtml(s.nombre)}</td>
-                <td class="text-capitalize">${escaparHtml(s.categoria)}</td>
+                <td>${escaparHtml(s.categoria)}</td>
                 <td>${escaparHtml(s.encargado)}</td>
                 <td>${escaparHtml(s.empresa)}</td>
                 <td>${escaparHtml(s.correo)}</td>
                 <td>${escaparHtml(s.telefono)}</td>
                 <td>
-                    <select class="form-select form-select-sm tableSelectStatus" data-id="${escaparHtml(s._id)}">
+                    <select class="tableSelectStatus ${claseEstado}" data-id="${escaparHtml(s._id)}">
                         <option value="Aprobado" ${aprobado  ? 'selected' : ''}>Aprobado</option>
                         <option value="Cerrado"  ${!aprobado ? 'selected' : ''}>Cerrado</option>
                     </select>
@@ -229,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function aplicarBloqueoRf16(esEdicion) {
         inputCorreo.disabled = esEdicion;
         inputEvento.disabled = esEdicion;
-        avisoCorreoRf16.classList.toggle('d-none', !esEdicion);
+        avisoCorreoRf16.classList.toggle('oculto', !esEdicion);
     }
 
     async function guardarStand() {

@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderTabla() {
         tbody.innerHTML = '';
-        tablaVacia.classList.toggle('d-none', oradores.length > 0);
+        tablaVacia.classList.toggle('oculto', oradores.length > 0);
 
         oradores.forEach(o => {
             const activo = esEstado(o.estado, 'activo');
@@ -208,11 +208,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             // RF-13: si tiene actividades vigentes se marca la fila y se avisa
             // en el propio <td>, para que el bloqueo no sorprenda al confirmar.
             const avisoRf13 = o.puedeEditarse === false
-                ? ' <i class="bi bi-lock-fill text-warning" title="Tiene actividades activas: no se puede editar ni eliminar (RF-13)"></i>'
+                ? ' <i class="bi bi-lock-fill" title="Tiene actividades activas: no se puede editar ni eliminar (RF-13)"></i>'
                 : '';
 
+            // estado-activo / estado-inactivo las colorea admin-layout.css.
+            const claseEstado = activo ? 'estado-activo' : 'estado-inactivo';
+
             tr.innerHTML = `
-                <td><input type="checkbox" class="form-check-input row-check" data-id="${escaparHtml(o._id)}"></td>
+                <td><input type="checkbox" class="row-check" data-id="${escaparHtml(o._id)}"></td>
                 <td>${formatearFecha(o.fechaRegistro)}</td>
                 <td>${escaparHtml(o.nombre)}${avisoRf13}</td>
                 <td>${escaparHtml(o.correo)}</td>
@@ -220,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td>${escaparHtml(o.especialidad)}</td>
                 <td>${escaparHtml(o.empresa)}</td>
                 <td>
-                    <select class="form-select form-select-sm tableSelectStatus" data-id="${escaparHtml(o._id)}">
+                    <select class="tableSelectStatus ${claseEstado}" data-id="${escaparHtml(o._id)}">
                         <option value="Activo"   ${activo  ? 'selected' : ''}>Activo</option>
                         <option value="Inactivo" ${!activo ? 'selected' : ''}>Inactivo</option>
                     </select>
@@ -338,21 +341,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPostulaciones();
     }
 
+    /**
+     * Devuelve la etiqueta de estado con las clases propias del proyecto.
+     * `inactivo` es el modificador rojo de admin-layout.css; se reutiliza para
+     * "Rechazada" en lugar de agregar un selector nuevo al CSS compartido.
+     */
     function badgeEstadoPostulacion(estado) {
-        const clase = esEstado(estado, 'aprobada')  ? 'text-bg-success'
-                    : esEstado(estado, 'rechazada') ? 'text-bg-danger'
-                    : 'text-bg-warning';
-        return `<span class="badge ${clase}">${escaparHtml(estado)}</span>`;
+        const clase = esEstado(estado, 'aprobada')  ? 'aprobado'
+                    : esEstado(estado, 'rechazada') ? 'inactivo'
+                    : 'pendiente';
+        return `<span class="status-badge ${clase}">${escaparHtml(estado)}</span>`;
     }
 
     function renderPostulaciones() {
         tbodyPostulaciones.innerHTML = '';
-        tablaVaciaPost.classList.toggle('d-none', postulaciones.length > 0);
+        tablaVaciaPost.classList.toggle('oculto', postulaciones.length > 0);
 
         postulaciones.forEach(p => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="checkbox" class="form-check-input row-check-post" data-id="${escaparHtml(p._id)}"></td>
+                <td><input type="checkbox" class="row-check-post" data-id="${escaparHtml(p._id)}"></td>
                 <td>${formatearFecha(p.fechaPostulacion)}</td>
                 <td>${escaparHtml(p.nombre)}</td>
                 <td>${escaparHtml(p.correo)}</td>
