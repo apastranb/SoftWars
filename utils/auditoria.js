@@ -79,4 +79,46 @@ function auditoriaMiddleware(req, res, next) {
     next();
 }
 
-module.exports = { sellarAuditoria, sellarActualizacion, auditoriaMiddleware };
+// ==========================================================================
+// ADAPTADORES PARA LOS CONTROLLERS DE EVENTOS Y ACTIVIDADES
+//
+// eventos.controller.js y actividades.controller.js (Carlos, SW-9 y SW-13)
+// llaman a `aplicarAuditoria(documento, req, opciones)` y
+// `aplicarAuditoriaSet(campos, req)`, que devuelven el documento YA fusionado
+// con los campos de auditoría, en vez de solo los campos sueltos.
+//
+// Esos nombres nunca existieron en este archivo, así que las cuatro
+// operaciones que los usaban (crear y editar evento, crear y editar
+// actividad) respondían HTTP 500 con "aplicarAuditoria is not a function".
+// Se agregan aquí como envoltorios de las funciones originales para no tener
+// que modificar los dos controllers.
+// ==========================================================================
+
+/**
+ * Devuelve el documento con los campos de auditoría de creación incorporados.
+ * @param {object} documento - Campos del documento a insertar.
+ * @param {object} [req] - Petición de Express, para extraer el administrador.
+ * @returns {object} El documento con createdAt, updatedAt y createdBy.
+ */
+function aplicarAuditoria(documento, req) {
+    return { ...documento, ...sellarAuditoria(req) };
+}
+
+/**
+ * Devuelve el objeto de campos con `updatedAt` incorporado, listo para usarse
+ * dentro de un `$set`. No toca createdAt ni createdBy.
+ * @param {object} campos - Campos que se van a actualizar.
+ * @param {object} [req] - Petición de Express.
+ * @returns {object} Los campos más updatedAt.
+ */
+function aplicarAuditoriaSet(campos, req) {
+    return { ...campos, ...sellarActualizacion(req) };
+}
+
+module.exports = {
+    sellarAuditoria,
+    sellarActualizacion,
+    auditoriaMiddleware,
+    aplicarAuditoria,
+    aplicarAuditoriaSet
+};
