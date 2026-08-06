@@ -654,7 +654,7 @@ aside p {
         display: none !important;
     }
 
-    /* Quitar sombras y bordes decorativos para impresión limpia */
+    /* Quitar sombras y bordes decorativos */
     main section {
         box-shadow: none !important;
         border-radius: 0 !important;
@@ -662,30 +662,42 @@ aside p {
         margin-bottom: 1rem !important;
     }
 
-    /* Mostrar portada del evento */
-    .eventCover {
-        max-height: 200px;
-        object-fit: cover;
-    }
-
-    /* Presentadores y stands se ocultan para que solo salga info + agenda */
+    /* Ocultar secciones que no son agenda */
     .eventParticipants,
-    .eventStands {
+    .eventStands,
+    .eventActivities {
         display: none !important;
     }
 
-    /* Tabla de agenda */
-    .agenda-tabla th {
-        background-color: #000 !important;
-        color: #fff !important;
+    /* AGENDA: mostrar TODAS las tablas, ocultar botones de tabs */
+    .eventAgendaDatesTab {
+        display: none !important;
+    }
+
+    .eventAgendaTable,
+    .eventAgendaTable.oculto {
+        display: block !important;
+    }
+
+    .eventAgendaTable table {
+        min-width: unset !important;
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+
+    .eventAgendaTable th {
+        background-color: #e7f2ff !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    .agenda-tabla tbody tr:nth-child(even) {
-        background-color: #f0f0f0 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    .btnExportAgenda {
+        display: none !important;
+    }
+
+    .eventCover {
+        max-height: 150px;
+        object-fit: cover;
     }
 
     body {
