@@ -153,16 +153,17 @@ function abrirModalEditarParticipante(id) {
 
 // ── INICIALIZADOR PRINCIPAL ─────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // Verificar sesión
-    if (localStorage.getItem('sesionActiva') !== 'true') {
+    // Verificar sesión contra el servidor
+    const usuario = await apiSesion();
+    if (!usuario) {
         window.location.href = 'login.html';
         return;
     }
 
-    document.getElementById('headerUserName').textContent = localStorage.getItem('sesionNombre') || 'Administrador';
-    document.getElementById('headerUserRol').textContent  = localStorage.getItem('sesionRol')    || '';
+    document.getElementById('headerUserName').textContent = usuario.nombre || 'Administrador';
+    document.getElementById('headerUserRol').textContent  = usuario.rol    || '';
 
     // Cerrar sesión
     document.getElementById('btnLogOut').addEventListener('click', async (e) => {
