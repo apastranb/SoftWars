@@ -294,6 +294,16 @@ table {
   min-width: 0;
 }
 
+@media (max-width: 575px) {
+  .form-group-row {
+    flex-direction: column;
+  }
+  .form-group-row > .form-group,
+  .form-group-row > .input-group {
+    width: 100%;
+  }
+}
+
 /* Labels */
 .form-group label,
 .input-group label,
