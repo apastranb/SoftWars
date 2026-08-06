@@ -630,42 +630,51 @@ aside p {
 /* ===== ESTILOS DE IMPRESIÓN (RF-18) ===== */
 
 @media print {
-    /* Ocultar todo excepto la agenda */
+    /* Ocultar navegación, sidebar, footer y elementos interactivos */
     nav,
     footer,
     aside,
     .no-print,
     #inscripcion-section,
-    .eventActivities,
-    .eventParticipants,
-    .eventStands,
-    .eventSummary {
+    .btn,
+    button,
+    .navbarSearch {
         display: none !important;
     }
 
-    /* La agenda ocupa toda la página */
-    .col-lg-8 {
+    /* La columna principal ocupa toda la página */
+    .col-lg-8,
+    .col-12 {
         width: 100% !important;
         max-width: 100% !important;
+        flex: none !important;
     }
 
-    .eventAgenda {
+    .col-lg-4 {
+        display: none !important;
+    }
+
+    /* Quitar sombras y bordes decorativos para impresión limpia */
+    main section {
         box-shadow: none !important;
-        padding: 0 !important;
+        border-radius: 0 !important;
+        padding: 1rem 0 !important;
+        margin-bottom: 1rem !important;
     }
 
-    /* Encabezado con nombre del evento para el PDF */
-    .eventAgenda::before {
-        content: "Agenda del Evento";
-        display: block;
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: #000;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #000;
-        padding-bottom: 0.5rem;
+    /* Mostrar portada del evento */
+    .eventCover {
+        max-height: 200px;
+        object-fit: cover;
     }
 
+    /* Presentadores y stands se ocultan para que solo salga info + agenda */
+    .eventParticipants,
+    .eventStands {
+        display: none !important;
+    }
+
+    /* Tabla de agenda */
     .agenda-tabla th {
         background-color: #000 !important;
         color: #fff !important;
@@ -681,5 +690,10 @@ aside p {
 
     body {
         font-size: 11pt;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
     }
 }
