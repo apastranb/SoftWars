@@ -14,8 +14,7 @@ const capitalizarTexto = (texto) => {
 
 // Cargar eventos desde la API con filtros
 const cargarEventos = async () => {
-    const busqueda = document.getElementById('searchInput').value.trim()
-        || document.getElementById('searchInputHero').value.trim();
+    const busqueda = document.getElementById('searchInputHero').value.trim();
     const categoria = document.getElementById('categoryFilter').value;
     const fecha = document.getElementById('dateFilter').value;
 
@@ -108,7 +107,7 @@ const renderConDebounce = () => {
 document.addEventListener('DOMContentLoaded', () => {
     renderizarEventos(true);
 
-    // Inicializar navbar search dropdown
+    // En index el navbar search muestra dropdown con links (igual que las otras páginas)
     if (validaciones && validaciones.inicializarNavbarSearch) {
         validaciones.inicializarNavbarSearch('pages/');
     }
@@ -116,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Filtros
     document.getElementById('filterButton').addEventListener('click', () => renderizarEventos(true));
     document.getElementById('clearFiltersButton').addEventListener('click', () => {
-        document.getElementById('searchInput').value = '';
         document.getElementById('searchInputHero').value = '';
         document.getElementById('categoryFilter').value = '';
         document.getElementById('dateFilter').value = '';
@@ -125,10 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('categoryFilter').addEventListener('change', () => renderizarEventos(true));
     document.getElementById('dateFilter').addEventListener('change', () => renderizarEventos(true));
 
-    // Busqueda con debounce
-    document.getElementById('searchInput').addEventListener('input', renderConDebounce);
+    // Busqueda con debounce (solo hero search filtra cards)
     document.getElementById('searchInputHero').addEventListener('input', renderConDebounce);
-    document.getElementById('searchButtonIndex')?.addEventListener('click', () => renderizarEventos(true));
     document.getElementById('searchButtonHero')?.addEventListener('click', () => renderizarEventos(true));
 
     // Cargar mas
