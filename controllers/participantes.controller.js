@@ -102,7 +102,7 @@ async function editarParticipante(req, res, next) {
 }
 
 // ── DELETE /api/participantes/:id ───────────────────────────────────────
-// Elimina un participante (baja lógica: cambia estado a Cancelado).
+// Elimina un participante y libera el cupo de sus actividades.
 
 async function eliminarParticipante(req, res, next) {
     try {
@@ -121,12 +121,6 @@ async function eliminarParticipante(req, res, next) {
             return res.status(404).json({ error: true, mensaje: 'Participante no encontrado.' });
         }
 
-        // Baja lógica: marcar como Cancelado
-        await db.collection('participantes').updateOne(
-            { _id },
-            { $set: { estado: 'Cancelado', updatedAt: new Date() } }
-        );
-
         // Decrementar cupoOcupado en cada actividad inscrita
         if (participante.actividades && participante.actividades.length > 0) {
             await db.collection('actividades').updateMany(
@@ -134,6 +128,9 @@ async function eliminarParticipante(req, res, next) {
                 { $inc: { cupoOcupado: -1 } }
             );
         }
+
+        // Eliminación real del documento
+        await db.collection('participantes').deleteOne({ _id });
 
         return res.status(200).json({ error: false, mensaje: 'Participante eliminado correctamente.' });
 

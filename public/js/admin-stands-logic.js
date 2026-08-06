@@ -230,7 +230,6 @@ document.addEventListener('DOMContentLoaded', async () => {
      */
     function aplicarBloqueoRf16(esEdicion) {
         inputCorreo.disabled = esEdicion;
-        inputEvento.disabled = esEdicion;
         avisoCorreoRf16.classList.toggle('oculto', !esEdicion);
     }
 
