@@ -17,16 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Cargar info de actividad desde URL params ────────────────────────────
     const params = new URLSearchParams(window.location.search);
-    const actividadId = params.get('actividad');
-    let nombreActividad = 'Actividad no especificada';
+    const actividadesParam = params.get('actividades');
+    const nombreParam      = params.get('nombre');
 
-    if (actividadId && window.db && window.db.actividades) {
-        const actividad = window.db.actividades.find(a => a.id === actividadId);
-        if (actividad) {
-            nombreActividad = actividad.nombre;
-        }
-    }
+    let nombreActividad = actividadesParam || 'Actividad no especificada';
     actividadNombre.textContent = nombreActividad;
+
+    // Si viene el nombre del titular desde la inscripción, pre-llenarlo
+    if (nombreParam) {
+        inputNombre.value = nombreParam;
+    }
 
     // ── Filtro en tiempo real: solo dígitos, máx 16, con espacios cada 4 ───
     inputTarjeta.addEventListener('input', () => {

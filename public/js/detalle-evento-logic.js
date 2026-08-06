@@ -365,9 +365,17 @@ const validarInscripcion = async (e) => {
         };
 
         try {
-            await apiPost('inscripciones', datos);
-            validaciones.exito('Inscripción exitosa', 'Te has inscrito correctamente al evento.');
-            document.getElementById('inscribirVisitante').reset();
+            const resultado = await apiPost('inscripciones', datos);
+
+            // Si el evento es de pago, redirigir a la página de pago
+            const eventoActual = window._eventoActual;
+            if (eventoActual && (eventoActual.tipoEntrada === 'pago' && !eventoActual.entradaLibre)) {
+                const actNombres = actividadesSeleccionadas.join(',');
+                window.location.href = `pago.html?actividades=${encodeURIComponent(actNombres)}&nombre=${encodeURIComponent(datos.nombreCompleto)}`;
+            } else {
+                validaciones.exito('Inscripción exitosa', 'Te has inscrito correctamente al evento.');
+                document.getElementById('inscribirVisitante').reset();
+            }
         } catch (error) {
             // apiPost ya muestra el error con SweetAlert2 (409 duplicado, 400 validación, etc.)
         }
@@ -398,6 +406,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const actividades = evento.actividades || [];
         const oradores = evento.oradores || [];
         const stands = evento.stands || [];
+
+        // Guardar referencia global al evento para la redirección a pago
+        window._eventoActual = evento;
 
         renderizarEvento(evento);
         renderizarActividades(actividades);
