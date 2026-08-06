@@ -82,7 +82,6 @@ async function renderizarTablaParticipantes() {
             const fecha = p.fechaInscripcion
                 ? new Date(p.fechaInscripcion).toLocaleDateString('es-CR')
                 : '—';
-            const badgeClass = p.estado === 'Activo' ? 'badge-active' : 'badge-inactive';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -95,13 +94,35 @@ async function renderizarTablaParticipantes() {
                 <td>${p.edad}</td>
                 <td>${p.carrera || '—'}</td>
                 <td>${actividades}</td>
-                <td><span class="badge ${badgeClass}">${p.estado}</span></td>
+                <td>
+                    <select class="tableSelectStatus ${p.estado === 'Activo' ? 'estado-activo' : 'estado-inactivo'}" data-id="${p._id}">
+                        <option value="Activo" ${p.estado === 'Activo' ? 'selected' : ''}>Activo</option>
+                        <option value="Cancelado" ${p.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                    </select>
+                </td>
                 <td>${fecha}</td>
             `;
             tbody.appendChild(tr);
         });
 
         document.getElementById('selectAll').checked = false;
+
+        // Cambio de estado directo (consistente con admin-eventos, admin-actividades)
+        tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
+            select.addEventListener('change', async (e) => {
+                const id = e.target.dataset.id;
+                const nuevoEstado = e.target.value;
+                try {
+                    await apiPut(`/api/participantes/${id}`, { estado: nuevoEstado });
+                    // Actualizar clase de color
+                    e.target.classList.remove('estado-activo', 'estado-inactivo');
+                    e.target.classList.add(nuevoEstado === 'Activo' ? 'estado-activo' : 'estado-inactivo');
+                    validaciones.exito('Estado actualizado', `El participante se marcó como "${nuevoEstado}".`);
+                } catch (error) {
+                    e.target.value = nuevoEstado === 'Activo' ? 'Cancelado' : 'Activo';
+                }
+            });
+        });
 
     } catch (err) {
         console.error('Error cargando participantes:', err);

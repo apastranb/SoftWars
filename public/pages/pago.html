@@ -24,9 +24,9 @@
 
                 <h2 class="pago-titulo text-center mb-4">Datos de Pago</h2>
 
-                <!-- Actividad -->
+                <!-- Evento / Actividad -->
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Actividad:</label>
+                    <label class="form-label fw-semibold" id="pagoLabel">Evento:</label>
                     <p id="pagoActividadNombre" class="pago-info-text mb-0">—</p>
                 </div>
 
@@ -90,8 +90,8 @@
 
                 <!-- Botones -->
                 <div class="d-grid gap-2 mt-4">
-                    <button class="btn btn-primary pago-btn" id="btnConfirmarPago">CONFIRMAR</button>
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary">Cancelar</a>
+                    <button class="btn btn-primary pago-btn" id="btnConfirmarPago">Confirmar pago</button>
+                    <a href="javascript:history.back()" class="btn btn-limpiar">Cancelar</a>
                 </div>
 
             </div>
@@ -100,7 +100,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../js/data-store.js"></script>
     <script src="../js/validaciones.js"></script>
     <script src="../js/pago-logic.js"></script>
 </body>

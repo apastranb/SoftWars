@@ -24,15 +24,14 @@ const renderizarActividades = (actividades) => {
     const container = document.querySelector('.eventActivities');
     if (!container) return;
 
-    const publicas = actividades.filter(a => a.visibilidad === 'publica');
-
-    if (publicas.length === 0) {
-        container.innerHTML = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2><p>No hay actividades publicas para este evento.</p>';
+    // Mostrar todas las actividades del evento (el acceso al detalle ya implica invitación)
+    if (actividades.length === 0) {
+        container.innerHTML = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2><p>No hay actividades disponibles para este evento.</p>';
         return;
     }
 
     let html = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2>';
-    publicas.forEach(act => {
+    actividades.forEach(act => {
         const cupoTexto = act.entradaLibre ? 'Entrada Libre' : `${act.cupoOcupado}/${act.cupoMaximo} cupos`;
         html += `
             <div class="eventActivityCard">
@@ -214,9 +213,8 @@ const renderizarCheckboxesActividades = (actividades) => {
     if (!container) return;
 
     container.innerHTML = '';
-    const publicas = actividades.filter(a => a.visibilidad === 'publica');
 
-    publicas.forEach(act => {
+    actividades.forEach(act => {
         const actId = act._id || act.id || act.codigo;
         if (act.entradaLibre) {
             const div = document.createElement('div');
@@ -361,7 +359,8 @@ const validarInscripcion = async (e) => {
             telefono: document.getElementById('telefonoVisitante').value.trim(),
             edad: parseInt(document.getElementById('edadVisitante').value.trim()),
             carrera: document.getElementById('carreraVisitante').value.trim(),
-            actividades: actividadesSeleccionadas
+            actividades: actividadesSeleccionadas,
+            eventoId: window._eventoActual?._id || window._eventoActual?.id || ''
         };
 
         try {
@@ -371,7 +370,8 @@ const validarInscripcion = async (e) => {
             const eventoActual = window._eventoActual;
             if (eventoActual && (eventoActual.tipoEntrada === 'pago' && !eventoActual.entradaLibre)) {
                 const actNombres = actividadesSeleccionadas.join(',');
-                window.location.href = `pago.html?actividades=${encodeURIComponent(actNombres)}&nombre=${encodeURIComponent(datos.nombreCompleto)}`;
+                const eventoNombre = eventoActual.nombre || '';
+                window.location.href = `pago.html?actividades=${encodeURIComponent(actNombres)}&nombre=${encodeURIComponent(datos.nombreCompleto)}&evento=${encodeURIComponent(eventoNombre)}`;
             } else {
                 validaciones.exito('Inscripción exitosa', 'Te has inscrito correctamente al evento.');
                 document.getElementById('inscribirVisitante').reset();

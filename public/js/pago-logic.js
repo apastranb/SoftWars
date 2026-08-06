@@ -15,13 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const errVencimiento  = document.getElementById('errorVencimiento');
     const errCVV          = document.getElementById('errorCVV');
 
-    // ── Cargar info de actividad desde URL params ────────────────────────────
+    // ── Cargar info desde URL params ────────────────────────────────────────
     const params = new URLSearchParams(window.location.search);
     const actividadesParam = params.get('actividades');
     const nombreParam      = params.get('nombre');
+    const eventoNombre     = params.get('evento');
+    const pagoLabel        = document.getElementById('pagoLabel');
 
-    let nombreActividad = actividadesParam || 'Actividad no especificada';
-    actividadNombre.textContent = nombreActividad;
+    if (actividadesParam && actividadesParam.trim()) {
+        // Tiene actividades seleccionadas
+        if (pagoLabel) pagoLabel.textContent = 'Actividad(es):';
+        actividadNombre.textContent = actividadesParam;
+    } else if (eventoNombre) {
+        // Inscripción general al evento (sin subeventos)
+        if (pagoLabel) pagoLabel.textContent = 'Evento:';
+        actividadNombre.textContent = eventoNombre;
+    } else {
+        if (pagoLabel) pagoLabel.textContent = 'Evento:';
+        actividadNombre.textContent = 'Evento no especificado';
+    }
 
     // Si viene el nombre del titular desde la inscripción, pre-llenarlo
     if (nombreParam) {
@@ -131,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.addEventListener('click', () => {
         if (!validarFormulario()) return;
 
-        validaciones.exito('Pago aprobado', `Actividad: ${nombreActividad}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
+        validaciones.exito('Pago aprobado', `${actividadNombre.textContent}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
         limpiarFormulario();
     });
 

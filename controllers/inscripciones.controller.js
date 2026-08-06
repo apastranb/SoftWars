@@ -32,10 +32,12 @@ async function crearInscripcion(req, res, next) {
     try {
         const campos = filtrarCampos(req.body, [
             'idDocumento', 'nombreCompleto', 'correo',
-            'telefono', 'edad', 'carrera', 'actividadIds', 'metodoPago'
+            'telefono', 'edad', 'carrera', 'actividadIds', 'actividades', 'eventoId', 'metodoPago'
         ]);
 
-        const { idDocumento, nombreCompleto, correo, telefono, edad, carrera, actividadIds, metodoPago } = campos;
+        // El frontend envía 'actividades', el controller acepta ambos nombres
+        const { idDocumento, nombreCompleto, correo, telefono, edad, carrera, metodoPago } = campos;
+        const actividadIds = campos.actividadIds || campos.actividades || [];
 
         // ── Validaciones de campos ──────────────────────────────────────
         const errores = [];
@@ -50,30 +52,48 @@ async function crearInscripcion(req, res, next) {
             errores.push('El teléfono debe tener 8 dígitos.');
         if (!validarEdad(edad))
             errores.push('La edad debe ser un número entre 15 y 120.');
-        if (!actividadIds || !Array.isArray(actividadIds) || actividadIds.length === 0)
-            errores.push('Debe seleccionar al menos una actividad.');
 
         if (errores.length > 0) {
             return res.status(400).json({ error: true, errores });
         }
 
-        // Convertir IDs a ObjectId
-        let idsActividades;
-        try {
-            idsActividades = actividadIds.map(id => new ObjectId(id));
-        } catch {
-            return res.status(400).json({ error: true, mensaje: 'Uno o más IDs de actividad no son válidos.' });
+        // Actividades: obligatorias si el evento tiene subeventos, opcionales si no
+        let idsActividades = [];
+        if (actividadIds && Array.isArray(actividadIds) && actividadIds.length > 0) {
+            try {
+                idsActividades = actividadIds.map(id => new ObjectId(id));
+            } catch {
+                return res.status(400).json({ error: true, mensaje: 'Uno o más IDs de actividad no son válidos.' });
+            }
         }
 
         const db = getDB();
 
-        // ── Cargar actividades seleccionadas ────────────────────────────
-        const actividades = await db.collection('actividades')
-            .find({ _id: { $in: idsActividades } })
-            .toArray();
+        // Verificar si el evento tiene actividades registradas
+        // Si tiene y el usuario no seleccionó ninguna → error
+        if (idsActividades.length === 0) {
+            // Necesitamos saber el eventoId — lo inferimos del body o de las actividades
+            const eventoId = req.body.eventoId;
+            if (eventoId) {
+                let filtroEvento;
+                try { filtroEvento = { eventoId: new ObjectId(eventoId) }; } catch { filtroEvento = { eventoId }; }
+                const totalActividades = await db.collection('actividades').countDocuments(filtroEvento);
+                if (totalActividades > 0) {
+                    return res.status(400).json({ error: true, mensaje: 'Debe seleccionar al menos una actividad.' });
+                }
+            }
+        }
 
-        if (actividades.length !== idsActividades.length) {
-            return res.status(404).json({ error: true, mensaje: 'Una o más actividades no fueron encontradas.' });
+        // ── Cargar actividades seleccionadas (si hay) ───────────────────
+        let actividades = [];
+        if (idsActividades.length > 0) {
+            actividades = await db.collection('actividades')
+                .find({ _id: { $in: idsActividades } })
+                .toArray();
+
+            if (actividades.length !== idsActividades.length) {
+                return res.status(404).json({ error: true, mensaje: 'Una o más actividades no fueron encontradas.' });
+            }
         }
 
         // ── Cargar oradores para verificar responsable ──────────────────
