@@ -265,10 +265,12 @@ const validaciones = {
 validaciones.inicializarNavbarSearch = function(basePath) {
     const input = document.getElementById('searchInput');
     const results = document.getElementById('navSearchResults');
-    if (!input || !results || !window.db) return;
+    if (!input || !results) return;
+
+    let debounceTimer = null;
 
     input.addEventListener('input', () => {
-        const termino = input.value.trim().toLowerCase();
+        const termino = input.value.trim();
 
         if (termino.length < 2) {
             results.classList.remove('active');
@@ -276,28 +278,33 @@ validaciones.inicializarNavbarSearch = function(basePath) {
             return;
         }
 
-        const eventos = window.db.eventos.filter(ev =>
-            ev.visibilidad === 'publico' && (
-                ev.nombre.toLowerCase().includes(termino) ||
-                ev.lugar.toLowerCase().includes(termino) ||
-                ev.categoria.toLowerCase().includes(termino)
-            )
-        ).slice(0, 5);
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async () => {
+            try {
+                const respuesta = await fetch(`/api/eventos?q=${encodeURIComponent(termino)}&visibilidad=publico`);
+                const data = await respuesta.json();
+                const eventos = Array.isArray(data) ? data : (data.data || []);
 
-        if (eventos.length === 0) {
-            results.innerHTML = '<span class="navbar-search-result-item">No se encontraron eventos.</span>';
-            results.classList.add('active');
-            return;
-        }
+                if (eventos.length === 0) {
+                    results.innerHTML = '<span class="navbar-search-result-item">No se encontraron eventos.</span>';
+                    results.classList.add('active');
+                    return;
+                }
 
-        results.innerHTML = eventos.map(ev => {
-            const href = basePath + 'detalle-evento.html?id=' + ev.id;
-            return `<a class="navbar-search-result-item" href="${href}">
-                ${ev.nombre}
-                <small>${ev.fechaInicio} · ${ev.lugar}</small>
-            </a>`;
-        }).join('');
-        results.classList.add('active');
+                results.innerHTML = eventos.slice(0, 5).map(ev => {
+                    const evId = ev._id || ev.id || ev.codigo;
+                    const href = basePath + 'detalle-evento.html?id=' + evId;
+                    return `<a class="navbar-search-result-item" href="${href}">
+                        ${ev.nombre}
+                        <small>${ev.fechaInicio} · ${ev.lugar}</small>
+                    </a>`;
+                }).join('');
+                results.classList.add('active');
+            } catch (error) {
+                results.innerHTML = '<span class="navbar-search-result-item">Error al buscar.</span>';
+                results.classList.add('active');
+            }
+        }, 300);
     });
 
     // Cerrar al hacer click fuera
