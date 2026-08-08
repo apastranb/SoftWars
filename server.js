@@ -10,9 +10,9 @@ require('dotenv').config();
 const express  = require('express');
 const session  = require('express-session');
 
-const { conectarDB, cerrarDB } = require('./config/db');
-const { auditoriaMiddleware }  = require('./utils/auditoria');
-const { manejarError }         = require('./middleware/errores');
+const { conectarDB, cerrarDB } = require('./backend/config/db');
+const { auditoriaMiddleware }  = require('./backend/utils/auditoria');
+const { manejarError }         = require('./backend/middleware/errores');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -21,40 +21,40 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ── Sesiones (SW-10, SW-11) ───────────────────────────────────────────────
+// ── Sesiones ───────────────────────────────────────────────────────────────
 app.use(session({
     secret:            process.env.SESSION_SECRET || 'softwars_secret_dev',
     resave:            false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure:   false,          // cambiar a true en producción con HTTPS
-        maxAge:   1000 * 60 * 60 * 8  // 8 horas
+        secure:   false,
+        maxAge:   1000 * 60 * 60 * 8
     }
 }));
 
-// ── SW-19: Auditoría automática (RF-29) ────────────────────────────────────
+// ── Auditoría automática (RF-29) ───────────────────────────────────────────
 app.use(auditoriaMiddleware);
 
 // ── Archivos estáticos ─────────────────────────────────────────────────────
 app.use(express.static('public'));
 
 // ── Rutas API ──────────────────────────────────────────────────────────────
-app.use('/api/auth',          require('./routes/auth.routes'));
-app.use('/api/eventos',       require('./routes/eventos.routes'));
-app.use('/api/actividades',   require('./routes/actividades.routes'));
-app.use('/api/oradores',      require('./routes/oradores.routes'));
-app.use('/api/stands',        require('./routes/stands.routes'));
-app.use('/api/participantes', require('./routes/participantes.routes'));
-app.use('/api/inscripciones', require('./routes/inscripciones.routes'));
-app.use('/api/postulaciones', require('./routes/postulaciones.routes'));
-app.use('/api/usuarios',      require('./routes/usuarios.routes'));
-app.use('/api/asistente',     require('./routes/asistente.routes'));
+app.use('/api/auth',          require('./backend/routes/auth.routes'));
+app.use('/api/eventos',       require('./backend/routes/eventos.routes'));
+app.use('/api/actividades',   require('./backend/routes/actividades.routes'));
+app.use('/api/oradores',      require('./backend/routes/oradores.routes'));
+app.use('/api/stands',        require('./backend/routes/stands.routes'));
+app.use('/api/participantes', require('./backend/routes/participantes.routes'));
+app.use('/api/inscripciones', require('./backend/routes/inscripciones.routes'));
+app.use('/api/postulaciones', require('./backend/routes/postulaciones.routes'));
+app.use('/api/usuarios',      require('./backend/routes/usuarios.routes'));
+app.use('/api/asistente',     require('./backend/routes/asistente.routes'));
 
 // ── Manejo centralizado de errores ─────────────────────────────────────────
 app.use(manejarError);
 
-// ── Arranque: conectar a MongoDB ANTES de escuchar peticiones ──────────────
+// ── Arranque ───────────────────────────────────────────────────────────────
 async function iniciarServidor() {
     try {
         await conectarDB();

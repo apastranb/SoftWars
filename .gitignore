@@ -16,6 +16,9 @@ node_modules/
 # Documentos internos del equipo (no entregables)
 docs/
 
+# Pruebas internas (se agregan al final si se entregan)
+pruebas/
+
 # Logs
 logs/
 *.log
