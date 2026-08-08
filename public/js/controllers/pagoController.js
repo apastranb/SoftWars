@@ -125,8 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnConfirmar.addEventListener('click', () => {
         if (!validarFormulario()) return;
-        validaciones.exito('Pago aprobado', `${actividadNombre.textContent}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`);
-        limpiarFormulario();
+        validaciones.exito('Pago aprobado', `${actividadNombre.textContent}\nTitular: ${inputNombre.value.trim()}\n\nGracias por tu inscripción.`)
+            .then(() => {
+                window.location.href = '../index.html';
+            });
     });
 
     inputTarjeta.addEventListener('input', () => limpiarError(errTarjeta, inputTarjeta));
