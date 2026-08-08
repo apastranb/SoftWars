@@ -584,40 +584,6 @@ aside p {
 
 /* ===== AGENDA (SW-26) ===== */
 
-.agenda-fecha {
-    background-color: var(--blue-100, #e7f2ff);
-    color: var(--blue-800);
-    font-weight: bold;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    margin-bottom: 0.75rem;
-    font-size: 1rem;
-}
-
-.agenda-tabla {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1.5rem;
-    font-size: 0.92rem;
-}
-
-.agenda-tabla th {
-    background-color: var(--blue-800);
-    color: #fff;
-    padding: 8px 12px;
-    text-align: left;
-}
-
-.agenda-tabla td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--gray-200);
-    vertical-align: top;
-}
-
-.agenda-tabla tbody tr:nth-child(even) {
-    background-color: var(--blue-150, #dbeafe);
-}
-
 .badge-refrigerio {
     background-color: #d1fae5;
     color: #065f46;

@@ -71,13 +71,13 @@ const renderizarAgendaSection = async (eventoId) => {
             return;
         }
 
-        const { agenda } = data;
+        const { agenda, evento } = data;
 
         let html = `
             <div class="eventAgendaHeader">
                 <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
-                <button class="btnExportAgenda" id="btnExportAgenda">
-                    <i class="bi bi-download"></i> <span>Exportar Agenda</span>
+                <button class="eventsAdminBtnSecondary btn-exportar-agenda" id="btnExportAgenda">
+                    <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
                 </button>
             </div>
         `;
@@ -127,8 +127,74 @@ const renderizarAgendaSection = async (eventoId) => {
             });
         });
 
+        // Exportar: abre ventana con formato cronograma para imprimir como PDF
         const btnExport = document.getElementById('btnExportAgenda');
-        if (btnExport) btnExport.addEventListener('click', () => window.print());
+        if (btnExport) {
+            btnExport.addEventListener('click', () => {
+                const win = window.open('', '_blank');
+                let contenido = `
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Agenda - ${evento.nombre || 'Evento'}</title>
+                        <style>
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body { font-family: 'Segoe UI', Arial, sans-serif; padding: 2rem; color: #333; }
+                            h1 { font-size: 1.4rem; color: #164a98; margin-bottom: 0.25rem; }
+                            .evento-info { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; border-bottom: 2px solid #164a98; padding-bottom: 1rem; }
+                            .dia-titulo { background: #164a98; color: #fff; padding: 0.5rem 1rem; margin: 1.5rem 0 0.75rem; font-size: 0.95rem; font-weight: bold; }
+                            .agenda-item { display: flex; gap: 1.2rem; padding: 0.8rem 0; border-bottom: 1px solid #e5e7eb; }
+                            .agenda-item:last-child { border-bottom: none; }
+                            .hora { flex: 0 0 90px; font-weight: bold; color: #164a98; font-size: 0.95rem; }
+                            .hora small { display: block; font-weight: normal; color: #999; font-size: 0.75rem; }
+                            .info { flex: 1; }
+                            .info h3 { font-size: 0.95rem; margin-bottom: 0.2rem; color: #1a1a1a; }
+                            .meta { font-size: 0.82rem; color: #666; margin-bottom: 0.2rem; }
+                            .meta strong { color: #164a98; }
+                            .desc { font-size: 0.82rem; color: #888; margin-top: 0.2rem; }
+                            .badge-cat { background: #e7f2ff; color: #164a98; padding: 1px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; }
+                            .badge-ref { background: #d1fae5; color: #065f46; padding: 1px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; margin-left: 0.5rem; }
+                            @media print { body { padding: 1rem; } }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>${evento.nombre || 'Agenda del Evento'}</h1>
+                        <p class="evento-info">${evento.lugar || ''} · ${evento.fechaInicio || ''} al ${evento.fechaFin || ''} · ${evento.horaInicio || ''} - ${evento.horaFin || ''}</p>
+                `;
+
+                agenda.forEach(dia => {
+                    contenido += `<div class="dia-titulo">${dia.fecha}</div>`;
+                    dia.actividades.forEach(act => {
+                        let duracion = '';
+                        if (act.horaInicio && act.horaFin) {
+                            const [h1,m1] = act.horaInicio.split(':').map(Number);
+                            const [h2,m2] = act.horaFin.split(':').map(Number);
+                            const mins = (h2*60+m2)-(h1*60+m1);
+                            duracion = mins >= 60 ? Math.floor(mins/60)+'h '+(mins%60>0?mins%60+'min':'') : mins+' min';
+                        }
+                        contenido += `
+                            <div class="agenda-item">
+                                <div class="hora">${act.horaInicio}<small>${duracion}</small></div>
+                                <div class="info">
+                                    <h3>${act.nombre} ${act.categoria ? '<span class="badge-cat">'+act.categoria+'</span>' : ''} ${act.incluyeRefrigerio ? '<span class="badge-ref">☕ Refrigerio</span>' : ''}</h3>
+                                    <p class="meta"><strong>${act.responsableNombre || 'Por confirmar'}</strong>${act.responsableEmpresa && act.responsableEmpresa !== '—' ? ' · '+act.responsableEmpresa : ''} ${act.lugar ? '· '+act.lugar : ''}</p>
+                                    ${act.descripcion ? '<p class="desc">'+act.descripcion+'</p>' : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+
+                contenido += `
+                    <script>window.onload = () => { window.print(); }<\/script>
+                    </body></html>
+                `;
+
+                win.document.write(contenido);
+                win.document.close();
+            });
+        }
 
     } catch (err) {
         console.error('Error cargando agenda:', err);
