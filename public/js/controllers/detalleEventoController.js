@@ -1,7 +1,12 @@
 // ==========================================================================
-// DETALLE EVENTO: Renderiza dinamicamente desde URL param ?id=XXX
-// Consume GET /api/eventos/:id y POST /api/inscripciones
+// CONTROLLER: DETALLE EVENTO — js/controllers/detalleEventoController.js
+// Renderiza detalle de evento desde URL param ?id=XXX
 // ==========================================================================
+
+import { obtenerEvento, obtenerAgenda } from '../services/eventos.service.js';
+import { apiPost } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
 
 const mostrarError = (idCampo, mensaje) => { validaciones.mostrarError(idCampo, mensaje); };
 const limpiarErrores = () => { validaciones.limpiarErrores(); };
@@ -24,7 +29,6 @@ const renderizarActividades = (actividades) => {
     const container = document.querySelector('.eventActivities');
     if (!container) return;
 
-    // Mostrar todas las actividades del evento (el acceso al detalle ya implica invitación)
     if (actividades.length === 0) {
         container.innerHTML = '<h2><i class="bi bi-calendar-check"></i> Actividades</h2><p>No hay actividades disponibles para este evento.</p>';
         return;
@@ -48,17 +52,16 @@ const renderizarActividades = (actividades) => {
     container.innerHTML = html;
 };
 
-// ── RENDERIZADO DE AGENDA (tabs por día, consume GET /api/eventos/agenda/:eventoId) ──
+// ── RENDERIZADO DE AGENDA ───────────────────────────────────────────────
 
-const renderizarAgenda = async (eventoId) => {
+const renderizarAgendaSection = async (eventoId) => {
     const section = document.querySelector('.eventAgenda');
     if (!section) return;
 
     try {
-        const res = await fetch(`/api/eventos/agenda/${eventoId}`);
-        const data = await res.json();
+        const data = await obtenerAgenda(eventoId);
 
-        if (!res.ok || data.error || !data.agenda || data.agenda.length === 0) {
+        if (!data || data.error || !data.agenda || data.agenda.length === 0) {
             section.innerHTML = `
                 <div class="eventAgendaHeader">
                     <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
@@ -114,7 +117,6 @@ const renderizarAgenda = async (eventoId) => {
 
         section.innerHTML = html;
 
-        // Inicializar tabs
         section.querySelectorAll('.eventAgendaDatesTabLinks').forEach(btn => {
             btn.addEventListener('click', (evt) => {
                 const day = evt.currentTarget.dataset.day;
@@ -178,8 +180,7 @@ const renderizarStands = (stands) => {
     const section = document.querySelector('.eventStands');
     if (!section) return;
 
-    // Filtrar solo aprobados
-    const aprobados = (stands || []).filter(s => 
+    const aprobados = (stands || []).filter(s =>
         s.estado && s.estado.toLowerCase() === 'aprobado'
     );
 
@@ -206,7 +207,7 @@ const renderizarStands = (stands) => {
     section.innerHTML = html;
 };
 
-// ── RENDERIZADO DE CHECKBOXES DE ACTIVIDADES (formulario inscripción) ───
+// ── RENDERIZADO DE CHECKBOXES DE ACTIVIDADES ────────────────────────────
 
 const renderizarCheckboxesActividades = (actividades) => {
     const container = document.getElementById('checkboxes-actividades');
@@ -267,7 +268,6 @@ const validarInscripcion = async (e) => {
     limpiarErrores();
     let esValido = true;
 
-    // Campos requeridos
     const camposRequeridos = [
         { id: 'nombreVisitante', mensaje: 'El nombre completo es requerido.' },
         { id: 'carreraVisitante', mensaje: 'La carrera o profesion es requerida.' }
@@ -328,7 +328,6 @@ const validarInscripcion = async (e) => {
         }
     }
 
-    // Actividades seleccionadas
     const checkboxes = document.querySelectorAll('input[name="actividades_seleccionadas"]:checked');
     const hayCheckboxesDisponibles = document.querySelectorAll('input[name="actividades_seleccionadas"]').length > 0;
 
@@ -346,7 +345,6 @@ const validarInscripcion = async (e) => {
         }
     }
 
-    // Enviar inscripción a la API
     if (esValido) {
         const actividadesSeleccionadas = Array.from(
             document.querySelectorAll('input[name="actividades_seleccionadas"]:checked')
@@ -364,9 +362,8 @@ const validarInscripcion = async (e) => {
         };
 
         try {
-            const resultado = await apiPost('inscripciones', datos);
+            await apiPost('inscripciones', datos);
 
-            // Si el evento es de pago, redirigir a la página de pago
             const eventoActual = window._eventoActual;
             if (eventoActual && (eventoActual.tipoEntrada === 'pago' && !eventoActual.entradaLibre)) {
                 const actNombres = actividadesSeleccionadas.join(',');
@@ -377,7 +374,7 @@ const validarInscripcion = async (e) => {
                 document.getElementById('inscribirVisitante').reset();
             }
         } catch (error) {
-            // apiPost ya muestra el error con SweetAlert2 (409 duplicado, 400 validación, etc.)
+            // apiPost ya muestra el error
         }
     }
 };
@@ -394,9 +391,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // GET /api/eventos/:id devuelve evento + actividades + oradores + stands
-        const respuesta = await apiGet(`eventos/${eventoId}`);
-        const evento = respuesta.data || respuesta;
+        const evento = await obtenerEvento(eventoId);
 
         if (!evento || !evento.nombre) {
             document.querySelector('.eventTitle').textContent = 'Evento no encontrado';
@@ -407,12 +402,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const oradores = evento.oradores || [];
         const stands = evento.stands || [];
 
-        // Guardar referencia global al evento para la redirección a pago
         window._eventoActual = evento;
 
         renderizarEvento(evento);
         renderizarActividades(actividades);
-        renderizarAgenda(eventoId);
+        renderizarAgendaSection(eventoId);
         renderizarPresentadores(oradores);
         renderizarStands(stands);
         renderizarCheckboxesActividades(actividades);
@@ -422,12 +416,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('.eventTitle').textContent = 'Error al cargar el evento';
     }
 
-    // Inicializar navbar search dropdown
     if (validaciones && validaciones.inicializarNavbarSearch) {
         validaciones.inicializarNavbarSearch('');
     }
 
-    // Inicializar formulario
     inicializarFiltrosEntrada();
     const formInscripcion = document.getElementById('inscribirVisitante');
     if (formInscripcion) {

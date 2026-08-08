@@ -1,7 +1,12 @@
-﻿// ==========================================================================
-// MÓDULO: GESTIÓN DE EVENTOS — admin-eventos-logic.js
+// ==========================================================================
+// CONTROLLER: GESTIÓN DE EVENTOS — js/controllers/adminEventosController.js
 // Consume GET /api/eventos, PUT /api/eventos/:id, DELETE /api/eventos/:id
 // ==========================================================================
+
+import { listarEventos, obtenerEvento, actualizarEvento, eliminarEvento } from '../services/eventos.service.js';
+import { apiSesion, apiGet, apiPut, apiDelete, listaDe } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
 
 let eventosCache = [];
 

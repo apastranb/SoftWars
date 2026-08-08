@@ -4,9 +4,6 @@
 //
 // Abre UNA sola conexión al clúster Atlas al arrancar el servidor y la
 // reutiliza durante todo el ciclo de vida del proceso (patrón singleton).
-// La función crearIndices() de utils/crearIndices.js se invoca aquí
-// después de conectar, por lo que los índices se garantizan en cada
-// arranque sin ningún paso manual adicional (SW-7).
 //
 // Contrato público:
 //   conectarDB()  → abre la conexión; llama solo desde server.js
@@ -22,7 +19,6 @@ let baseDatos = null;
 /**
  * Abre la conexión al clúster y deja la base de datos lista.
  * Se llama UNA sola vez desde server.js antes de levantar el listener.
- * Después de conectar, instala los índices definidos en utils/crearIndices.js.
  *
  * @returns {Promise<import('mongodb').Db>} Instancia de la base de datos.
  * @throws {Error} Si falta MONGODB_URI o si la conexión falla.
@@ -45,12 +41,6 @@ async function conectarDB() {
     baseDatos = cliente.db(nombreBD);
 
     console.log(`[db] Conectado a MongoDB — base de datos "${nombreBD}"`);
-
-    // SW-7: crear / verificar índices en cada arranque
-    // El require es diferido para romper la dependencia circular:
-    // crearIndices.js → getDB() → baseDatos (que ya está asignado aquí)
-    const { crearIndices } = require('../utils/crearIndices');
-    await crearIndices();
 
     return baseDatos;
 }

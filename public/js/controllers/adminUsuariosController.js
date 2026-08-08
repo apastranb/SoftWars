@@ -1,7 +1,11 @@
 // ==========================================================================
-// MÓDULO: GESTIÓN DE USUARIOS — admin-usuarios-logic.js
+// CONTROLLER: GESTIÓN DE USUARIOS — js/controllers/adminUsuariosController.js
 // Consume GET/POST/PUT/DELETE /api/usuarios
 // ==========================================================================
+
+import { apiSesion, apiGet, apiPost, apiPut, apiDelete, listaDe } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
 
 const mostrarError = (idCampo, mensaje) => { validaciones.mostrarError(idCampo, mensaje); };
 const limpiarErrores = () => { validaciones.limpiarErrores(); };

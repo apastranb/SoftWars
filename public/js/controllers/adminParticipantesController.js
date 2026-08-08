@@ -1,44 +1,14 @@
 // ==========================================================================
-// LÓGICA DE PARTICIPANTES — public/js/admin-participantes-logic.js
+// CONTROLLER: PARTICIPANTES — js/controllers/adminParticipantesController.js
 // Responsable: Kenner Gamboa (SW-30)
-//
-// Consume la API REST en lugar de window.db.
-// Endpoints usados:
-//   GET    /api/participantes        — listar con filtros
-//   GET    /api/inscripciones        — vista global de inscripciones
-//   PUT    /api/participantes/:id    — editar participante
-//   DELETE /api/participantes/:id    — eliminar (baja lógica)
 // ==========================================================================
 
-// ── Cierre de sesión ────────────────────────────────────────────────────
-window.cerrarSesion = function () {
-    fetch('/api/auth/logout', { method: 'POST' })
-        .finally(() => { window.location.href = 'login.html'; });
-};
+import { apiSesion, apiGet, apiPut, apiDelete, listaDe } from '../services/api.service.js';
 
-// ── Helpers HTTP ────────────────────────────────────────────────────────
+const validaciones = window.validaciones;
 
-async function apiGet(ruta) {
-    const res = await fetch(ruta);
-    if (!res.ok) throw await res.json();
-    return res.json();
-}
-
-async function apiPut(ruta, datos) {
-    const res = await fetch(ruta, {
-        method:  'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(datos)
-    });
-    if (!res.ok) throw await res.json();
-    return res.json();
-}
-
-async function apiDelete(ruta) {
-    const res = await fetch(ruta, { method: 'DELETE' });
-    if (!res.ok) throw await res.json();
-    return res.json();
-}
+// ── Variable global para el ID en edición ───────────────────────────────
+let editandoPartId = null;
 
 // ── Renderizado de la tabla ─────────────────────────────────────────────
 
@@ -50,13 +20,13 @@ async function renderizarTablaParticipantes() {
     const filtroEstado  = document.getElementById('filtro-estado').value;
     const filtroFecha   = document.getElementById('filtro-fecha').value;
 
-    // Construir query string para el filtro
-    const params = new URLSearchParams();
-    if (filtroEstado) params.append('estado', filtroEstado);
-    if (filtroFecha)  params.append('fecha',  filtroFecha);
+    // Construir params para el filtro
+    const params = {};
+    if (filtroEstado) params.estado = filtroEstado;
+    if (filtroFecha)  params.fecha = filtroFecha;
 
     try {
-        const data = await apiGet(`/api/inscripciones?${params.toString()}`);
+        const data = await apiGet('inscripciones', params);
         let participantes = data.inscripciones || [];
 
         // Filtro de búsqueda local (texto libre)
@@ -107,14 +77,13 @@ async function renderizarTablaParticipantes() {
 
         document.getElementById('selectAll').checked = false;
 
-        // Cambio de estado directo (consistente con admin-eventos, admin-actividades)
+        // Cambio de estado directo
         tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
             select.addEventListener('change', async (e) => {
                 const id = e.target.dataset.id;
                 const nuevoEstado = e.target.value;
                 try {
-                    await apiPut(`/api/participantes/${id}`, { estado: nuevoEstado });
-                    // Actualizar clase de color
+                    await apiPut('participantes', id, { estado: nuevoEstado });
                     e.target.classList.remove('estado-activo', 'estado-inactivo');
                     e.target.classList.add(nuevoEstado === 'Activo' ? 'estado-activo' : 'estado-inactivo');
                     validaciones.exito('Estado actualizado', `El participante se marcó como "${nuevoEstado}".`);
@@ -133,7 +102,6 @@ async function renderizarTablaParticipantes() {
 // ── Modal editar ────────────────────────────────────────────────────────
 
 function abrirModalEditarParticipante(id) {
-    // Buscar la fila en la tabla para obtener los datos actuales
     const fila = document.querySelector(`.row-check[data-id="${id}"]`)?.closest('tr');
     if (!fila) return;
 
@@ -170,7 +138,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         const confirmar = await validaciones.confirmar('¿Cerrar sesión?', 'Se cerrará tu sesión actual.');
         if (!confirmar) return;
-        window.cerrarSesion();
+        fetch('/api/auth/logout', { method: 'POST' })
+            .finally(() => { window.location.href = 'login.html'; });
     });
 
     // Render inicial
@@ -217,7 +186,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!confirmar) return;
 
         try {
-            await Promise.all(seleccionados.map(id => apiDelete(`/api/participantes/${id}`)));
+            for (const id of seleccionados) {
+                await apiDelete('participantes', id);
+            }
             validaciones.exito('Eliminado', 'Los participantes fueron eliminados correctamente.');
             renderizarTablaParticipantes();
         } catch (err) {
@@ -270,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!esValido) return;
 
         try {
-            await apiPut(`/api/participantes/${editandoPartId}`, {
+            await apiPut('participantes', editandoPartId, {
                 nombreCompleto: nombre,
                 telefono,
                 edad:    parseInt(edad, 10),
@@ -284,6 +255,3 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
-
-// Variable global para el ID en edición
-let editandoPartId = null;

@@ -1,46 +1,24 @@
 // ==========================================================================
-// CONTROLLER DE STANDS — controllers/stands.controller.js
-// Responsable: Josué Arroyo (SW-14)
+// CONTROLLER: STANDS — backend/controllers/stands.controller.js
+// Recibe peticiones HTTP, valida entrada, llama al service y responde.
+// Responsable original: Josué Arroyo (SW-14)
 //
-// Requerimientos que implementa:
-//   RF-14  Creación con categoría (Empresa / Personal) y datos de contacto.
-//   RF-15  ID numérico automático con REINICIO ANUAL y estado gestionable
-//          entre Aprobado y Cerrado.
-//   RF-16  Edición limitada: se puede cambiar todo MENOS el correo
-//          electrónico y el ID numérico.
-//   RF-22  Búsqueda y filtros por nombre, estado, empresa o responsable.
-//
-// Sobre el ID anual (RF-15): cada stand guarda tres campos relacionados.
-//     anio    → 2026            año al que pertenece la numeración
-//     numero  → 1, 2, 3...      consecutivo que vuelve a 1 cada año
-//     codigo  → "S-2026-001"    identificador legible que se muestra en el panel
-// El consecutivo lo entrega utils/codigos.js con un contador atómico por año,
-// de modo que dos administradores que registren un stand al mismo tiempo
-// nunca reciban el mismo número.
+// RF-14  Creación con categoría (Empresa / Personal).
+// RF-15  ID numérico automático con reinicio anual.
+// RF-16  Edición limitada (no se puede cambiar correo ni ID numérico).
+// RF-22  Búsqueda y filtros.
 // ==========================================================================
 
-const { getDB } = require('../config/db');
-const { siguienteNumeroStand } = require('../utils/codigos');
-const { filtroPorId, conAlias, conAliasLista, busquedaTexto, aObjectId } = require('../utils/mongo');
-const { errorNoEncontrado, errorConflicto, errorValidacion } = require('../utils/respuestas');
-const { ESTADOS_STAND, CATEGORIAS_STAND } = require('../utils/catalogos');
+const { errorNoEncontrado, errorValidacion } = require('../utils/respuestas');
 const v = require('../utils/validaciones.server');
-
-const COLECCION = 'stands';
-
-/** RF-16 — campos que no se pueden modificar una vez creado el stand. */
-const CAMPOS_INMUTABLES = ['correo', 'numero', 'anio', 'codigo'];
+const { ESTADOS_STAND, CATEGORIAS_STAND } = require('../utils/catalogos');
+const standsService = require('../services/stands.service');
+const { CAMPOS_INMUTABLES } = require('../models/stand.model');
 
 // ==========================================================================
-// VALIDACIÓN (OB-04 — segunda barrera en el servidor)
+// VALIDACIÓN
 // ==========================================================================
 
-/**
- * Valida el cuerpo de un stand con las mismas reglas que el cliente.
- * @param {object} cuerpo - req.body
- * @param {boolean} [esEdicion=false]
- * @returns {object} Mapa { campo: mensaje }. Vacío si todo es válido.
- */
 function validarStand(cuerpo, esEdicion = false) {
     const errores = {};
     const presente = campo => !esEdicion || cuerpo[campo] !== undefined;
@@ -61,7 +39,6 @@ function validarStand(cuerpo, esEdicion = false) {
         errores.empresa = 'La empresa u organización es requerida.';
     }
 
-    // El correo solo se valida al crear: RF-16 lo vuelve inmutable en edición.
     if (!esEdicion) {
         if (!v.validarRequerido(cuerpo.correo)) {
             errores.correo = 'El correo de contacto es requerido.';
@@ -87,7 +64,6 @@ function validarStand(cuerpo, esEdicion = false) {
         }
     }
 
-    // RF-14 — categoría obligatoria: Empresa o Personal.
     if (presente('categoria')) {
         if (!v.validarRequerido(cuerpo.categoria)) {
             errores.categoria = 'Debe seleccionar una categoría.';
@@ -96,7 +72,6 @@ function validarStand(cuerpo, esEdicion = false) {
         }
     }
 
-    // RF-15 — estado gestionable entre Aprobado y Cerrado.
     if (cuerpo.estado !== undefined && !v.validarEnCatalogo(cuerpo.estado, ESTADOS_STAND)) {
         errores.estado = `El estado debe ser ${ESTADOS_STAND.join(' o ')}.`;
     }
@@ -108,189 +83,59 @@ function validarStand(cuerpo, esEdicion = false) {
     return errores;
 }
 
-/**
- * Arma los campos editables del stand. Nunca incluye los campos inmutables
- * de RF-16, así que sirve tanto para crear como para actualizar.
- * @param {object} cuerpo - req.body ya validado.
- * @returns {object}
- */
-function construirDocumento(cuerpo) {
-    const descripcion = cuerpo.descripcion !== undefined ? cuerpo.descripcion : cuerpo.desc;
-
-    return {
-        nombre: v.limpiar(cuerpo.nombre),
-        categoria: v.normalizarCatalogo(cuerpo.categoria, CATEGORIAS_STAND, 'empresa'),
-        descripcion: v.limpiar(descripcion),
-        encargado: v.limpiar(cuerpo.encargado),
-        empresa: v.limpiar(cuerpo.empresa),
-        telefono: v.normalizarTelefono(cuerpo.telefono),
-        estado: v.normalizarCatalogo(cuerpo.estado, ESTADOS_STAND, 'Aprobado')
-    };
-}
-
 // ==========================================================================
 // ENDPOINTS
 // ==========================================================================
 
-/**
- * GET /api/stands
- * RF-22 — Filtros: ?q= &estado= &empresa= &encargado= &categoria= &eventoId= &anio=
- */
+/** GET /api/stands */
 async function listar(req, res) {
-    const { q, estado, empresa, encargado, categoria, eventoId, anio } = req.query;
-    const filtro = {};
-
-    if (q && q.trim()) {
-        const texto = busquedaTexto(q);
-        filtro.$or = [
-            { nombre: texto }, { empresa: texto }, { encargado: texto },
-            { codigo: texto }, { correo: texto }
-        ];
-    }
-    if (estado) filtro.estado = v.normalizarCatalogo(estado, ESTADOS_STAND, estado);
-    if (categoria) filtro.categoria = v.normalizarCatalogo(categoria, CATEGORIAS_STAND, categoria);
-    if (empresa) filtro.empresa = busquedaTexto(empresa);
-    if (encargado) filtro.encargado = busquedaTexto(encargado);
-    if (eventoId) filtro.eventoId = aObjectId(eventoId) || eventoId;
-    if (anio) filtro.anio = parseInt(anio, 10);
-
-    const stands = await getDB().collection(COLECCION)
-        .find(filtro)
-        .sort({ anio: -1, numero: 1 })
-        .toArray();
-
-    res.json(conAliasLista(stands));
+    const resultado = await standsService.listarStands(req.query);
+    res.json(resultado);
 }
 
-/** GET /api/stands/:id — acepta ObjectId o código legible (S-2026-001). */
+/** GET /api/stands/:id */
 async function obtener(req, res) {
-    const stand = await getDB().collection(COLECCION).findOne(filtroPorId(req.params.id));
+    const stand = await standsService.obtenerStand(req.params.id);
     if (!stand) throw errorNoEncontrado('El stand solicitado no existe.');
-    res.json(conAlias(stand));
+    res.json(stand);
 }
 
-/**
- * POST /api/stands — RF-14 y RF-15.
- * Genera el número consecutivo del año en curso y lo deja fijo de por vida.
- */
+/** POST /api/stands */
 async function crear(req, res) {
     const errores = validarStand(req.body, false);
     if (Object.keys(errores).length > 0) throw errorValidacion(errores);
 
-    const db = getDB();
-    const coleccion = db.collection(COLECCION);
-
-    // El evento debe existir: MongoDB no valida claves foráneas.
-    const eventoId = aObjectId(req.body.eventoId) || req.body.eventoId;
-    const evento = await db.collection('eventos').findOne(
-        aObjectId(req.body.eventoId) ? { _id: eventoId } : { codigo: String(eventoId) }
-    );
-    if (!evento) {
-        throw errorValidacion({ eventoId: 'El evento seleccionado no existe.' });
-    }
-
-    // Un mismo correo no puede tener dos stands en el mismo evento.
-    const correo = v.normalizarCorreo(req.body.correo);
-    const duplicado = await coleccion.findOne({ correo: correo, eventoId: evento._id });
-    if (duplicado) {
-        throw errorConflicto(
-            `El correo ${correo} ya tiene un stand registrado en este evento (${duplicado.codigo}).`
-        );
-    }
-
-    // RF-15 — numeración anual.
-    const { anio, numero, codigo } = await siguienteNumeroStand();
-
-    const documento = {
-        codigo: codigo,
-        numero: numero,
-        anio: anio,
-        eventoId: evento._id,
-        correo: correo,
-        ...construirDocumento(req.body),
-        fechaRegistro: new Date()
-    };
-
-    const resultado = await coleccion.insertOne(documento);
-    res.status(201).json(conAlias({ _id: resultado.insertedId, ...documento }));
+    const stand = await standsService.crearStand(req.body, req);
+    res.status(201).json(stand);
 }
 
-/**
- * PUT /api/stands/:id — RF-16.
- * Se puede modificar todo excepto el correo y el ID numérico. Si la petición
- * intenta cambiar alguno de esos campos, se responde 400 en lugar de
- * ignorarlo en silencio: así el error es visible durante las pruebas.
- */
+/** PUT /api/stands/:id */
 async function actualizar(req, res) {
-    const coleccion = getDB().collection(COLECCION);
-    const stand = await coleccion.findOne(filtroPorId(req.params.id));
-    if (!stand) throw errorNoEncontrado('El stand solicitado no existe.');
-
-    // RF-16 — rechazo explícito de cambios sobre campos inmutables.
-    const intentos = CAMPOS_INMUTABLES.filter(campo => {
-        if (req.body[campo] === undefined) return false;
-        if (campo === 'correo') return v.normalizarCorreo(req.body.correo) !== stand.correo;
-        return String(req.body[campo]) !== String(stand[campo]);
-    });
-
-    if (intentos.length > 0) {
-        const etiquetas = { correo: 'el correo electrónico', numero: 'el ID numérico', anio: 'el año', codigo: 'el código' };
-        throw errorValidacion({
-            [intentos[0]]: `No se puede modificar ${intentos.map(c => etiquetas[c]).join(' ni ')} de un stand ya registrado (RF-16).`
-        });
-    }
-
     const errores = validarStand(req.body, true);
     if (Object.keys(errores).length > 0) throw errorValidacion(errores);
 
-    const cambios = construirDocumento({ ...stand, ...req.body });
-
-    if (req.body.eventoId !== undefined) {
-        const eventoId = aObjectId(req.body.eventoId);
-        if (eventoId) cambios.eventoId = eventoId;
-    }
-
-    cambios.fechaActualizacion = new Date();
-    await coleccion.updateOne({ _id: stand._id }, { $set: cambios });
-
-    const actualizado = await coleccion.findOne({ _id: stand._id });
-    res.json(conAlias(actualizado));
+    const stand = await standsService.actualizarStand(req.params.id, req.body, req);
+    if (!stand) throw errorNoEncontrado('El stand solicitado no existe.');
+    res.json(stand);
 }
 
-/**
- * PATCH /api/stands/:id/estado — RF-15.
- * Cambia el estado entre Aprobado y Cerrado desde el <select> de la tabla.
- */
+/** PATCH /api/stands/:id/estado */
 async function cambiarEstado(req, res) {
     const estado = v.normalizarCatalogo(req.body.estado, ESTADOS_STAND);
     if (!estado) {
         throw errorValidacion({ estado: `El estado debe ser ${ESTADOS_STAND.join(' o ')}.` });
     }
 
-    const coleccion = getDB().collection(COLECCION);
-    const stand = await coleccion.findOne(filtroPorId(req.params.id));
+    const stand = await standsService.cambiarEstado(req.params.id, estado, req);
     if (!stand) throw errorNoEncontrado('El stand solicitado no existe.');
-
-    await coleccion.updateOne(
-        { _id: stand._id },
-        { $set: { estado: estado, fechaActualizacion: new Date() } }
-    );
-
-    res.json(conAlias({ ...stand, estado: estado }));
+    res.json(stand);
 }
 
-/**
- * DELETE /api/stands/:id — RF-37.
- * El stand no tiene registros dependientes, así que se elimina físicamente.
- */
+/** DELETE /api/stands/:id */
 async function eliminar(req, res) {
-    const coleccion = getDB().collection(COLECCION);
-    const stand = await coleccion.findOne(filtroPorId(req.params.id));
-    if (!stand) throw errorNoEncontrado('El stand solicitado no existe.');
-
-    await coleccion.deleteOne({ _id: stand._id });
-
-    res.json({ mensaje: `El stand "${stand.nombre}" fue eliminado.`, codigo: stand.codigo });
+    const resultado = await standsService.eliminarStand(req.params.id);
+    if (!resultado.encontrado) throw errorNoEncontrado('El stand solicitado no existe.');
+    res.json({ mensaje: `El stand "${resultado.nombre}" fue eliminado.`, codigo: resultado.codigo });
 }
 
 module.exports = {
@@ -302,5 +147,5 @@ module.exports = {
     eliminar,
     CAMPOS_INMUTABLES,
     validarStand,
-    construirDocumento
+    construirDocumento: standsService.construirDocumento
 };

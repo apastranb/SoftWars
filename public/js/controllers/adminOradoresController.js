@@ -1,32 +1,16 @@
 // ==========================================================================
-// PANEL DE PRESENTADORES — public/js/admin-oradores-logic.js
+// CONTROLLER: PANEL DE PRESENTADORES — js/controllers/adminOradoresController.js
 // Responsable: Josué Arroyo (SW-27)
-//
-// Migración de la iteración 1 (window.db / localStorage) a la API REST.
-// Toda la lectura y escritura pasa por public/js/api.js; esta página ya no
-// carga data-store.js (SW-22).
-//
-// Reglas del ERS que la interfaz refleja:
-//   RF-13  Eliminar queda bloqueado si el presentador es responsable de
-//          actividades vigentes; editar siempre se permite. El servidor
-//          responde 409 al intentar eliminarlo, y el listado trae
-//          `puedeEliminarse` para marcar la fila sin una petición extra.
-//
-//          Nota: el ERS (pág. 16) redacta RF-13 como "Edición y Eliminación
-//          Condicional" y su criterio de aceptación deniega ambas acciones.
-//          El equipo decidió el 5/08 implementar solo el bloqueo de borrado,
-//          por acuerdo con Carlos Carballo (commit b1b8921).
-//   RF-20  La búsqueda y los filtros se resuelven en el servidor (?q=,
-//          ?estado=, ?fechaRegistro=), no filtrando un arreglo en memoria.
-//   HU-10  Las postulaciones se aprueban o rechazan contra
-//          /api/postulaciones/:id/aprobar | /rechazar. Aprobar crea el orador
-//          en el servidor, que es quien asigna el código OR-00X.
 // ==========================================================================
+
+import { apiSesion, apiGet, apiPost, apiPut, apiPatch, apiDelete, listaDe } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
+const Swal = window.Swal;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
     // ── Guardia de sesión ───────────────────────────────────────────────────
-    // La sesión vive en una cookie httpOnly del servidor, no en localStorage.
     const usuario = await apiSesion();
     if (!usuario) {
         window.location.href = 'login.html';
@@ -69,22 +53,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const filterEstadoPost     = document.getElementById('filterEstadoPostulacion');
 
     // ── Estado de la página ─────────────────────────────────────────────────
-    let editandoId   = null;   // _id del orador en edición (null = alta)
+    let editandoId   = null;
     let fotoDataUrl  = null;
-    let oradores     = [];     // último listado recibido del servidor
+    let oradores     = [];
     let postulaciones = [];
-    let nombresActividad = new Map();   // actividadId → nombre, para la bandeja
+    let nombresActividad = new Map();
 
     // ── Utilidades ──────────────────────────────────────────────────────────
 
-    /** Evita que un nombre con < o > rompa el HTML de la tabla. */
     function escaparHtml(valor) {
         return String(valor ?? '').replace(/[&<>"']/g, c => (
             { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
         ));
     }
 
-    /** Convierte la fecha ISO que devuelve la API a YYYY/MM/DD. */
     function formatearFecha(valor) {
         if (!valor) return '';
         const fecha = new Date(valor);
@@ -94,7 +76,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return `${fecha.getFullYear()}/${m}/${d}`;
     }
 
-    /** Los catálogos del servidor vienen capitalizados; el <select> en minúscula. */
     function esEstado(valor, referencia) {
         return String(valor || '').toLowerCase() === referencia;
     }
@@ -103,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return [...document.querySelectorAll(`${selector}:checked`)].map(cb => cb.dataset.id);
     }
 
-    // ── Validación del formulario (primera barrera; el servidor repite) ──────
+    // ── Validación del formulario ───────────────────────────────────────────
 
     function validarFormulario() {
         validaciones.limpiarErrores();
@@ -172,9 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 opcion.textContent = ev.nombre;
                 inputEvento.appendChild(opcion);
             });
-        } catch (error) {
-            // api.js ya avisó al usuario; el <select> queda solo con el placeholder.
-        }
+        } catch (error) { }
     }
 
     async function cargarNombresActividad() {
@@ -188,7 +167,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── Tabla de presentadores ──────────────────────────────────────────────
 
-    /** RF-20 — los filtros viajan como query params; filtra MongoDB, no el navegador. */
     async function cargarOradores() {
         try {
             oradores = listaDe(await apiGet('oradores', {
@@ -210,12 +188,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const activo = esEstado(o.estado, 'activo');
             const tr = document.createElement('tr');
 
-            // Si tiene actividades vigentes, no se puede eliminar (solo eliminar, editar sí)
             const avisoBloqueo = o.puedeEliminarse === false
                 ? ' <i class="bi bi-lock-fill" title="No se puede eliminar: tiene actividades activas asignadas"></i>'
                 : '';
 
-            // estado-activo / estado-inactivo las colorea admin-layout.css.
             const claseEstado = activo ? 'estado-activo' : 'estado-inactivo';
 
             tr.innerHTML = `
@@ -238,8 +214,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.getElementById('selectAll').checked = false;
 
-        // PATCH /estado sí está permitido con actividades vigentes: desactivar a
-        // alguien solo impide asignarle actividades NUEVAS.
         tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
             select.addEventListener('change', async (e) => {
                 try {
@@ -285,15 +259,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await apiPut('oradores', editandoId, cuerpoDelFormulario());
                 validaciones.exito('Presentador actualizado', 'Los datos se guardaron correctamente.');
             } else {
-                // El código OR-00X lo asigna el servidor de forma atómica.
                 await apiPost('oradores', cuerpoDelFormulario());
                 validaciones.exito('Presentador registrado', 'El presentador se registró con éxito.');
             }
             modalOrador.hide();
             cargarOradores();
         } catch (error) {
-            // 409 (correo duplicado o actividades activas) y 400 los muestra api.js;
-            // el modal se queda abierto para poder corregir.
         } finally {
             btnGuardar.disabled = false;
         }
@@ -336,11 +307,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPostulaciones();
     }
 
-    /**
-     * Devuelve la etiqueta de estado con las clases propias del proyecto.
-     * `inactivo` es el modificador rojo de admin-layout.css; se reutiliza para
-     * "Rechazada" en lugar de agregar un selector nuevo al CSS compartido.
-     */
     function badgeEstadoPostulacion(estado) {
         const clase = esEstado(estado, 'aprobada')  ? 'aprobado'
                     : esEstado(estado, 'rechazada') ? 'inactivo'
@@ -369,7 +335,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('selectAllPostulaciones').checked = false;
     }
 
-    /** Devuelve las postulaciones seleccionadas que siguen pendientes. */
     function pendientesSeleccionadas() {
         const ids = idsSeleccionados('.row-check-post');
         return postulaciones.filter(p => ids.includes(String(p._id)) && esEstado(p.estado, 'pendiente'));
@@ -411,7 +376,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
         if (!confirmar) return;
 
-        // Se envían en serie para poder contar cuáles bloqueó el servidor.
         let eliminados = 0;
         for (const id of seleccionados) {
             try {
@@ -443,8 +407,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         lector.readAsDataURL(archivo);
     });
 
-    // La búsqueda golpea el servidor, así que se espera a que el usuario
-    // termine de escribir en vez de disparar una petición por tecla.
     let temporizadorBusqueda = null;
     searchInput.addEventListener('input', () => {
         clearTimeout(temporizadorBusqueda);
@@ -529,9 +491,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Una postulación aprobada ya generó un orador: borrarla dejaría el
-        // registro sin rastro de dónde salió, así que solo se descartan las
-        // rechazadas, igual que en la iteración 1.
         const eliminables = postulaciones.filter(
             p => ids.includes(String(p._id)) && esEstado(p.estado, 'rechazada')
         );

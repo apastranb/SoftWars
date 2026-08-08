@@ -1,7 +1,12 @@
 // ==========================================================================
-// MÓDULO: CREAR / EDITAR EVENTO — admin-crear-evento-logic.js
+// CONTROLLER: CREAR / EDITAR EVENTO — js/controllers/adminCrearEventoController.js
 // Consume POST /api/eventos, PUT /api/eventos/:id, GET /api/eventos/:id
 // ==========================================================================
+
+import { apiSesion, apiGet, apiPost, apiPut } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
+const Swal = window.Swal;
 
 const mostrarError = (idCampo, mensaje) => { validaciones.mostrarError(idCampo, mensaje); };
 const limpiarErrores = () => { validaciones.limpiarErrores(); };

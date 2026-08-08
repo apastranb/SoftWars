@@ -1,20 +1,11 @@
 // ==========================================================================
-// PANEL DE STANDS — public/js/admin-stands-logic.js
+// CONTROLLER: PANEL DE STANDS — js/controllers/adminStandsController.js
 // Responsable: Josué Arroyo (SW-27)
-//
-// Migración de la iteración 1 (window.db / localStorage) a la API REST.
-// Esta página ya no carga data-store.js (SW-22).
-//
-// Reglas del ERS que la interfaz refleja:
-//   RF-15  El ID numérico lo asigna el servidor y se reinicia cada año
-//          (S-2026-001, S-2027-001...). El navegador NUNCA lo calcula: en la
-//          iteración 1 se hacía con Math.max(...ids)+1, que repetía números si
-//          dos administradores registraban un stand a la vez.
-//   RF-16  Edición limitada: el correo y el ID no se pueden modificar. El
-//          formulario los bloquea y el servidor responde 400 si igual llegan.
-//   RF-22  Búsqueda y filtros (?q=, ?estado=, ?categoria=) se resuelven en
-//          MongoDB, no filtrando un arreglo en memoria.
 // ==========================================================================
+
+import { apiSesion, apiGet, apiPost, apiPut, apiPatch, apiDelete, listaDe } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -56,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const avisoCorreoRf16 = document.getElementById('avisoCorreoRf16');
 
     // ── Estado de la página ─────────────────────────────────────────────────
-    let editandoId = null;   // _id del stand en edición (null = alta)
+    let editandoId = null;
     let stands     = [];
 
     // ── Utilidades ──────────────────────────────────────────────────────────
@@ -75,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return [...tbody.querySelectorAll('.row-check:checked')].map(cb => cb.dataset.id);
     }
 
-    // ── Validación del formulario (primera barrera; el servidor repite) ─────
+    // ── Validación del formulario ───────────────────────────────────────────
 
     function validarFormulario() {
         validaciones.limpiarErrores();
@@ -117,7 +108,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             valido = false;
         }
 
-        // RF-16: en edición el correo está bloqueado, así que no se valida.
         if (!editandoId) {
             if (!validaciones.validarRequerido(inputCorreo.value)) {
                 validaciones.mostrarError('inputCorreoStand', 'El correo de contacto es requerido.');
@@ -151,14 +141,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 opcion.textContent = ev.nombre;
                 inputEvento.appendChild(opcion);
             });
-        } catch (error) {
-            // api.js ya avisó al usuario.
-        }
+        } catch (error) { }
     }
 
     // ── Tabla ───────────────────────────────────────────────────────────────
 
-    /** RF-22 — los filtros viajan como query params y los resuelve MongoDB. */
     async function cargarStands() {
         try {
             stands = listaDe(await apiGet('stands', {
@@ -178,7 +165,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         stands.forEach(s => {
             const aprobado = esValor(s.estado, 'aprobado');
-            // estado-aprobado / estado-cerrado las colorea admin-layout.css.
             const claseEstado = aprobado ? 'estado-aprobado' : 'estado-cerrado';
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -202,7 +188,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.getElementById('selectAll').checked = false;
 
-        // RF-15 — el estado se gestiona entre Aprobado y Cerrado.
         tbody.querySelectorAll('.tableSelectStatus').forEach(select => {
             select.addEventListener('change', async (e) => {
                 try {
@@ -223,11 +208,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         validaciones.limpiarErrores();
     }
 
-    /**
-     * RF-16 — el correo y el ID son inmutables. En edición se deshabilita el
-     * campo y se explica por qué, en lugar de dejar que el usuario escriba algo
-     * que el servidor va a rechazar con un 400.
-     */
     function aplicarBloqueoRf16(esEdicion) {
         inputCorreo.disabled = esEdicion;
         avisoCorreoRf16.classList.toggle('oculto', !esEdicion);
@@ -248,12 +228,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnGuardar.disabled = true;
         try {
             if (editandoId) {
-                // No se envía `correo`: RF-16 lo deja fijo y el servidor
-                // devolvería 400 si detecta un intento de cambiarlo.
                 await apiPut('stands', editandoId, cuerpo);
                 validaciones.exito('Stand actualizado', 'Los datos se guardaron correctamente.');
             } else {
-                // El código S-AAAA-NNN lo asigna el servidor (RF-15).
                 const creado = await apiPost('stands', {
                     ...cuerpo,
                     correo:   inputCorreo.value.trim(),
@@ -264,8 +241,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             modalStand.hide();
             cargarStands();
         } catch (error) {
-            // 409 (correo repetido en el evento) y 400 los muestra api.js;
-            // el modal se queda abierto para poder corregir.
         } finally {
             btnGuardar.disabled = false;
         }
@@ -350,8 +325,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnGuardar.addEventListener('click', guardarStand);
 
-    // La búsqueda golpea el servidor, así que se espera a que el usuario
-    // termine de escribir en vez de disparar una petición por tecla.
     let temporizadorBusqueda = null;
     searchInput.addEventListener('input', () => {
         clearTimeout(temporizadorBusqueda);

@@ -358,3 +358,7 @@ validaciones.confirmar = function(titulo, texto) {
         cancelButtonText: 'Cancelar'
     }).then(result => result.isConfirmed);
 };
+
+
+// Exponer en window para que los ES modules puedan accederlo
+window.validaciones = validaciones;

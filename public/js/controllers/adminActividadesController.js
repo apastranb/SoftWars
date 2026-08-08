@@ -1,7 +1,11 @@
 // ==========================================================================
-// MÓDULO: GESTIÓN DE ACTIVIDADES — admin-actividades-logic.js
+// CONTROLLER: GESTIÓN DE ACTIVIDADES — js/controllers/adminActividadesController.js
 // Consume GET/POST/PUT/DELETE /api/actividades, GET /api/eventos, GET /api/oradores
 // ==========================================================================
+
+import { apiSesion, apiGet, apiPost, apiPut, apiDelete, listaDe } from '../services/api.service.js';
+
+const validaciones = window.validaciones;
 
 let actividadEditandoId = null;
 let actividadesCache = [];

@@ -1,7 +1,11 @@
 // ==========================================================================
-// INDEX: Catálogo público de eventos
-// Consume GET /api/eventos con filtros (q, categoria, visibilidad)
+// CONTROLLER: INDEX — js/controllers/indexController.js
+// Catálogo público de eventos.
 // ==========================================================================
+
+import { listarEventos } from '../services/eventos.service.js';
+
+const validaciones = window.validaciones;
 
 const EVENTOS_POR_PAGINA = 8;
 let eventosCache = [];
@@ -23,15 +27,14 @@ const cargarEventos = async () => {
     if (categoria) params.categoria = categoria;
 
     try {
-        const respuesta = await apiGet('eventos', params);
-        let eventos = Array.isArray(respuesta) ? respuesta : (respuesta.data || []);
+        const eventos = await listarEventos(params);
 
-        // Filtro de fecha en cliente (la API no filtra por fecha exacta)
+        // Filtro de fecha en cliente
         if (fecha) {
-            eventos = eventos.filter(ev => ev.fechaInicio === fecha || ev.fechaFin === fecha);
+            eventosCache = eventos.filter(ev => ev.fechaInicio === fecha || ev.fechaFin === fecha);
+        } else {
+            eventosCache = eventos;
         }
-
-        eventosCache = eventos;
     } catch (error) {
         console.error('Error cargando eventos:', error);
         eventosCache = [];
@@ -96,7 +99,7 @@ const renderizarEventos = async (resetear) => {
     }
 };
 
-// Debounce para no hacer peticiones en cada tecla
+// Debounce
 let debounceTimer = null;
 const renderConDebounce = () => {
     clearTimeout(debounceTimer);
@@ -107,12 +110,10 @@ const renderConDebounce = () => {
 document.addEventListener('DOMContentLoaded', () => {
     renderizarEventos(true);
 
-    // En index el navbar search muestra dropdown con links (igual que las otras páginas)
     if (validaciones && validaciones.inicializarNavbarSearch) {
         validaciones.inicializarNavbarSearch('pages/');
     }
 
-    // Filtros
     document.getElementById('filterButton').addEventListener('click', () => renderizarEventos(true));
     document.getElementById('clearFiltersButton').addEventListener('click', () => {
         document.getElementById('searchInputHero').value = '';
@@ -123,10 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('categoryFilter').addEventListener('change', () => renderizarEventos(true));
     document.getElementById('dateFilter').addEventListener('change', () => renderizarEventos(true));
 
-    // Busqueda con debounce (solo hero search filtra cards)
     document.getElementById('searchInputHero').addEventListener('input', renderConDebounce);
     document.getElementById('searchButtonHero')?.addEventListener('click', () => renderizarEventos(true));
 
-    // Cargar mas
     document.getElementById('loadMoreButton').addEventListener('click', () => renderizarEventos(false));
 });

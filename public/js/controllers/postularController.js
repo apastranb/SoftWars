@@ -1,16 +1,19 @@
 // ==========================================================================
-// MÓDULO: POSTULACIÓN PÚBLICA DE ORADOR / PRESENTADOR (RF-24)
-// Consume POST /api/postulaciones y GET /api/actividades
+// CONTROLLER: POSTULACIÓN — js/controllers/postularController.js
+// Formulario público de postulación como orador (RF-24).
 // ==========================================================================
+
+import { listarActividades } from '../services/actividades.service.js';
+import { crearPostulacion } from '../services/postulaciones.service.js';
+
+const validaciones = window.validaciones;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Inicializar navbar search dropdown
     if (validaciones && validaciones.inicializarNavbarSearch) {
         validaciones.inicializarNavbarSearch('');
     }
 
-    // ── Referencias al DOM ──────────────────────────────────────────────────
     const form = document.getElementById('form-postulacion');
     const campoNombre = document.getElementById('nombre');
     const campoCorreo = document.getElementById('correo');
@@ -25,13 +28,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let fotoDataUrl = null;
 
-    // ── Poblar select de actividades desde la API ───────────────────────────
+    // Poblar select de actividades
     const poblarActividades = async () => {
         if (!campoActividad) return;
         campoActividad.innerHTML = '<option value="">Seleccionar actividad...</option>';
         try {
-            const respuesta = await apiGet('actividades');
-            const actividades = Array.isArray(respuesta) ? respuesta : (respuesta.data || []);
+            const actividades = await listarActividades();
             actividades.forEach(act => {
                 if (act.visibilidad === 'privada') return;
                 const actId = act._id || act.id || act.codigo;
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await poblarActividades();
 
-    // ── Vista previa de foto ────────────────────────────────────────────────
+    // Vista previa de foto
     if (campoFoto) {
         campoFoto.addEventListener('change', () => {
             const archivo = campoFoto.files[0];
@@ -61,15 +63,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ── Filtro: solo números en teléfono ────────────────────────────────────
+    // Filtro: solo números en teléfono
     const bloquearLetras = (e) => {
         e.target.value = e.target.value.replace(/[^0-9-]/g, '');
     };
     if (campoTelefono) campoTelefono.addEventListener('input', bloquearLetras);
     if (campoTelefono2) campoTelefono2.addEventListener('input', bloquearLetras);
 
-    // ── Validaciones individuales (blur) ────────────────────────────────────
-
+    // Validaciones individuales
     const validarNombre = () => {
         const valor = campoNombre.value.trim();
         if (!valor) { validaciones.mostrarError('nombre', 'El nombre completo es requerido.'); return false; }
@@ -131,7 +132,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return true;
     };
 
-    // Blur events
     campoNombre.addEventListener('blur', validarNombre);
     campoCorreo.addEventListener('blur', validarCorreo);
     campoTelefono.addEventListener('blur', validarTelefono);
@@ -141,8 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     campoBiografia.addEventListener('blur', validarBiografia);
     campoActividad.addEventListener('blur', validarActividad);
 
-    // ── Envío del formulario ────────────────────────────────────────────────
-
+    // Envío del formulario
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         validaciones.limpiarErrores();
@@ -160,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!esValido) return;
 
-        // Construir array de teléfonos
         const telefonos = [campoTelefono.value.trim()];
         if (campoTelefono2.value.trim()) {
             telefonos.push(campoTelefono2.value.trim());
@@ -169,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const datos = {
             nombre: campoNombre.value.trim(),
             correo: campoCorreo.value.trim(),
-            telefonos: telefonos,
+            telefonos,
             especialidad: campoEspecialidad.value.trim(),
             empresa: campoOrganizacion.value.trim(),
             biografia: campoBiografia.value.trim(),
@@ -178,13 +176,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            await apiPost('postulaciones', datos);
+            await crearPostulacion(datos);
             form.reset();
             fotoDataUrl = null;
             if (fotoPreview) fotoPreview.src = '../img/img-placeholder.png';
             validaciones.exito('Postulación enviada', 'Un administrador revisará tu solicitud.');
         } catch (error) {
-            // apiPost ya muestra el error con SweetAlert2
+            // El service ya muestra el error
         }
     });
 });
