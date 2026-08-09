@@ -253,18 +253,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function guardarOrador() {
         if (!validarFormulario()) return;
 
+        // Construir FormData para soportar upload de foto a Cloudinary
+        const formData = new FormData();
+        formData.append('nombre', inputNombre.value.trim());
+        formData.append('correo', inputCorreo.value.trim());
+        formData.append('telefono', inputTelefono.value.trim());
+        if (inputTelefono2.value.trim()) formData.append('telefono2', inputTelefono2.value.trim());
+        formData.append('especialidad', inputEspecialidad.value.trim());
+        formData.append('empresa', inputEmpresa.value.trim());
+        formData.append('biografia', inputBiografia.value.trim());
+        if (inputEvento.value) formData.append('eventoId', inputEvento.value);
+
+        // Agregar foto como archivo si hay uno seleccionado
+        if (inputFoto && inputFoto.files[0]) {
+            formData.append('foto', inputFoto.files[0]);
+        }
+
         btnGuardar.disabled = true;
         try {
-            if (editandoId) {
-                await apiPut('oradores', editandoId, cuerpoDelFormulario());
-                validaciones.exito('Presentador actualizado', 'Los datos se guardaron correctamente.');
-            } else {
-                await apiPost('oradores', cuerpoDelFormulario());
-                validaciones.exito('Presentador registrado', 'El presentador se registró con éxito.');
+            const url = editandoId
+                ? `/api/oradores/${editandoId}`
+                : '/api/oradores';
+            const metodo = editandoId ? 'PUT' : 'POST';
+
+            const respuesta = await fetch(url, { method: metodo, body: formData });
+            const resultado = await respuesta.json().catch(() => null);
+
+            if (!respuesta.ok) {
+                const msg = (resultado && resultado.mensaje) || 'Error al guardar el presentador.';
+                validaciones.alerta('Error', msg, 'error');
+                return;
             }
+
+            const msgExito = editandoId ? 'Presentador actualizado' : 'Presentador registrado';
+            const descExito = editandoId ? 'Los datos se guardaron correctamente.' : 'El presentador se registró con éxito.';
+            validaciones.exito(msgExito, descExito);
             modalOrador.hide();
             cargarOradores();
         } catch (error) {
+            validaciones.alerta('Error', 'No se pudo contactar el servidor.', 'error');
         } finally {
             btnGuardar.disabled = false;
         }
@@ -492,16 +519,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const eliminables = postulaciones.filter(
-            p => ids.includes(String(p._id)) && esEstado(p.estado, 'rechazada')
+            p => ids.includes(String(p._id))
         );
         if (eliminables.length === 0) {
-            validaciones.alerta('No eliminable', 'Solo se pueden eliminar postulaciones rechazadas.', 'warning');
+            validaciones.alerta('Sin selección', 'No se encontraron postulaciones para eliminar.', 'warning');
             return;
         }
 
         const confirmar = await validaciones.confirmar(
             '¿Eliminar postulaciones?',
-            `Se eliminarán ${eliminables.length} postulación(es) rechazada(s).`
+            `Se eliminarán ${eliminables.length} postulación(es). Esta acción no afecta a los presentadores ya registrados.`
         );
         if (!confirmar) return;
 

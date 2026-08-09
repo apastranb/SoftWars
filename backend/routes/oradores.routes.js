@@ -18,6 +18,7 @@
 
 const router = require('express').Router();
 const { verificarSesion } = require('../middleware/auth');
+const { uploadFoto } = require('../middleware/upload');
 const { asyncHandler } = require('../utils/respuestas');
 const controller = require('../controllers/oradores.controller');
 
@@ -26,8 +27,8 @@ router.get('/', asyncHandler(controller.listar));
 router.get('/:id', asyncHandler(controller.obtener));
 
 // --- Escritura: solo administradores autenticados ---
-router.post('/', verificarSesion, asyncHandler(controller.crear));
-router.put('/:id', verificarSesion, asyncHandler(controller.actualizar));
+router.post('/', verificarSesion, uploadFoto('oradores'), asyncHandler(controller.crear));
+router.put('/:id', verificarSesion, uploadFoto('oradores'), asyncHandler(controller.actualizar));
 router.patch('/:id/estado', verificarSesion, asyncHandler(controller.cambiarEstado));
 router.delete('/:id', verificarSesion, asyncHandler(controller.eliminar));
 

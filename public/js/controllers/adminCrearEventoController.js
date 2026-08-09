@@ -260,36 +260,49 @@ const validarFormularioEvento = async (e) => {
 
     if (!esValido) return;
 
-    // Construir datos del evento
-    const datos = {
-        nombre: document.getElementById('nombreEvento').value.trim(),
-        categoria: document.getElementById('categoriaEvento').value,
-        cupoMax: parseInt(document.getElementById('cupoEvento').value),
-        descripcion: document.getElementById('descEvento').value.trim(),
-        fechaInicio: document.getElementById('fechaInicioEvento').value,
-        fechaFin: document.getElementById('fechaFinEvento').value,
-        lugar: document.getElementById('lugarEvento').value.trim(),
-        horaInicio: document.getElementById('horaInicio').value,
-        horaFin: document.getElementById('horaFin').value,
-        responsable: document.getElementById('responsableEvento').value.trim(),
-        tipoEntrada: tipoEntrada.value,
-        visibilidad: visibilidad.value
-    };
+    // Construir FormData (soporta archivo de imagen + campos de texto)
+    const formData = new FormData();
+    formData.append('nombre', document.getElementById('nombreEvento').value.trim());
+    formData.append('categoria', document.getElementById('categoriaEvento').value);
+    formData.append('cupoMax', document.getElementById('cupoEvento').value);
+    formData.append('descripcion', document.getElementById('descEvento').value.trim());
+    formData.append('fechaInicio', document.getElementById('fechaInicioEvento').value);
+    formData.append('fechaFin', document.getElementById('fechaFinEvento').value);
+    formData.append('lugar', document.getElementById('lugarEvento').value.trim());
+    formData.append('horaInicio', document.getElementById('horaInicio').value);
+    formData.append('horaFin', document.getElementById('horaFin').value);
+    formData.append('responsable', document.getElementById('responsableEvento').value.trim());
+    formData.append('tipoEntrada', tipoEntrada.value);
+    formData.append('visibilidad', visibilidad.value);
+
+    // Agregar imagen si se seleccionó un archivo
+    const archivoImagen = document.getElementById('portadaEvento');
+    if (archivoImagen && archivoImagen.files[0]) {
+        formData.append('imagen', archivoImagen.files[0]);
+    }
 
     try {
-        if (eventoEditandoId) {
-            await apiPut('eventos', eventoEditandoId, datos);
-            validaciones.exito('Evento actualizado', 'Los cambios se guardaron correctamente.').then(() => {
-                window.location.href = 'admin-eventos.html';
-            });
-        } else {
-            await apiPost('eventos', datos);
-            validaciones.exito('Evento creado', 'El evento se registró con éxito.').then(() => {
-                window.location.href = 'admin-eventos.html';
-            });
+        const url = eventoEditandoId
+            ? `/api/eventos/${eventoEditandoId}`
+            : '/api/eventos';
+        const metodo = eventoEditandoId ? 'PUT' : 'POST';
+
+        const respuesta = await fetch(url, { method: metodo, body: formData });
+        const resultado = await respuesta.json().catch(() => null);
+
+        if (!respuesta.ok) {
+            const msg = (resultado && resultado.mensaje) || 'Error al guardar el evento.';
+            validaciones.alerta('Error', msg, 'error');
+            return;
         }
+
+        const msgExito = eventoEditandoId ? 'Evento actualizado' : 'Evento creado';
+        const descExito = eventoEditandoId ? 'Los cambios se guardaron correctamente.' : 'El evento se registró con éxito.';
+        validaciones.exito(msgExito, descExito).then(() => {
+            window.location.href = 'admin-eventos.html';
+        });
     } catch (error) {
-        // apiPost/apiPut ya muestra el error
+        validaciones.alerta('Error', 'No se pudo contactar el servidor.', 'error');
     }
 };
 

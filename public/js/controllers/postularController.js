@@ -164,25 +164,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             telefonos.push(campoTelefono2.value.trim());
         }
 
-        const datos = {
-            nombre: campoNombre.value.trim(),
-            correo: campoCorreo.value.trim(),
-            telefonos,
-            especialidad: campoEspecialidad.value.trim(),
-            empresa: campoOrganizacion.value.trim(),
-            biografia: campoBiografia.value.trim(),
-            foto: fotoDataUrl,
-            actividadId: campoActividad.value
-        };
+        // Usar FormData para enviar la foto como archivo real a Cloudinary
+        const formData = new FormData();
+        formData.append('nombre', campoNombre.value.trim());
+        formData.append('correo', campoCorreo.value.trim());
+        formData.append('telefono', telefonos[0]);
+        if (telefonos[1]) formData.append('telefono2', telefonos[1]);
+        formData.append('especialidad', campoEspecialidad.value.trim());
+        formData.append('empresa', campoOrganizacion.value.trim());
+        formData.append('biografia', campoBiografia.value.trim());
+        formData.append('actividadId', campoActividad.value);
+
+        // Agregar foto como archivo si hay uno seleccionado
+        if (campoFoto && campoFoto.files[0]) {
+            formData.append('foto', campoFoto.files[0]);
+        }
 
         try {
-            await crearPostulacion(datos);
+            const respuesta = await fetch('/api/postulaciones', {
+                method: 'POST',
+                body: formData
+            });
+            const resultado = await respuesta.json().catch(() => null);
+
+            if (!respuesta.ok) {
+                const msg = (resultado && resultado.mensaje) || 'No se pudo enviar la postulación.';
+                validaciones.alerta('Error', msg, 'error');
+                return;
+            }
+
             form.reset();
             fotoDataUrl = null;
             if (fotoPreview) fotoPreview.src = '../img/img-placeholder.png';
             validaciones.exito('Postulación enviada', 'Un administrador revisará tu solicitud.');
         } catch (error) {
-            // El service ya muestra el error
+            validaciones.alerta('Error', 'No se pudo contactar el servidor.', 'error');
         }
     });
 });

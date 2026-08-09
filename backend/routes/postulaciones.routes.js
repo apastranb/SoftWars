@@ -17,11 +17,12 @@
 
 const router = require('express').Router();
 const { verificarSesion } = require('../middleware/auth');
+const { uploadFoto } = require('../middleware/upload');
 const { asyncHandler } = require('../utils/respuestas');
 const controller = require('../controllers/postulaciones.controller');
 
-// --- Formulario público (RF-24): sin autenticación ---
-router.post('/', asyncHandler(controller.crear));
+// --- Formulario público (RF-24): sin autenticación, acepta foto ---
+router.post('/', uploadFoto('postulaciones'), asyncHandler(controller.crear));
 
 // --- Bandeja administrativa: requiere sesión ---
 router.get('/', verificarSesion, asyncHandler(controller.listar));

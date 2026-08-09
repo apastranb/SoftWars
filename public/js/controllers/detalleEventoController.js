@@ -5,6 +5,7 @@
 
 import { obtenerEvento, obtenerAgenda } from '../services/eventos.service.js';
 import { apiPost } from '../services/api.service.js';
+import { iconoCategoria } from '../services/categorias.service.js';
 
 const validaciones = window.validaciones;
 
@@ -15,6 +16,8 @@ const limpiarErrores = () => { validaciones.limpiarErrores(); };
 
 const renderizarEvento = (evento) => {
     document.querySelector('.eventTitle').textContent = evento.nombre;
+    const coverImg = document.querySelector('.eventCover');
+    if (coverImg && evento.imagen) coverImg.src = evento.imagen;
     document.querySelector('.eventDate').innerHTML = `<i class="bi bi-calendar"></i> ${evento.fechaInicio}${evento.fechaFin !== evento.fechaInicio ? ' al ' + evento.fechaFin : ''}`;
     document.querySelector('.eventTime').innerHTML = `<i class="bi bi-alarm"></i> ${evento.horaInicio} - ${evento.horaFin}`;
     document.querySelector('.eventLocation').innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${evento.lugar}`;
@@ -76,7 +79,7 @@ const renderizarAgendaSection = async (eventoId) => {
         let html = `
             <div class="eventAgendaHeader">
                 <h2><i class="bi bi-journal"></i> Agenda del Evento</h2>
-                <button class="eventsAdminBtnSecondary btn-exportar-agenda" id="btnExportAgenda">
+                <button class="btnExportAgenda" id="btnExportAgenda">
                     <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
                 </button>
             </div>
@@ -242,7 +245,7 @@ const renderizarPresentadores = (oradores) => {
 
 // ── RENDERIZADO DE STANDS ───────────────────────────────────────────────
 
-const renderizarStands = (stands) => {
+const renderizarStands = (stands, categoriaEvento) => {
     const section = document.querySelector('.eventStands');
     if (!section) return;
 
@@ -256,10 +259,11 @@ const renderizarStands = (stands) => {
         html += '<p>No hay stands asignados a este evento.</p>';
     } else {
         aprobados.forEach(s => {
+            const imgSrc = iconoCategoria(categoriaEvento);
             html += `
                 <div class="eventStandsCard">
                     <div class="standCategoryIcon">
-                        <img src="../img/img-placeholder.png" alt="${s.nombre}" />
+                        <img src="${imgSrc}" alt="${s.nombre}" />
                     </div>
                     <div>
                         <h3 class="standName">${s.nombre}</h3>
@@ -474,7 +478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderizarActividades(actividades);
         renderizarAgendaSection(eventoId);
         renderizarPresentadores(oradores);
-        renderizarStands(stands);
+        renderizarStands(stands, evento.categoria);
         renderizarCheckboxesActividades(actividades);
 
     } catch (error) {
