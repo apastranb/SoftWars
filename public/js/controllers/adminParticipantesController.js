@@ -35,7 +35,8 @@ async function renderizarTablaParticipantes() {
                 p.nombreCompleto?.toLowerCase().includes(textoBusqueda) ||
                 p.correo?.toLowerCase().includes(textoBusqueda) ||
                 p.idDocumento?.includes(textoBusqueda) ||
-                p.carrera?.toLowerCase().includes(textoBusqueda)
+                p.carrera?.toLowerCase().includes(textoBusqueda) ||
+                (p.actividadesNombres || []).some(nombre => nombre.toLowerCase().includes(textoBusqueda))
             );
         }
 

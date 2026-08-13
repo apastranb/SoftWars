@@ -72,6 +72,16 @@ async function crearPostulacion(datos) {
 
     const correo = v.normalizarCorreo(datos.correo);
 
+    // Verificar si el correo ya está registrado como presentador/orador
+    const oradorExistente = await db.collection('oradores').findOne({
+        correo: correo
+    });
+    if (oradorExistente) {
+        throw errorConflicto(
+            `El correo ${correo} ya está registrado como presentador en el sistema. No es necesario postularse de nuevo.`
+        );
+    }
+
     // RF-25 — prevención de duplicados
     const duplicada = await coleccion.findOne({
         correo,
