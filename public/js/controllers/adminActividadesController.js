@@ -144,7 +144,6 @@ const validarFormularioActividad = () => {
         { id: 'modal-hora-inicio', mensaje: 'La hora de inicio es obligatoria.' },
         { id: 'modal-hora-fin', mensaje: 'La hora de finalización es obligatoria.' },
         { id: 'modal-lugar', mensaje: 'El lugar es obligatorio.' },
-        { id: 'modal-responsable', mensaje: 'Debe seleccionar un responsable.' },
         { id: 'modal-visibilidad', mensaje: 'Debe seleccionar la visibilidad.' }
     ];
 
