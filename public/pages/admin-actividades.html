@@ -53,6 +53,7 @@
         
         <header>
             <div class="headerTitle">
+                <button class="sidebar-toggle" id="btnToggleSidebar"><i class="bi bi-list"></i></button>
                 <h1>Gestión de Actividades</h1>
             </div>
             <div class="headerActions">
@@ -257,8 +258,13 @@
                 <button type="submit" id="btn-guardar-modal" form="form-actividad-modal" class="modal-btn-registrar">Registrar</button>
             </div>
         </div>
-    </div>    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/validaciones.js"></script>
     <script type="module" src="../js/controllers/adminActividadesController.js"></script>
+    <script>
+      (function(){const b=document.getElementById('btnToggleSidebar'),s=document.querySelector('.navSideMenu'),o=document.getElementById('sidebarOverlay');if(!b||!s||!o)return;b.addEventListener('click',()=>{s.classList.toggle('sidebar-open');o.classList.toggle('active')});o.addEventListener('click',()=>{s.classList.remove('sidebar-open');o.classList.remove('active')})})();
+    </script>
 </body>
 </html>

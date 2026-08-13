@@ -46,6 +46,7 @@
     <div class="admin-main-content">
         <header>
             <div class="headerTitle">
+                <button class="sidebar-toggle" id="btnToggleSidebar"><i class="bi bi-list"></i></button>
                 <h1>Gestión de Participantes</h1>
             </div>
             <div class="headerActions">
@@ -147,8 +148,13 @@
         </div>
     </div>
 
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/validaciones.js"></script>
     <script type="module" src="../js/controllers/adminParticipantesController.js"></script>
+    <script>
+      (function(){const b=document.getElementById('btnToggleSidebar'),s=document.querySelector('.navSideMenu'),o=document.getElementById('sidebarOverlay');if(!b||!s||!o)return;b.addEventListener('click',()=>{s.classList.toggle('sidebar-open');o.classList.toggle('active')});o.addEventListener('click',()=>{s.classList.remove('sidebar-open');o.classList.remove('active')})})();
+    </script>
 </body>
 </html>

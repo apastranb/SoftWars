@@ -53,6 +53,7 @@
     <div class="admin-main-content">
       <header>
         <div class="headerTitle">
+          <button class="sidebar-toggle" id="btnToggleSidebar"><i class="bi bi-list"></i></button>
           <h1>Gestión de Eventos</h1>
         </div>
         <div class="headerActions">
@@ -165,8 +166,29 @@
       </main>
     </div>
 
+    <!-- Overlay para sidebar mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/validaciones.js"></script>
     <script type="module" src="../js/controllers/adminEventosController.js"></script>
+
+    <!-- Sidebar toggle (responsive) -->
+    <script>
+      (function() {
+        const btn = document.getElementById('btnToggleSidebar');
+        const sidebar = document.querySelector('.navSideMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (!btn || !sidebar || !overlay) return;
+        btn.addEventListener('click', () => {
+          sidebar.classList.toggle('sidebar-open');
+          overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+          sidebar.classList.remove('sidebar-open');
+          overlay.classList.remove('active');
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -121,6 +121,12 @@ header {
   font-size: 1.5rem;
 }
 
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .headerActions {
   display: flex;
   align-items: center;
@@ -679,4 +685,99 @@ header {
 .link-evento-id:hover {
   text-decoration: underline;
   color: var(--blue-800);
+}
+
+/* ===== RESPONSIVE: OFFCANVAS MENU LATERAL (< 992px) ===== */
+
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--blue-800);
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+@media (max-width: 991px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .navSideMenu {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1100;
+  }
+
+  .navSideMenu.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .admin-main-content {
+    margin-left: 0;
+  }
+
+  /* Tablas responsive con scroll horizontal */
+  .admin-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Widgets de detalle en una columna */
+  .widgets-layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Header más compacto */
+  header {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .headerSearchBar input {
+    width: 120px;
+  }
+
+  .headerAdminInfo {
+    display: none;
+  }
+
+  /* Toolbar apilado */
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 575px) {
+  .admin-page-content {
+    padding: 1rem;
+  }
+
+  .headerTitle h1 {
+    font-size: 1.1rem;
+  }
+
+  .admin-toolbar__filters,
+  .admin-toolbar__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-toolbar__actions button {
+    width: 100%;
+  }
 }

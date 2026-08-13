@@ -77,7 +77,38 @@ function uploadImagen(carpeta) {
  */
 function uploadFoto(carpeta) {
     if (!estaConfigurado()) {
-        return (req, res, next) => next();
+        // Sin Cloudinary: aceptar el campo pero validar formato
+        const memStorage = multer.memoryStorage();
+        const upload = multer({
+            storage: memStorage,
+            limits: { fileSize: 3 * 1024 * 1024 },
+            fileFilter: (req, file, cb) => {
+                const tiposPermitidos = ['image/jpeg', 'image/png', 'image/jpg'];
+                if (tiposPermitidos.includes(file.mimetype)) {
+                    cb(null, true);
+                } else {
+                    cb(new Error('FORMATO_NO_PERMITIDO'));
+                }
+            }
+        });
+        return (req, res, next) => {
+            const middleware = upload.single('foto');
+            middleware(req, res, (err) => {
+                if (err && err.message === 'FORMATO_NO_PERMITIDO') {
+                    return res.status(400).json({
+                        error: true,
+                        mensaje: 'Formato de fotografía no permitido. Solo se aceptan archivos PNG o JPEG.'
+                    });
+                }
+                if (err && err.code === 'LIMIT_FILE_SIZE') {
+                    return res.status(400).json({
+                        error: true,
+                        mensaje: 'La foto no puede superar los 3 MB.'
+                    });
+                }
+                next();
+            });
+        };
     }
 
     const storage = new CloudinaryStorage({
