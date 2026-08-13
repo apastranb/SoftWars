@@ -436,7 +436,13 @@ const validarInscripcion = async (e) => {
 
             const eventoActual = window._eventoActual;
             if (eventoActual && (eventoActual.tipoEntrada === 'pago' && !eventoActual.entradaLibre)) {
-                const actNombres = actividadesSeleccionadas.join(',');
+                // Obtener los nombres de las actividades seleccionadas en vez de sus IDs
+                const actividadesEvento = eventoActual.actividades || [];
+                const nombresSeleccionados = actividadesSeleccionadas.map(id => {
+                    const act = actividadesEvento.find(a => (a._id || a.id || a.codigo) === id);
+                    return act ? act.nombre : id;
+                });
+                const actNombres = nombresSeleccionados.join(', ');
                 const eventoNombre = eventoActual.nombre || '';
                 window.location.href = `pago.html?actividades=${encodeURIComponent(actNombres)}&nombre=${encodeURIComponent(datos.nombreCompleto)}&evento=${encodeURIComponent(eventoNombre)}`;
             } else {
