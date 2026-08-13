@@ -165,6 +165,31 @@ async function crearInscripcion(datos) {
         );
     }
 
+    // RF-08: Si TODAS las actividades del evento están llenas, marcar el evento como Llena
+    if (actividades.length > 0 && actividades[0].eventoId) {
+        const eventoId = actividades[0].eventoId;
+        const todasActividadesEvento = await db.collection('actividades')
+            .find({ eventoId, entradaLibre: { $ne: true } })
+            .toArray();
+
+        if (todasActividadesEvento.length > 0) {
+            const todasLlenas = todasActividadesEvento.every(a => {
+                // Sumar 1 si esta actividad fue parte de la inscripción actual
+                const cupoActual = actividades.find(act => act._id.toString() === a._id.toString())
+                    ? a.cupoOcupado + 1
+                    : a.cupoOcupado;
+                return cupoActual >= a.cupoMaximo;
+            });
+
+            if (todasLlenas) {
+                await db.collection('eventos').updateOne(
+                    { _id: eventoId },
+                    { $set: { estado: 'Llena', updatedAt: new Date() } }
+                );
+            }
+        }
+    }
+
     return { exito: true, id: resultado.insertedId };
 }
 

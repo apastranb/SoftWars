@@ -525,3 +525,8 @@ footer p {
   background-color: var(--blue-800);
   color: var(--white);
 }
+
+/* SweetAlert2 siempre por encima de los modales del admin */
+.swal2-container {
+  z-index: 3000 !important;
+}
